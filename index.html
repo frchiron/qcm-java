@@ -6,19 +6,29 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h1>Préparation certification Java 21</h1>
-<p>Choisissez un examen blanc :</p>
-<ul>
-    <li>
-        Examen blanc 1 :
-        <a href="exam.html?exam=exam1.json&mode=exam">Mode Examen</a> |
-        <a href="exam.html?exam=exam1.json&mode=train">Mode Entraînement</a>
-    </li>
-    <li>
-        Examen blanc 2 :
-        <a href="exam.html?exam=exam2.json&mode=exam">Mode Examen</a> |
-        <a href="exam.html?exam=exam2.json&mode=train">Mode Entraînement</a>
-    </li>
-</ul>
+<div class="container">
+    <div class="card">
+        <h1>Préparation Certification Java 21</h1>
+        <p>Choisissez un examen blanc :</p>
+
+        <div class="exam-list">
+            <div class="exam-item">
+                <h3>Examen blanc 1</h3>
+                <div class="buttons">
+                    <a class="btn" href="exam.html?exam=exam1.json&mode=exam">Mode Examen</a>
+                    <a class="btn btn-outline" href="exam.html?exam=exam1.json&mode=train">Mode Entraînement</a>
+                </div>
+            </div>
+
+            <div class="exam-item">
+                <h3>Examen blanc 2</h3>
+                <div class="buttons">
+                    <a class="btn" href="exam.html?exam=exam2.json&mode=exam">Mode Examen</a>
+                    <a class="btn btn-outline" href="exam.html?exam=exam2.json&mode=train">Mode Entraînement</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

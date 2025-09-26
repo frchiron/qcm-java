@@ -1,11 +1,5 @@
-body {
-    font-family: "Inter", Arial, sans-serif;
-    background: #f4f7fa;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-}
+
+
 
 .app {
     width: 100%;
@@ -111,4 +105,95 @@ footer {
     border-radius: 0.5rem;
     padding: 0.25rem 0.5rem;
     transition: background 0.2s ease;
+}
+
+
+/* Fond gris clair sobre */
+body {
+    font-family: "Inter", Arial, sans-serif;
+    background-color: #f4f7fa;  /* gris très clair */
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #111;
+}
+
+/* Carte centrale */
+.container .card {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+}
+
+/* Logo */
+.logo {
+    width: 80px;
+    margin-bottom: 20px;
+}
+
+/* Titres */
+.card h1 {
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+.card h3 {
+    margin: 15px 0 10px;
+}
+
+/* Boutons */
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    margin: 5px;
+    background-color: #3b82f6;
+    color: white;
+    text-decoration: none;
+    border-radius: 12px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    background-color: #2563eb;
+    transform: translateY(-2px);
+}
+
+.btn-outline {
+    background: white;
+    color: #3b82f6;
+    border: 2px solid #3b82f6;
+}
+
+.btn-outline:hover {
+    background: #3b82f6;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Organisation des boutons */
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Liste des examens */
+.exam-item {
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 12px;
+    background: #f3f4f6;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+}
+
+.exam-item:hover {
+    transform: translateY(-3px);
 }
