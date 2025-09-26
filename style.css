@@ -203,3 +203,24 @@ body {
     margin-bottom: 5px;
     font-style: italic;
 }
+
+/* Bloc de code dans les questions */
+.question pre {
+    font-size: 0.8rem;     /* plus petit */
+    line-height: 1.1;      /* espacement réduit */
+    padding: 6px 10px;     /* padding plus compact */
+    background-color: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    overflow-x: auto;
+    max-height: 180px;     /* hauteur maximale réduite */
+    margin: 4px 0;
+}
+
+/* Code en ligne */
+.question code {
+    font-size: 0.8rem;
+    background-color: #e5e7eb;
+    padding: 1px 3px;
+    border-radius: 3px;
+}

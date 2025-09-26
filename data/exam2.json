@@ -1,0 +1,189 @@
+{
+  "title": "Examen blanc Java 21 Certification (1Z0-830) - Niveau Authentique Oracle",
+  "duration": 2,
+  "questions": [
+    {
+      "topic": "Virtual Threads",
+      "question": "Examinez le code suivant utilisant les Virtual Threads de Java 21 :<br><pre><code class='language-java'>import java.util.concurrent.*;\nimport java.util.stream.IntStream;\n\npublic class VirtualThreadExample {\n    public static void main(String[] args) throws InterruptedException {\n        var executor1 = Executors.newVirtualThreadPerTaskExecutor();\n        var executor2 = Executors.newFixedThreadPool(10);\n        \n        var tasks = IntStream.range(0, 1000)\n            .mapToObj(i -> (Runnable) () -> {\n                try {\n                    Thread.sleep(100);\n                    System.out.print(Thread.currentThread().isVirtual() + \" \");\n                } catch (InterruptedException e) {\n                    Thread.currentThread().interrupt();\n                }\n            })\n            .toList();\n        \n        try (executor1; executor2) {  // Line A\n            tasks.forEach(executor1::execute);\n            tasks.forEach(executor2::execute);\n        }\n        \n        Thread.sleep(2000);\n    }\n}</code></pre>Que se passe-t-il lors de l'exécution de ce code ?",
+      "options": [
+        "Compilation error à Line A : executor2 n'implémente pas AutoCloseable",
+        "Le programme affiche 2000 fois \"true false\" dans un ordre aléatoire",
+        "Le programme affiche 1000 fois \"true\" suivi de 1000 fois \"false\"",
+        "RuntimeException car les Virtual Threads ne peuvent pas utiliser Thread.sleep()",
+        "Le programme se bloque indéfiniment",
+        "Compilation error : newVirtualThreadPerTaskExecutor() n'existe pas"
+      ],
+      "answer": 0,
+      "difficulty": "advanced",
+      "explanation": "ThreadPoolExecutor (retourné par newFixedThreadPool) n'implémente pas AutoCloseable, contrairement à l'executor des Virtual Threads. Impossible de l'utiliser dans try-with-resources."
+    },
+    {
+      "question": "Analysez le code utilisant les Sequenced Collections de Java 21 :<br><pre><code class='language-java'>import java.util.*;\n\npublic class SequencedTest {\n    public static void main(String[] args) {\n        List<String> list1 = List.of(\"A\", \"B\", \"C\");\n        List<String> list2 = new ArrayList<>(list1);\n        \n        try {\n            System.out.print(list1.getFirst() + \" \");      // Line 1\n            System.out.print(list1.getLast() + \" \");       // Line 2\n            System.out.print(list1.reversed().get(1) + \" \"); // Line 3\n            \n            list2.addFirst(\"X\");                            // Line 4\n            list2.addLast(\"Y\");                             // Line 5\n            System.out.print(list2.getFirst() + \" \");      // Line 6\n            \n            list1.addFirst(\"Z\");                            // Line 7\n        } catch (Exception e) {\n            System.out.print(\"Exception: \" + e.getClass().getSimpleName());\n        }\n    }\n}</code></pre>Quelle est la sortie de ce programme ?",
+      "options": [
+        "<code>A C B X Exception: UnsupportedOperationException</code>",
+        "Compilation error : getFirst() et getLast() n'existent pas pour List",
+        "<code>A C B X Y Exception: UnsupportedOperationException</code>",
+        "<code>Exception: UnsupportedOperationException</code>",
+        "<code>A C B X UnsupportedOperationException</code>",
+        "<code>A C B Exception: UnsupportedOperationException</code>"
+      ],
+      "answer": 0,
+      "difficulty": "advanced",
+      "explanation": "Lines 1-6 s'exécutent correctement. list1.reversed().get(1) donne \"B\" car la vue inversée est [\"C\", \"B\", \"A\"]. Line 7 lève UnsupportedOperationException car List.of() crée une liste immutable."
+    },
+    {
+      "question": "Considérez le code suivant utilisant le pattern matching avec switch :<br><pre><code class='language-java'>sealed interface Shape permits Circle, Rectangle, Triangle {}\nrecord Circle(double radius) implements Shape {}\nrecord Rectangle(double width, double height) implements Shape {}\nrecord Triangle(double a, double b, double c) implements Shape {}\n\npublic class PatternMatchingTest {\n    public static double calculateArea(Object obj) {\n        return switch (obj) {\n            case null -> 0.0;\n            case Circle(var radius) when radius > 0 -> Math.PI * radius * radius;\n            case Rectangle(var w, var h) when w > 0 && h > 0 -> w * h;\n            case Triangle(var a, var b, var c) when isValidTriangle(a, b, c) ->\n                getTriangleArea(a, b, c);\n            case Shape s -> throw new IllegalArgumentException(\"Invalid shape: \" + s);\n            default -> throw new IllegalArgumentException(\"Not a shape\");\n        };\n    }\n    \n    private static boolean isValidTriangle(double a, double b, double c) {\n        return a + b > c && a + c > b && b + c > a;\n    }\n    \n    private static double getTriangleArea(double a, double b, double c) {\n        double s = (a + b + c) / 2;\n        return Math.sqrt(s * (s - a) * (s - b) * (s - c));\n    }\n    \n    public static void main(String[] args) {\n        System.out.println(calculateArea(new Circle(-5)));\n        System.out.println(calculateArea(new Rectangle(3, 4)));\n        System.out.println(calculateArea(\"Hello\"));\n    }\n}</code></pre>Que se passe-t-il lors de l'exécution ?",
+      "options": [
+        "0.0, 12.0, Exception IllegalArgumentException",
+        "Compilation error : when clauses ne sont pas supportées",
+        "Exception IllegalArgumentException pour Circle(-5)",
+        "0.0, 12.0, Exception IllegalArgumentException",
+        "Compilation error : switch n'est pas exhaustif",
+        "Exception IllegalArgumentException pour tous les cas"
+      ],
+      "answer": 2,
+      "difficulty": "expert",
+      "explanation": "Circle(-5) ne matche pas le premier case car radius <= 0. Il matche 'case Shape s' qui lance IllegalArgumentException. Le programme s'arrête là."
+    },
+    {
+      "question": "Examinez ce code complexe utilisant les streams et les collectors :<br><pre><code class='language-java'>import java.util.*;\nimport java.util.function.Function;\nimport java.util.stream.Collectors;\n\nrecord Student(String name, String department, int grade) {}\n\npublic class StreamCollectorsTest {\n    public static void main(String[] args) {\n        List<Student> students = List.of(\n            new Student(\"Alice\", \"CS\", 85),\n            new Student(\"Bob\", \"CS\", 92),\n            new Student(\"Charlie\", \"Math\", 78),\n            new Student(\"Diana\", \"Math\", 95),\n            new Student(\"Eve\", \"Physics\", 88)\n        );\n        \n        var result = students.stream()\n            .collect(Collectors.groupingBy(\n                Student::department,\n                Collectors.teeing(\n                    Collectors.averagingInt(Student::grade),\n                    Collectors.maxBy(Comparator.comparing(Student::grade)),\n                    (avg, max) -> Map.of(\"average\", avg, \"top\", max.orElse(null))\n                )\n            ));\n        \n        System.out.println(result.get(\"CS\").get(\"average\"));\n        System.out.println(result.get(\"Math\").get(\"top\"));\n    }\n}</code></pre>Quelle est la sortie ?",
+      "options": [
+        "<code>88.5</code><br><code>Student[name=Diana, department=Math, grade=95]</code>",
+        "Compilation error : teeing collector syntax incorrecte",
+        "<code>88.5</code><br><code>Optional[Student[name=Diana, department=Math, grade=95]]</code>",
+        "<code>89.0</code><br><code>Student[name=Diana, department=Math, grade=95]</code>",
+        "ClassCastException à l'exécution",
+        "<code>88.5</code><br><code>Diana</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "Pour CS: (85+92)/2 = 88.5. Pour Math: maxBy retourne Optional[Diana] mais orElse(null) extrait l'objet Student. teeing combine correctement les deux collectors."
+    },
+    {
+      "question": "Considérez ce code avec try-with-resources et exceptions personnalisées :<br><pre><code class='language-java'>import java.io.IOException;\n\nclass CustomResource implements AutoCloseable {\n    private final String name;\n    private boolean closed = false;\n    \n    public CustomResource(String name) throws IOException {\n        this.name = name;\n        if (\"BAD\".equals(name)) {\n            throw new IOException(\"Bad resource\");\n        }\n        System.out.print(\"Created \" + name + \" \");\n    }\n    \n    public void doWork() throws IOException {\n        if (closed) throw new IOException(\"Resource closed\");\n        if (\"FAIL\".equals(name)) {\n            throw new IOException(\"Work failed\");\n        }\n        System.out.print(\"Working \" + name + \" \");\n    }\n    \n    @Override\n    public void close() throws IOException {\n        if (!closed) {\n            closed = true;\n            System.out.print(\"Closed \" + name + \" \");\n            if (\"CLOSE_ERROR\".equals(name)) {\n                throw new IOException(\"Close failed\");\n            }\n        }\n    }\n}\n\npublic class ResourceTest {\n    public static void main(String[] args) {\n        try (var r1 = new CustomResource(\"GOOD\");\n             var r2 = new CustomResource(\"CLOSE_ERROR\");\n             var r3 = new CustomResource(\"FAIL\")) {\n            \n            r1.doWork();\n            r2.doWork();\n            r3.doWork();\n            \n        } catch (IOException e) {\n            System.out.print(\"Caught: \" + e.getMessage() + \" \");\n            for (Throwable suppressed : e.getSuppressed()) {\n                System.out.print(\"Suppressed: \" + suppressed.getMessage() + \" \");\n            }\n        }\n    }\n}</code></pre>Quelle est la sortie de ce programme ?",
+      "options": [
+        "<code>Created GOOD Created CLOSE_ERROR Created FAIL Working GOOD Working CLOSE_ERROR Caught: Work failed Closed FAIL Closed CLOSE_ERROR Suppressed: Close failed Closed GOOD</code>",
+        "<code>Created GOOD Created CLOSE_ERROR Created FAIL Working GOOD Working CLOSE_ERROR Caught: Work failed</code>",
+        "<code>Created GOOD Created CLOSE_ERROR Created FAIL Working GOOD Working CLOSE_ERROR Caught: Work failed Closed FAIL Closed CLOSE_ERROR Closed GOOD Suppressed: Close failed</code>",
+        "IOException pendant la création des resources",
+        "<code>Created GOOD Created CLOSE_ERROR Created FAIL Working GOOD Working CLOSE_ERROR Closed FAIL Closed CLOSE_ERROR Closed GOOD Caught: Work failed</code>",
+        "Compilation error : resources cannot be auto-closed with var"
+      ],
+      "answer": 2,
+      "difficulty": "expert",
+      "explanation": "r3.doWork() lève l'exception principale 'Work failed'. Les resources se ferment en ordre inverse (r3, r2, r1). L'exception de r2.close() devient suppressed."
+    },
+    {
+      "question": "Analysez ce code utilisant des generics avancés et des wildcards :<br><pre><code class='language-java'>import java.util.*;\n\ninterface Processor<T> {\n    void process(T item);\n}\n\nclass NumberProcessor implements Processor<Number> {\n    public void process(Number n) { System.out.print(\"Number: \" + n + \" \"); }\n}\n\nclass IntegerProcessor implements Processor<Integer> {\n    public void process(Integer i) { System.out.print(\"Integer: \" + i + \" \"); }\n}\n\npublic class GenericsTest {\n    \n    public static void processItems(List<? extends Number> items, \n                                  Processor<? super Number> processor) {\n        for (Number item : items) {\n            processor.process(item);\n        }\n    }\n    \n    public static void addNumbers(List<? super Integer> numbers) {\n        numbers.add(42);\n        numbers.add(100);\n    }\n    \n    public static void main(String[] args) {\n        List<Integer> integers = new ArrayList<>(List.of(1, 2, 3));\n        List<Number> numbers = new ArrayList<>();\n        \n        // Test 1\n        processItems(integers, new NumberProcessor());\n        \n        // Test 2  \n        processItems(integers, new IntegerProcessor());  // Line A\n        \n        // Test 3\n        addNumbers(integers);\n        addNumbers(numbers);\n        System.out.print(\"Size: \" + integers.size() + \" \" + numbers.size());\n    }\n}</code></pre>Que se passe-t-il lors de l'exécution ?",
+      "options": [
+        "<code>Number: 1 Number: 2 Number: 3</code> Compilation error à Line A",
+        "<code>Number: 1 Number: 2 Number: 3 Integer: 1 Integer: 2 Integer: 3 Size: 5 2</code>",
+        "Compilation error à Line A : IntegerProcessor ne peut pas être utilisé",
+        "<code>Number: 1 Number: 2 Number: 3</code> Compilation error pour addNumbers",
+        "Compilation error : wildcard bounds incorrects",
+        "<code>Number: 1 Number: 2 Number: 3 Size: 5 2</code>"
+      ],
+      "answer": 2,
+      "difficulty": "expert",
+      "explanation": "Line A : compilation error. Processor<? super Number> nécessite un supertype de Number. IntegerProcessor<Integer> ne satisfait pas cette contrainte car Integer n'est pas un supertype de Number."
+    },
+    {
+      "question": "Examinez ce code utilisant CompletableFuture et Virtual Threads :<br><pre><code class='language-java'>import java.util.concurrent.*;\nimport java.util.stream.IntStream;\n\npublic class AsyncTest {\n    public static void main(String[] args) throws ExecutionException, InterruptedException {\n        \n        var executor = Executors.newVirtualThreadPerTaskExecutor();\n        \n        var futures = IntStream.range(1, 4)\n            .mapToObj(i -> CompletableFuture\n                .supplyAsync(() -> {\n                    try {\n                        Thread.sleep(100 * i);\n                        return \"Task-\" + i + \"-\" + Thread.currentThread().isVirtual();\n                    } catch (InterruptedException e) {\n                        Thread.currentThread().interrupt();\n                        return \"Interrupted-\" + i;\n                    }\n                }, executor)\n                .thenApply(result -> result.toUpperCase())\n                .exceptionally(ex -> \"Error-\" + ex.getMessage())\n            )\n            .toArray(CompletableFuture[]::new);\n        \n        var allResults = CompletableFuture.allOf(futures)\n            .thenApply(v -> java.util.Arrays.stream(futures)\n                .map(CompletableFuture::join)\n                .toList())\n            .get();\n        \n        allResults.forEach(System.out::println);\n        executor.close();\n    }\n}</code></pre>Quelle est la sortie attendue (dans l'ordre) ?",
+      "options": [
+        "<code>TASK-1-TRUE</code><br><code>TASK-2-TRUE</code><br><code>TASK-3-TRUE</code>",
+        "<code>TASK-3-TRUE</code><br><code>TASK-2-TRUE</code><br><code>TASK-1-TRUE</code>",
+        "<code>TASK-1-FALSE</code><br><code>TASK-2-FALSE</code><br><code>TASK-3-FALSE</code>",
+        "L'ordre varie mais tous affichent TRUE",
+        "ExecutionException car Virtual Threads et CompletableFuture incompatibles",
+        "<code>TASK-1-TRUE</code><br><code>TASK-2-TRUE</code><br><code>TASK-3-TRUE</code> (ordre garanti par allOf)"
+      ],
+      "answer": 0,
+      "difficulty": "advanced",
+      "explanation": "L'executor Virtual Threads fait que isVirtual() retourne true. allOf() préserve l'ordre du tableau des futures, donc 1-2-3 même si 3 se termine avant 1."
+    },
+    {
+      "question": "Analysez ce code complexe avec des text blocks et formatting :<br><pre><code class='language-java'>import java.time.LocalDateTime;\nimport java.time.format.DateTimeFormatter;\n\npublic class TextBlockTest {\n    public static void main(String[] args) {\n        String name = \"Alice\";\n        int age = 25;\n        LocalDateTime now = LocalDateTime.of(2024, 1, 15, 14, 30);\n        \n        String template1 = \"\"\"\n            Hello %s!\n            You are %d years old.\n            Current time: %s\n            \"\"\";\n        \n        String template2 = \"\"\"\n            {\n                \"name\": \"%s\",\n                \"age\": %d,\n                \"timestamp\": \"%s\"\n            }\n            \"\"\";\n        \n        var formatted1 = String.format(template1, \n            name, age, now.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));\n        \n        var formatted2 = template2.formatted(\n            name, age, now.format(DateTimeFormatter.ofPattern(\"yyyy-MM-dd HH:mm\")));\n        \n        System.out.println(\"Length1: \" + formatted1.lines().count());\n        System.out.println(\"Length2: \" + formatted2.lines().count());\n        System.out.println(\"Contains JSON: \" + formatted2.contains(\"2024-01-15 14:30\"));\n    }\n}</code></pre>Quelle est la sortie ?",
+      "options": [
+        "<code>Length1: 3</code><br><code>Length2: 5</code><br><code>Contains JSON: true</code>",
+        "<code>Length1: 4</code><br><code>Length2: 6</code><br><code>Contains JSON: true</code>",
+        "Compilation error : formatted() method does not exist",
+        "<code>Length1: 3</code><br><code>Length2: 5</code><br><code>Contains JSON: false</code>",
+        "<code>Length1: 4</code><br><code>Length2: 5</code><br><code>Contains JSON: true</code>",
+        "Runtime error : DateTimeFormatter pattern invalid"
+      ],
+      "answer": 0,
+      "difficulty": "intermediate",
+      "explanation": "template1 a 3 lignes de contenu. template2 a 5 lignes (accolades + 3 propriétés + accolade). Le pattern 'yyyy-MM-dd HH:mm' produit '2024-01-15 14:30'."
+    },
+    {
+      "question": "Considérez ce code avec des sealed classes et pattern matching exhaustif :<br><pre><code class='language-java'>public class ExhaustiveTest {\n    \n    sealed interface Result<T> permits Success, Failure, Pending {}\n    record Success<T>(T value) implements Result<T> {}\n    record Failure<T>(Exception error) implements Result<T> {}  \n    record Pending<T>() implements Result<T> {}\n    \n    public static <T> String processResult(Result<T> result) {\n        return switch (result) {\n            case Success<T> s -> \"Got: \" + s.value();\n            case Failure<T> f -> \"Error: \" + f.error().getMessage();\n            // Missing Pending case intentionally\n        };\n    }\n    \n    public static void main(String[] args) {\n        var success = new Success<>(\"Hello\");\n        var failure = new Failure<String>(new RuntimeException(\"Oops\"));\n        var pending = new Pending<String>();\n        \n        System.out.println(processResult(success));\n        System.out.println(processResult(failure));\n        System.out.println(processResult(pending));\n    }\n}</code></pre>Que se passe-t-il ?",
+      "options": [
+        "Compilation error : switch n'est pas exhaustif",
+        "<code>Got: Hello</code><br><code>Error: Oops</code><br><code>MatchException</code>",
+        "Compilation error : generic sealed interfaces not allowed",
+        "<code>Got: Hello</code><br><code>Error: Oops</code><br><code>null</code>",
+        "Compilation error : record generic syntax incorrect",
+        "RuntimeException lors du traitement de pending"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "Avec sealed interfaces, le compilateur exige l'exhaustivité. Le case Pending<T> manque, donc compilation error. C'est une fonctionnalité de sécurité importante."
+    },
+    {
+      "question": "Analysez ce code complexe avec les nouvelles méthodes de Collections :<br><pre><code class='language-java'>import java.util.*;\n\npublic class CollectionMethodsTest {\n    public static void main(String[] args) {\n        \n        // Sequenced operations\n        LinkedHashSet<String> set = new LinkedHashSet<>(\n            List.of(\"first\", \"middle\", \"last\"));\n        \n        List<String> list = new ArrayList<>(\n            List.of(\"A\", \"B\", \"C\"));\n        \n        try {\n            // Test 1: Sequenced methods\n            System.out.print(set.getFirst() + \" \");\n            System.out.print(set.getLast() + \" \");\n            \n            // Test 2: Reversed views\n            var reversedSet = set.reversed();\n            System.out.print(reversedSet.getFirst() + \" \");\n            \n            // Test 3: Modifications\n            list.addFirst(\"Z\");\n            list.addLast(\"Y\");\n            System.out.print(list + \" \");\n            \n            // Test 4: Reversed list modification\n            var reversedList = list.reversed();\n            reversedList.addFirst(\"W\"); // This adds to original list's end\n            System.out.print(list + \" \");\n            \n        } catch (Exception e) {\n            System.out.print(\"Exception: \" + e.getClass().getSimpleName());\n        }\n    }\n}</code></pre>Quelle est la sortie ?",
+      "options": [
+        "<code>first last last [Z, A, B, C, Y] [Z, A, B, C, Y, W]</code>",
+        "<code>first last last [Z, A, B, C, Y] [W, Z, A, B, C, Y]</code>",
+        "Compilation error : getFirst/getLast not available for LinkedHashSet",
+        "<code>first last first [Z, A, B, C, Y] [Z, A, B, C, Y, W]</code>",
+        "<code>first last last [Z, A, B, C, Y] Exception: UnsupportedOperationException</code>",
+        "<code>first last last Exception: UnsupportedOperationException</code>"
+      ],
+      "answer": 0,
+      "difficulty": "advanced",
+      "explanation": "LinkedHashSet implémente SequencedSet (Java 21). reversedSet.getFirst() donne 'last'. reversedList.addFirst() ajoute à la fin de la liste originale, créant [Z, A, B, C, Y, W]."
+    },
+    {
+      "question": "Considérez ce code utilisant les record patterns avec nested records :<br><pre><code class='language-java'>record Point(int x, int y) {}\nrecord Circle(Point center, int radius) {}\nrecord Rectangle(Point topLeft, Point bottomRight) {}\n\npublic class RecordPatternTest {\n    \n    public static String analyzeShape(Object shape) {\n        return switch (shape) {\n            case Circle(Point(var x, var y), var r) when r > 0 && x >= 0 && y >= 0 -> \n                \"Valid circle at (\" + x + \",\" + y + \") radius \" + r;\n            \n            case Rectangle(Point(var x1, var y1), Point(var x2, var y2)) \n                when x2 > x1 && y2 > y1 -> \n                \"Valid rectangle from (\" + x1 + \",\" + y1 + \") to (\" + x2 + \",\" + y2 + \")\";\n            \n            case Circle(Point center, var r) -> \n                \"Invalid circle: \" + center + \" radius \" + r;\n                \n            case Rectangle r -> \n                \"Invalid rectangle: \" + r;\n                \n            case null -> \"Null shape\";\n            \n            default -> \"Unknown shape: \" + shape.getClass().getSimpleName();\n        };\n    }\n    \n    public static void main(String[] args) {\n        var circle1 = new Circle(new Point(5, 3), 10);\n        var circle2 = new Circle(new Point(-1, 2), 5);\n        var rect = new Rectangle(new Point(0, 0), new Point(-1, 5));\n        \n        System.out.println(analyzeShape(circle1));\n        System.out.println(analyzeShape(circle2));  \n        System.out.println(analyzeShape(rect));\n    }\n}</code></pre>Quelle est la sortie ?",
+      "options": [
+        "<code>Valid circle at (5,3) radius 10</code><br><code>Invalid circle: Point[x=-1, y=2] radius 5</code><br><code>Invalid rectangle: Rectangle[topLeft=Point[x=0, y=0], bottomRight=Point[x=-1, y=5]]</code>",
+        "Compilation error : nested record patterns not supported",
+        "<code>Valid circle at (5,3) radius 10</code><br><code>Valid circle at (-1,2) radius 5</code><br><code>Valid rectangle from (0,0) to (-1,5)</code>",
+        "Compilation error : when clauses cannot access pattern variables",
+        "<code>Valid circle at (5,3) radius 10</code><br><code>Invalid circle: Point[x=-1, y=2] radius 5</code><br><code>Valid rectangle from (0,0) to (-1,5)</code>",
+        "MatchException for all cases"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "circle1 passe tous les guards (r>0, x>=0, y>=0). circle2 échoue car x<0, donc matche le case générique Circle. rect échoue car x2<x1, donc matche le case générique Rectangle."
+    },
+    {
+      "question": "Analysez ce code utilisant les streams avec des operations complexes :<br><pre><code class='language-java'>import java.util.*;\nimport java.util.stream.Collectors;\n\nrecord Transaction(String id, String type, double amount, String currency) {}\n\npublic class StreamOperationsTest {\n    public static void main(String[] args) {\n        \n        List<Transaction> transactions = List.of(\n            new Transaction(\"T1\", \"DEBIT\", 100.0, \"USD\"),\n            new Transaction(\"T2\", \"CREDIT\", 200.0, \"USD\"),  \n            new Transaction(\"T3\", \"DEBIT\", 150.0, \"EUR\"),\n            new Transaction(\"T4\", \"CREDIT\", 300.0, \"EUR\"),\n            new Transaction(\"T5\", \"DEBIT\", 75.0, \"USD\")\n        );\n        \n        var result = transactions.stream()\n            .collect(Collectors.groupingBy(\n                Transaction::currency,\n                Collectors.groupingBy(\n                    Transaction::type,\n                    Collectors.summingDouble(Transaction::amount)\n                )\n            ));\n        \n        // Calculate net balance per currency\n        var balances = result.entrySet().stream()\n            .collect(Collectors.toMap(\n                Map.Entry::getKey,\n                entry -> {\n                    var byType = entry.getValue();\n                    double credits = byType.getOrDefault(\"CREDIT\", 0.0);\n                    double debits = byType.getOrDefault(\"DEBIT\", 0.0);\n                    return credits - debits;\n                }\n            ));\n        \n        System.out.println(\"USD: \" + balances.get(\"USD\"));\n        System.out.println(\"EUR: \" + balances.get(\"EUR\"));\n        \n        // Test stream reuse\n        try {\n            var stream = transactions.stream();\n            stream.count();\n            stream.findFirst(); // Line X\n        } catch (Exception e) {\n            System.out.println(\"Stream error: \" + e.getClass().getSimpleName());\n        }\n    }\n}</code></pre>Quelle est la sortie ?",
+      "options": [
+        "<code>USD: 25.0</code><br><code>EUR: 150.0</code><br><code>Stream error: IllegalStateException</code>",
+        "<code>USD: -25.0</code><br><code>EUR: -150.0</code><br><code>Stream error: IllegalStateException</code>",
+        "<code>USD: 25.0</code><br><code>EUR: 150.0</code>",
+        "Compilation error : nested groupingBy not allowed",
+        "<code>USD: -25.0</code><br><code>EUR: -150.0</code>",
+        "<code>Stream error: IllegalStateException</code> (seulement)"
+      ],
+      "answer": 0,
+      "difficulty": "advanced",
+      "explanation": "USD: CREDIT(200) - DEBIT(100+75) = 25.0. EUR: CREDIT(300) - DEBIT(150) = 150.0. Le stream ne peut pas être réutilisé après count(), donc IllegalStateException."
+    },
+    {
+      "question": "Examinez ce code final utilisant les modules et les services :<br><pre><code class='language-java'>// module-info.java du module provider\nmodule com.example.provider {\n    requires java.base;\n    provides com.example.api.Service with com.example.provider.ServiceImpl;\n    exports com.example.api;\n}\n\n// Service interface\npackage com.example.api;\npublic interface Service {\n    String process(String input);\n}\n\n// Implementation  \npackage com.example.provider;\nimport com.example.api.Service;\n\npublic class ServiceImpl implements Service {\n    public String process(String input) {\n        return \"Processed: \" + input.toUpperCase();\n    }\n}\n\n// module-info.java du module consumer\nmodule com.example.consumer {\n    requires com.example.provider;\n    uses com.example.api.Service;\n}\n\n// Consumer code\npackage com.example.consumer;\nimport com.example.api.Service;\nimport java.util.ServiceLoader;\n\npublic class Consumer {\n    public static void main(String[] args) {\n        ServiceLoader<Service> loader = ServiceLoader.load(Service.class);\n        \n        var services = loader.stream()\n            .map(ServiceLoader.Provider::get)\n            .toList();\n        \n        if (services.isEmpty()) {\n            System.out.println(\"No services found\");\n        } else {\n            services.forEach(service -> \n                System.out.println(service.process(\"hello\"))\n            );\n        }\n        \n        // Alternative loading\n        loader.findFirst().ifPresentOrElse(\n            service -> System.out.println(\"Found: \" + service.getClass().getSimpleName()),\n            () -> System.out.println(\"No service available\")\n        );\n    }\n}</code></pre>En supposant que les modules sont correctement configurés et déployés, quelle est la sortie ?",
+      "options": [
+        "<code>No services found</code><br><code>No service available</code>",
+        "<code>Processed: HELLO</code><br><code>Found: ServiceImpl</code>",
+        "Compilation error : circular module dependency",
+        "ServiceConfigurationError à l'exécution",
+        "<code>Processed: HELLO</code><br><code>No service available</code>",
+        "<code>No services found</code><br><code>Found: ServiceImpl</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Le ServiceLoader trouve correctement le service via la déclaration 'provides...with'. Il charge ServiceImpl, exécute process('hello') et trouve le service des deux façons."
+    }
+  ]
+}
