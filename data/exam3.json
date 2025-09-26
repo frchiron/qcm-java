@@ -1,123 +1,136 @@
 {
-  "title": "Examen de 10 questions avec Chatgpt",
-  "duration": 4,
+  "title": "Certification Java 21 - Questions Avancées POO",
+  "duration": 35,
   "questions": [
     {
-      "topic": "Héritage avancé",
-      "question": "Examinez le code suivant :\n\n```java\nclass A {\n    static void s() { System.out.println(\"A\"); }\n    void m() { System.out.println(\"mA\"); }\n}\nclass B extends A {\n    static void s() { System.out.println(\"B\"); }\n    void m() { System.out.println(\"mB\"); }\n}\npublic class Test {\n    public static void main(String[] args) {\n        A obj = new B();\n        obj.s();\n        obj.m();\n    }\n}\n```",
+      "topic": "Héritage",
+      "question": "Que va afficher ce code avec les sealed classes ?<br><pre><code class='language-java'>public sealed class Shape permits Circle, Rectangle {}\nfinal class Circle extends Shape {\n    public String toString() { return \"Circle\"; }\n}\nfinal class Rectangle extends Shape {\n    public String toString() { return \"Rectangle\"; }\n}\nShape s = new Circle();\nswitch(s) {\n    case Circle c -> System.out.print(\"Found: \" + c);\n    case Rectangle r -> System.out.print(\"Found: \" + r);\n}</code></pre>",
       "options": [
-        "A\nmA",
-        "B\nmB",
-        "A\nmB",
-        "B\nmA"
+        "<code>Found: Circle</code>",
+        "<code>Compilation error - missing default case</code>",
+        "<code>Found: Circle@hashcode</code>",
+        "<code>Runtime error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "advanced",
+      "explanation": "Avec les sealed classes, le switch est exhaustif sans default. Le pattern matching appelle toString() de Circle."
+    },
+    {
+      "topic": "Encapsulation",
+      "question": "Quel est le résultat de ce code avec les records ?<br><pre><code class='language-java'>public record Person(String name, int age) {\n    public Person {\n        if (age < 0) age = 0;\n    }\n    private static int count = 0;\n    public Person(String name) {\n        this(name, ++count);\n    }\n}\nPerson p1 = new Person(\"Alice\");\nPerson p2 = new Person(\"Bob\", -5);\nSystem.out.println(p1.age() + \",\" + p2.age());</code></pre>",
+      "options": [
+        "<code>1,0</code>",
+        "<code>1,-5</code>",
+        "<code>0,0</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "advanced",
+      "explanation": "Le constructeur compact modifie age avant l'assignation. count s'incrémente à 1 pour p1, p2 utilise -5 mais le compact constructor le change en 0."
+    },
+    {
+      "topic": "Polymorphisme",
+      "question": "Que va afficher ce code complexe avec la surcharge ?<br><pre><code class='language-java'>class Test {\n    void method(Object o) { System.out.print(\"Object\"); }\n    void method(String s) { System.out.print(\"String\"); }\n    void method(Integer i) { System.out.print(\"Integer\"); }\n}\nTest t = new Test();\nObject obj = \"Hello\";\nInteger num = null;\nt.method(obj);\nt.method(num);</code></pre>",
+      "options": [
+        "<code>StringInteger</code>",
+        "<code>ObjectInteger</code>",
+        "<code>ObjectObject</code>",
+        "<code>StringObject</code>"
+      ],
+      "answer": 1,
+      "difficulty": "advanced",
+      "explanation": "La résolution de surcharge se fait à la compilation sur le type de référence. obj est Object, num est Integer (même si null)."
+    },
+    {
+      "topic": "Interfaces",
+      "question": "Quel est le résultat de ce code avec conflit de méthodes default ?<br><pre><code class='language-java'>interface A {\n    default String method() { return \"A\"; }\n}\ninterface B extends A {\n    default String method() { return \"B\"; }\n}\ninterface C extends A {\n    default String method() { return \"C\"; }\n}\nclass D implements B, C {\n    public String method() { return B.super.method() + C.super.method(); }\n}\nSystem.out.println(new D().method());</code></pre>",
+      "options": [
+        "<code>BC</code>",
+        "<code>CB</code>",
+        "<code>AA</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "advanced",
+      "explanation": "B.super.method() appelle la méthode de B (\"B\"), C.super.method() appelle celle de C (\"C\"), donc \"BC\"."
+    },
+    {
+      "topic": "Héritage",
+      "question": "Que va afficher ce code avec l'ordre d'initialisation ?<br><pre><code class='language-java'>class Parent {\n    { System.out.print(\"1\"); }\n    static { System.out.print(\"2\"); }\n    Parent() { System.out.print(\"3\"); }\n}\nclass Child extends Parent {\n    static { System.out.print(\"4\"); }\n    { System.out.print(\"5\"); }\n    Child() { System.out.print(\"6\"); }\n}\nnew Child();</code></pre>",
+      "options": [
+        "<code>241536</code>",
+        "<code>245136</code>",
+        "<code>421536</code>",
+        "<code>245163</code>"
+      ],
+      "answer": 0,
+      "difficulty": "advanced",
+      "explanation": "Ordre : static Parent (2), static Child (4), instance Parent (1), constructeur Parent (3), instance Child (5), constructeur Child (6)."
+    },
+    {
+      "topic": "Encapsulation",
+      "question": "Que se passe-t-il avec ce code et les modules (Java 9+) ?<br><pre><code class='language-java'>// Dans le package com.example.internal\nclass InternalClass {\n    public void publicMethod() { System.out.print(\"Public\"); }\n    void packageMethod() { System.out.print(\"Package\"); }\n}\n// Dans un autre module, même package\nInternalClass obj = new InternalClass();\nobj.publicMethod();\nobj.packageMethod();</code></pre>",
+      "options": [
+        "<code>PublicPackage</code>",
+        "<code>Public puis compilation error</code>",
+        "<code>Compilation error sur les deux</code>",
+        "<code>Runtime error</code>"
       ],
       "answer": 2,
-      "difficulty": "very_advanced",
-      "explanation": "Les méthodes statiques sont liées à la référence et non à l'objet (early binding), donc obj.s() appelle A.s(). Les méthodes d'instance sont polymorphiques, donc obj.m() appelle B.m()."
+      "difficulty": "advanced",
+      "explanation": "Avec les modules, même les classes publiques dans des packages non exportés ne sont pas accessibles depuis d'autres modules."
     },
     {
-      "topic": "Polymorphisme et casting",
-      "question": "Que fait ce code ?\n\n```java\nclass X { void f() { System.out.println(\"X\"); } }\nclass Y extends X { void f() { System.out.println(\"Y\"); } void g() { System.out.println(\"G\"); } }\npublic class Test {\n    public static void main(String[] args) {\n        X obj = new Y();\n        ((Y)obj).g();\n        ((X)obj).f();\n    }\n}\n```",
+      "topic": "Polymorphisme",
+      "question": "Que va afficher ce code avec les génériques et l'héritage ?<br><pre><code class='language-java'>class Container&lt;T&gt; {\n    void process(T item) { System.out.print(\"Generic\"); }\n}\nclass StringContainer extends Container&lt;String&gt; {\n    void process(String item) { System.out.print(\"String\"); }\n    void process(Object item) { System.out.print(\"Object\"); }\n}\nContainer&lt;String&gt; c = new StringContainer();\nc.process(\"test\");</code></pre>",
       "options": [
-        "G\nX",
-        "G\nY",
-        "Compilation error",
-        "RuntimeException"
+        "<code>Generic</code>",
+        "<code>String</code>",
+        "<code>Object</code>",
+        "<code>Compilation error</code>"
       ],
       "answer": 1,
-      "difficulty": "very_advanced",
-      "explanation": "Le cast vers Y est sûr car l'objet réel est Y. L'appel g() fonctionne. La méthode f() est polymorphique, donc l'appel ((X)obj).f() invoque Y.f()."
+      "difficulty": "advanced",
+      "explanation": "La méthode process(String) dans StringContainer redéfinit la méthode générique héritée. Le polymorphisme s'applique."
     },
     {
-      "topic": "Encapsulation et héritage",
-      "question": "Considérons :\n\n```java\nclass A { private void secret() { System.out.println(\"A\"); } }\nclass B extends A { void secret() { System.out.println(\"B\"); } }\npublic class Test {\n    public static void main(String[] args) {\n        A obj = new B();\n        // obj.secret();\n    }\n}\n``` \nQue se passe-t-il si on décommente obj.secret() ?",
+      "topic": "Interfaces",
+      "question": "Quel est le résultat avec les méthodes private static dans les interfaces ?<br><pre><code class='language-java'>interface Utility {\n    static String format(String s) { return validate(s) ? s.toUpperCase() : \"INVALID\"; }\n    private static boolean validate(String s) { return s != null && !s.isEmpty(); }\n    default String process(String input) { return format(input); }\n}\nclass Impl implements Utility {}\nSystem.out.print(new Impl().process(\"\"));\nSystem.out.print(Utility.format(\"hello\"));</code></pre>",
       "options": [
-        "Appelle B.secret()",
-        "Appelle A.secret()",
-        "Compilation error",
-        "RuntimeException"
-      ],
-      "answer": 2,
-      "difficulty": "very_advanced",
-      "explanation": "La méthode secret() de A est privée et non héritée. La méthode B.secret() n'override pas A.secret(). Ainsi, obj.secret() n'existe pas pour le compilateur → compilation error."
-    },
-    {
-      "topic": "Polymorphisme et interfaces",
-      "question": "Analysez :\n\n```java\ninterface I { void f(); }\nclass A implements I { public void f() { System.out.println(\"A\"); } }\nclass B extends A { public void f() { System.out.println(\"B\"); } }\npublic class Test {\n    public static void main(String[] args) {\n        I obj = new B();\n        obj.f();\n    }\n}\n```",
-      "options": [
-        "A",
-        "B",
-        "Compilation error",
-        "RuntimeException"
-      ],
-      "answer": 1,
-      "difficulty": "very_advanced",
-      "explanation": "La référence est de type I, l'objet est B. La méthode f() est surchargée et appelée dynamiquement → B.f()."
-    },
-    {
-      "topic": "Héritage multiple et ambiguïté",
-      "question": "Quel est le résultat ?\n\n```java\ninterface I1 { default void f() { System.out.println(\"I1\"); } }\ninterface I2 { default void f() { System.out.println(\"I2\"); } }\nclass C implements I1, I2 {\n    public void f() { I1.super.f(); }\n}\npublic class Test {\n    public static void main(String[] args) {\n        new C().f();\n    }\n}\n```",
-      "options": [
-        "I1",
-        "I2",
-        "Compilation error",
-        "RuntimeException"
+        "<code>INVALIDHELLO</code>",
+        "<code>HELLO</code>",
+        "<code>Compilation error</code>",
+        "<code>Runtime error</code>"
       ],
       "answer": 0,
-      "difficulty": "very_advanced",
-      "explanation": "En cas de conflit entre plusieurs interfaces avec des méthodes default, il faut explicitement choisir quelle super méthode appeler. Ici, I1.super.f() est appelé → I1."
+      "difficulty": "advanced",
+      "explanation": "process(\"\") appelle format(\"\") qui retourne \"INVALID\" car validate retourne false. format(\"hello\") retourne \"HELLO\"."
     },
     {
-      "topic": "Polymorphisme et exceptions",
-      "question": "Examinez :\n\n```java\nclass A { void f() throws Exception {} }\nclass B extends A { void f() throws java.io.IOException {} }\n``` \nEst-ce correct ?",
+      "topic": "Héritage",
+      "question": "Que va afficher ce code avec final et redéfinition ?<br><pre><code class='language-java'>class Base {\n    final void method1() { System.out.print(\"Base1\"); }\n    void method2() { System.out.print(\"Base2\"); }\n    static void method3() { System.out.print(\"Base3\"); }\n}\nclass Derived extends Base {\n    // void method1() { System.out.print(\"Der1\"); } // Commenté\n    final void method2() { System.out.print(\"Der2\"); }\n    static void method3() { System.out.print(\"Der3\"); }\n}\nBase b = new Derived();\nb.method1(); b.method2(); b.method3();</code></pre>",
       "options": [
-        "Oui, java.io.IOException est une Exception",
-        "Non, on ne peut pas réduire la portée des exceptions",
-        "Non, java.io.IOException est plus large",
-        "Oui, mais seulement si f() est static"
+        "<code>Base1Der2Base3</code>",
+        "<code>Base1Der2Der3</code>",
+        "<code>Base1Base2Base3</code>",
+        "<code>Compilation error</code>"
       ],
       "answer": 0,
-      "difficulty": "very_advanced",
-      "explanation": "Lors de l'override, une méthode peut lancer la même exception ou des sous-classes de l'exception déclarée. IOException est une sous-classe de Exception → correct."
+      "difficulty": "advanced",
+      "explanation": "method1 est final donc Base1, method2 est redéfinie donc Der2, method3 est statique donc Base3 (pas de polymorphisme)."
     },
     {
-      "topic": "Héritage et méthodes finales",
-      "question": "Que se passe-t-il ?\n\n```java\nclass A { final void f() {} }\nclass B extends A { void f() {} }\n```",
+      "topic": "Polymorphisme",
+      "question": "Que va afficher ce code avec les varargs et la surcharge ?<br><pre><code class='language-java'>class VarTest {\n    void method(int... nums) { System.out.print(\"varargs\"); }\n    void method(int a, int b) { System.out.print(\"two-params\"); }\n    void method(Integer... nums) { System.out.print(\"Integer-varargs\"); }\n}\nVarTest v = new VarTest();\nv.method(1, 2);\nv.method(1, 2, 3);\nv.method(new Integer[]{1, 2});</code></pre>",
       "options": [
-        "Override fonctionne",
-        "Compilation error",
-        "RuntimeException",
-        "Méthode ignorée"
-      ],
-      "answer": 1,
-      "difficulty": "very_advanced",
-      "explanation": "Une méthode final ne peut pas être override. Ici B.f() provoque une erreur de compilation."
-    },
-    {
-      "topic": "Polymorphisme et abstract",
-      "question": "Considérons :\n\n```java\nabstract class A { abstract void f(); }\nclass B extends A { void f() { System.out.println(\"B\"); } }\npublic class Test { public static void main(String[] args) { new B().f(); } }\n```",
-      "options": [
-        "Compilation error",
-        "B",
-        "RuntimeException",
-        "A"
-      ],
-      "answer": 1,
-      "difficulty": "very_advanced",
-      "explanation": "La classe B implémente la méthode abstraite f(), donc l'instanciation et l'appel fonctionnent normalement → B."
-    },
-    {
-      "topic": "Encapsulation et héritage complexe",
-      "question": "Analysez :\n\n```java\nclass A { private int x = 10; protected int getX() { return x; } }\nclass B extends A { void printX() { System.out.println(getX()); } }\npublic class Test { public static void main(String[] args) { new B().printX(); } }\n```",
-      "options": [
-        "10",
-        "Compilation error",
-        "0",
-        "RuntimeException"
+        "<code>two-paramsvarargsInteger-varargs</code>",
+        "<code>varargsvarargvarargs</code>",
+        "<code>two-paramsvarargsvarargs</code>",
+        "<code>Compilation error - ambiguous</code>"
       ],
       "answer": 0,
-      "difficulty": "very_advanced",
-      "explanation": "Le champ x est privé, mais accessible indirectement via la méthode protected getX(). B.printX() appelle getX() → 10."
+      "difficulty": "advanced",
+      "explanation": "method(1,2) choisit la signature exacte, method(1,2,3) choisit int varargs, method(Integer[]) choisit Integer varargs (correspondance exacte de type)."
     }
   ]
 }
