@@ -41,6 +41,7 @@ function showQuestion() {
         `Question ${currentQuestion + 1} / ${examData.questions.length}`;
 
     container.innerHTML = `
+    <p class="topic">Topic : <strong>${q.topic}</strong></p>
     <h3>${q.question}</h3>
     ${q.options.map((opt, i) => `
       <div class="option" data-index="${i}">${opt}</div>

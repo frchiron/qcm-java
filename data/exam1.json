@@ -3,6 +3,7 @@
   "duration": 2,
   "questions": [
     {
+      "topic": "Primitive types",
       "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 10;\nSystem.out.println(x++ + ++x);</code></pre>",
       "options": [
         "<code>20</code>",

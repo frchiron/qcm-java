@@ -197,3 +197,9 @@ body {
 .exam-item:hover {
     transform: translateY(-3px);
 }
+.topic {
+    font-size: 0.9rem;
+    color: #6b7280; /* gris moyen */
+    margin-bottom: 5px;
+    font-style: italic;
+}
