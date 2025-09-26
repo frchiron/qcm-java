@@ -1,0 +1,18 @@
+{
+  "title": "Examen blanc Java 21 - Partie 1",
+  "duration": 2,
+  "questions": [
+    {
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 10;\nSystem.out.println(x++ + ++x);</code></pre>",
+      "options": [
+        "<code>20</code>",
+        "<code>21</code>",
+        "<code>22</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 1,
+      "difficulty": "intermediate",
+      "explanation": "x++ utilise 10 puis incrémente → x=11, ++x fait 12, donc 10+12=22. Correction : la bonne réponse est 22."
+    }
+  ]
+}
