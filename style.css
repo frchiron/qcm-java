@@ -228,23 +228,33 @@ body.home-page {
 
 /* Bloc de code dans les questions */
 .question pre {
-    font-size: 0.8rem;     /* plus petit */
-    line-height: 1.1;      /* espacement réduit */
-    padding: 6px 10px;     /* padding plus compact */
+    font-size: 0.6rem;     /* taille optimale */
+    line-height: 1.3;      /* espacement pour lisibilité */
+    padding: 4px 8px;      /* padding réduit */
     background-color: #f3f4f6;
     border: 1px solid #d1d5db;
     border-radius: 6px;
     overflow-x: auto;
-    max-height: 180px;     /* hauteur maximale réduite */
-    margin: 4px 0;
+    max-height: 140px;     /* hauteur réduite mais lisible */
+    margin: 2px 0;         /* marge réduite */
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    white-space: pre;      /* préserver les sauts de ligne */
 }
 
 /* Code en ligne */
 .question code {
-    font-size: 0.8rem;
+    font-size: 0.6rem;
     background-color: #e5e7eb;
-    padding: 1px 3px;
+    padding: 1px 2px;
     border-radius: 3px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Code dans les options aussi */
+.option code, .option pre {
+    font-size: 0.6rem;
+    line-height: 1.3;
+    white-space: pre;
 }
 
 /* Graphique camembert */
