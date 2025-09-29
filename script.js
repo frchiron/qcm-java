@@ -183,12 +183,17 @@ function endExam() {
     const percent = Math.round((score / total) * 100);
 
     let cssClass = "success";
-    if (percent < 50) cssClass = "danger";
-    else if (percent < 75) cssClass = "warning";
+    if (percent < 67) cssClass = "danger";
+    else if (percent <= 80) cssClass = "warning";
+
+    const angle = (percent * 360) / 100;
 
     document.querySelector("main").innerHTML = `
     <div class="card result ${cssClass}">
       <h2>Examen terminé ✅</h2>
+      <div class="pie-chart ${cssClass}" style="--success-angle: ${angle}deg;">
+        ${percent}%
+      </div>
       <p>Score : <strong>${score}</strong> / ${total}</p>
       <p>Résultat : <strong>${percent}%</strong></p>
       <div style="margin-top: 20px;">
