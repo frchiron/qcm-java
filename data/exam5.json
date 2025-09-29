@@ -1,0 +1,266 @@
+{
+  "title": "Certification Java 21 - Niveau OCP 830",
+  "duration": 45,
+  "questions": [
+    {
+      "topic": "Polymorphisme",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Animal {\n    void eat() throws Exception { System.out.print(\"Animal\"); }\n}\nclass Dog extends Animal {\n    void eat() throws RuntimeException { System.out.print(\"Dog\"); }\n}\nclass Test {\n    public static void main(String[] args) {\n        Animal a = new Dog();\n        a.eat();\n    }\n}</code></pre>",
+      "options": [
+        "<code>Dog</code>",
+        "<code>Animal</code>",
+        "<code>Compilation error dans Dog</code>",
+        "<code>Compilation error dans main</code>"
+      ],
+      "answer": 3,
+      "difficulty": "advanced",
+      "explanation": "Dans main, a.eat() peut lancer Exception (checked), donc il faut un try-catch ou throws. Le fait que l'objet réel soit Dog n'importe pas à la compilation."
+    },
+    {
+      "topic": "Encapsulation",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>class Outer {\n    private int x = 10;\n    class Inner {\n        private int x = 20;\n        void display() {\n            int x = 30;\n            System.out.print(x + \",\" + this.x + \",\" + Outer.this.x);\n        }\n    }\n}\nnew Outer().new Inner().display();</code></pre>",
+      "options": [
+        "<code>30,20,10</code>",
+        "<code>10,20,30</code>",
+        "<code>30,30,30</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "advanced",
+      "explanation": "x local (30), this.x de Inner (20), Outer.this.x de Outer (10). La syntaxe Outer.this permet d'accéder aux membres de la classe externe."
+    },
+    {
+      "topic": "Interfaces",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>interface I1 { default void m() { System.out.print(\"I1\"); } }\ninterface I2 { default void m() { System.out.print(\"I2\"); } }\ninterface I3 extends I1, I2 { default void m() { System.out.print(\"I3\"); } }\nclass C implements I3 { }\nnew C().m();</code></pre>",
+      "options": [
+        "<code>I1</code>",
+        "<code>I2</code>",
+        "<code>I3</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 2,
+      "difficulty": "advanced",
+      "explanation": "I3 résout le conflit entre I1 et I2 en fournissant sa propre implémentation. C hérite de cette implémentation sans avoir besoin de la redéfinir."
+    },
+    {
+      "topic": "Héritage",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Parent {\n    private void method() { System.out.print(\"Parent\"); }\n    void display() { method(); }\n}\nclass Child extends Parent {\n    public void method() { System.out.print(\"Child\"); }\n    void test() { method(); }\n}\nChild c = new Child();\nc.display();\nc.test();</code></pre>",
+      "options": [
+        "<code>ParentChild</code>",
+        "<code>ChildChild</code>",
+        "<code>ParentParent</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "advanced",
+      "explanation": "Les méthodes private ne sont pas héritées ni redéfinies. display() appelle la méthode private de Parent, test() appelle la méthode public de Child."
+    },
+    {
+      "topic": "Overriding",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>class A {\n    Number getValue() { return 10; }\n}\nclass B extends A {\n    Integer getValue() { return 20; }\n}\nclass C extends B {\n    int getValue() { return 30; }\n}\nA obj = new C();\nSystem.out.println(obj.getValue());</code></pre>",
+      "options": [
+        "<code>10</code>",
+        "<code>20</code>",
+        "<code>30</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 3,
+      "difficulty": "advanced",
+      "explanation": "int n'est pas un type compatible pour le type de retour covariant. Il faut un type de référence (Integer). Les types primitifs ne peuvent pas être utilisés dans la covariance."
+    },
+    {
+      "topic": "Polymorphisme",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Base {\n    void method(int i) { System.out.print(\"Base-int\"); }\n    void method(double d) { System.out.print(\"Base-double\"); }\n}\nclass Derived extends Base {\n    void method(long l) { System.out.print(\"Derived-long\"); }\n}\nDerived d = new Derived();\nd.method(10);</code></pre>",
+      "options": [
+        "<code>Base-int</code>",
+        "<code>Derived-long</code>",
+        "<code>Base-double</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 1,
+      "difficulty": "advanced",
+      "explanation": "La résolution de surcharge privilégie d'abord la classe actuelle avec élargissement (int → long) plutôt que remonter à la classe parent."
+    },
+    {
+      "topic": "Encapsulation",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>record Point(int x, int y) {\n    Point {\n        x = x * 2;\n    }\n    public int x() { return x + 1; }\n}\nPoint p = new Point(5, 10);\nSystem.out.print(p.x() + \",\" + p.y());</code></pre>",
+      "options": [
+        "<code>11,10</code>",
+        "<code>10,10</code>",
+        "<code>5,10</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "advanced",
+      "explanation": "Le constructeur compact multiplie x par 2 (x=10), puis l'accesseur x() ajoute 1, donc 11. y reste 10."
+    },
+    {
+      "topic": "Interfaces",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>interface Service {\n    private static void log(String msg) { System.out.print(\"LOG:\"); }\n    static void execute() { log(\"test\"); System.out.print(\"Execute\"); }\n    default void run() { execute(); System.out.print(\"Run\"); }\n}\nclass Impl implements Service {}\nnew Impl().run();</code></pre>",
+      "options": [
+        "<code>LOG:ExecuteRun</code>",
+        "<code>ExecuteRun</code>",
+        "<code>LOG:Run</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "advanced",
+      "explanation": "run() appelle execute() (méthode static de l'interface), qui appelle log() et affiche Execute, puis run() affiche Run."
+    },
+    {
+      "topic": "Héritage",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>class X {\n    X() { this(10); System.out.print(\"X1\"); }\n    X(int i) { System.out.print(\"X2\"); }\n}\nclass Y extends X {\n    Y() { System.out.print(\"Y1\"); }\n    Y(int i) { super(); System.out.print(\"Y2\"); }\n}\nnew Y(5);</code></pre>",
+      "options": [
+        "<code>X2X1Y2</code>",
+        "<code>X2Y2</code>",
+        "<code>X1X2Y2</code>",
+        "<code>Y2X2X1</code>"
+      ],
+      "answer": 0,
+      "difficulty": "advanced",
+      "explanation": "Y(5) appelle super() qui appelle X(), qui appelle this(10) donc X(int) → X2, puis X() continue → X1, puis Y(5) continue → Y2."
+    },
+    {
+      "topic": "Overriding",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Parent {\n    protected Object method() { return \"Parent\"; }\n}\nclass Child extends Parent {\n    public String method() { return \"Child\"; }\n}\nParent p = new Child();\nSystem.out.println(p.method());</code></pre>",
+      "options": [
+        "<code>Parent</code>",
+        "<code>Child</code>",
+        "<code>Compilation error dans Child</code>",
+        "<code>Runtime error</code>"
+      ],
+      "answer": 1,
+      "difficulty": "advanced",
+      "explanation": "La redéfinition est valide : le type de retour est covariant (String extends Object) et la visibilité est élargie (public > protected). Le polymorphisme appelle Child.method()."
+    },
+    {
+      "topic": "Polymorphisme",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>class A {\n    void method() { System.out.print(\"A\"); }\n}\nclass B extends A {\n    @Override void method() { System.out.print(\"B\"); }\n    void method(int i) { System.out.print(\"B-int\"); }\n}\nA obj = new B();\nobj.method();\n((B)obj).method(5);</code></pre>",
+      "options": [
+        "<code>BB-int</code>",
+        "<code>AB-int</code>",
+        "<code>BA</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "advanced",
+      "explanation": "obj.method() utilise le polymorphisme et appelle B.method(). Le cast permet d'accéder à method(int) de B."
+    },
+    {
+      "topic": "Encapsulation",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Test {\n    private static class Inner {\n        private static int x = getValue();\n        private static int getValue() { System.out.print(\"Init\"); return 10; }\n    }\n    public static void main(String[] args) {\n        System.out.print(Inner.x);\n        System.out.print(Inner.x);\n    }\n}</code></pre>",
+      "options": [
+        "<code>Init10Init10</code>",
+        "<code>Init1010</code>",
+        "<code>1010</code>",
+        "<code>Init10</code>"
+      ],
+      "answer": 1,
+      "difficulty": "advanced",
+      "explanation": "La classe Inner est initialisée au premier accès, getValue() est appelé une fois, puis x conserve sa valeur 10 pour le second accès."
+    },
+    {
+      "topic": "Interfaces",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>sealed interface Shape permits Circle, Rectangle {}\nfinal class Circle implements Shape {}\nfinal class Rectangle implements Shape {}\nShape getShape() { return new Circle(); }\nvar result = switch(getShape()) {\n    case Circle c -> \"Circle\";\n    case Rectangle r -> \"Rectangle\";\n};\nSystem.out.print(result);</code></pre>",
+      "options": [
+        "<code>Circle</code>",
+        "<code>Rectangle</code>",
+        "<code>Compilation error - missing default</code>",
+        "<code>Compilation error - missing null case</code>"
+      ],
+      "answer": 0,
+      "difficulty": "advanced",
+      "explanation": "Avec les sealed interfaces, le switch est exhaustif. Pas besoin de default ni de null case (getShape() ne peut pas retourner null ici)."
+    },
+    {
+      "topic": "Héritage",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Alpha {\n    String value = \"Alpha\";\n    Alpha() { display(); }\n    void display() { System.out.print(value); }\n}\nclass Beta extends Alpha {\n    String value = \"Beta\";\n    void display() { System.out.print(value); }\n}\nnew Beta();</code></pre>",
+      "options": [
+        "<code>Alpha</code>",
+        "<code>Beta</code>",
+        "<code>null</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 2,
+      "difficulty": "advanced",
+      "explanation": "Le constructeur Alpha appelle display() de Beta (polymorphisme), mais le champ value de Beta n'est pas encore initialisé, donc null."
+    },
+    {
+      "topic": "Overriding",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>class Vehicle {\n    synchronized void move() { System.out.print(\"Vehicle\"); }\n}\nclass Car extends Vehicle {\n    void move() { System.out.print(\"Car\"); }\n}\nVehicle v = new Car();\nv.move();</code></pre>",
+      "options": [
+        "<code>Vehicle</code>",
+        "<code>Car</code>",
+        "<code>Compilation error - must be synchronized</code>",
+        "<code>Runtime error</code>"
+      ],
+      "answer": 1,
+      "difficulty": "advanced",
+      "explanation": "synchronized n'est pas partie de la signature de méthode. La redéfinition est valide sans synchronized, et le polymorphisme appelle Car.move()."
+    },
+    {
+      "topic": "Polymorphisme",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Base {\n    void method(Object... args) { System.out.print(\"varargs\"); }\n}\nclass Derived extends Base {\n    void method(Object o) { System.out.print(\"single\"); }\n}\nDerived d = new Derived();\nd.method(\"test\");\nd.method(\"a\", \"b\");</code></pre>",
+      "options": [
+        "<code>singlevarargs</code>",
+        "<code>singlesingle</code>",
+        "<code>varargsvarargs</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "advanced",
+      "explanation": "method(\"test\") correspond à method(Object), method(\"a\",\"b\") ne correspond qu'à method(Object...) héritée de Base."
+    },
+    {
+      "topic": "Encapsulation",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>class Data {\n    private final int[] values;\n    Data(int[] v) { this.values = v; }\n    int[] getValues() { return values; }\n}\nint[] arr = {1, 2, 3};\nData d = new Data(arr);\nd.getValues()[0] = 999;\nSystem.out.print(Arrays.toString(d.getValues()));</code></pre>",
+      "options": [
+        "<code>[1, 2, 3]</code>",
+        "<code>[999, 2, 3]</code>",
+        "<code>Compilation error</code>",
+        "<code>Runtime error</code>"
+      ],
+      "answer": 1,
+      "difficulty": "advanced",
+      "explanation": "final empêche de réassigner values, mais pas de modifier le contenu du tableau. L'encapsulation est violée car getValues() expose la référence interne."
+    },
+    {
+      "topic": "Interfaces",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>interface I {\n    int VALUE = getValue();\n    static int getValue() { System.out.print(\"Init\"); return 42; }\n}\nclass Test {\n    public static void main(String[] args) {\n        System.out.print(I.VALUE);\n    }\n}</code></pre>",
+      "options": [
+        "<code>Init42</code>",
+        "<code>42</code>",
+        "<code>Compilation error</code>",
+        "<code>InitInit42</code>"
+      ],
+      "answer": 0,
+      "difficulty": "advanced",
+      "explanation": "Les interfaces sont initialisées paresseusement. L'accès à I.VALUE déclenche l'initialisation qui appelle getValue(), affichant Init puis 42."
+    },
+    {
+      "topic": "Héritage",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>class A {\n    A() throws Exception { System.out.print(\"A\"); }\n}\nclass B extends A {\n    B() throws RuntimeException { System.out.print(\"B\"); }\n}\nnew B();</code></pre>",
+      "options": [
+        "<code>AB</code>",
+        "<code>BA</code>",
+        "<code>Compilation error dans B</code>",
+        "<code>Compilation error dans new B()</code>"
+      ],
+      "answer": 2,
+      "difficulty": "advanced",
+      "explanation": "Le constructeur B() appelle implicitement super() qui lance Exception (checked). B() doit déclarer throws Exception ou plus général."
+    },
+    {
+      "topic": "Overriding",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>abstract class Animal {\n    abstract void sound();\n    void makeSound() { System.out.print(\"Animal:\"); sound(); }\n}\nclass Dog extends Animal {\n    void sound() { System.out.print(\"Bark\"); }\n    void makeSound() { System.out.print(\"Dog:\"); super.makeSound(); }\n}\nnew Dog().makeSound();</code></pre>",
+      "options": [
+        "<code>Dog:Animal:Bark</code>",
+        "<code>Animal:Bark</code>",
+        "<code>Dog:Bark</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "advanced",
+      "explanation": "Dog.makeSound() affiche Dog:, appelle super.makeSound() qui affiche Animal: et appelle sound() qui via polymorphisme appelle Dog.sound() → Bark."
+    }
+  ]
+}
