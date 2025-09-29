@@ -139,6 +139,9 @@ function endExam() {
       <h2>Examen terminé ✅</h2>
       <p>Score : <strong>${score}</strong> / ${total}</p>
       <p>Résultat : <strong>${percent}%</strong></p>
+      <div style="margin-top: 20px;">
+        <a href="index.html" class="btn">Retour à l'accueil</a>
+      </div>
     </div>
   `;
 
