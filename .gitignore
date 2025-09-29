@@ -1,0 +1,39 @@
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Node modules (si on ajoute Node.js plus tard)
+node_modules/
+package-lock.json
+
+# Build artifacts (si on ajoute un build process)
+dist/
+build/
+
+# Cache
+.cache/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# User-specific files
+.user.preferences

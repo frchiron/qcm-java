@@ -14,7 +14,7 @@ async function loadExam() {
     currentExamId = examFile; // Stocker l'ID de l'examen
     startTime = Date.now(); // Enregistrer l'heure de début
 
-    const res = await fetch(`data/${examFile}`);
+    const res = await fetch(`assets/data/${examFile}`);
     examData = await res.json();
 
     document.getElementById("exam-title").textContent = examData.title;

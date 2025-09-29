@@ -7,22 +7,29 @@ Application web de QCM (Questionnaires à Choix Multiples) pour la préparation 
 ### Structure du projet
 ```
 qcm-java/
+├── README.md               # Documentation utilisateur
 ├── index.html              # Page d'accueil avec sélection d'examens
 ├── exam.html               # Interface d'examen/entraînement
-├── script.js               # Logique principale de l'application
-├── style.css               # Styles CSS complets
-├── progressManager.js      # Gestion de la progression et LocalStorage
-├── test_reset.html         # Page de test pour les fonctions de reset
-└── data/                   # Fichiers JSON des examens
-    ├── exam1.json          # Examen de test/développement
-    ├── exam5.json          # Héritage/Polymorphisme - Examen 1
-    ├── exam6.json          # Héritage/Polymorphisme - Examen 2
-    ├── exam7.json          # Héritage/Polymorphisme - Examen 3
-    ├── exam-12-heritage_and_co.json  # Héritage/Polymorphisme - Examen 4
-    ├── exam8.json          # Collections/Streams - Examen 1
-    ├── exam9.json          # Collections/Streams - Examen 2
-    ├── exam10.json         # Collections/Streams - Examen 3
-    └── exam11.json         # Collections/Streams - Examen 4 (spécial reduce)
+├── assets/
+│   ├── css/
+│   │   └── style.css       # Styles CSS complets
+│   ├── js/
+│   │   ├── script.js       # Logique principale de l'application
+│   │   └── progressManager.js  # Gestion de la progression et LocalStorage
+│   └── data/               # Fichiers JSON des examens
+│       ├── exam1.json      # Examen de test/développement
+│       ├── exam5.json      # Héritage/Polymorphisme - Examen 1
+│       ├── exam6.json      # Héritage/Polymorphisme - Examen 2
+│       ├── exam7.json      # Héritage/Polymorphisme - Examen 3
+│       ├── exam-12-heritage_and_co.json  # Héritage/Polymorphisme - Examen 4
+│       ├── exam8.json      # Collections/Streams - Examen 1
+│       ├── exam9.json      # Collections/Streams - Examen 2
+│       ├── exam10.json     # Collections/Streams - Examen 3
+│       └── exam11.json     # Collections/Streams - Examen 4 (spécial reduce)
+├── docs/
+│   └── CLAUDE.md           # Documentation technique (ce fichier)
+└── tests/
+    └── test_reset.html     # Page de test pour les fonctions de reset
 ```
 
 ## 🎯 Fonctionnalités principales
@@ -50,7 +57,7 @@ qcm-java/
 ## 🛠 Commandes de développement
 
 ### Tests et débogage
-- Ouvrir `test_reset.html` pour tester les fonctions de progression
+- Ouvrir `tests/test_reset.html` pour tester les fonctions de progression
 - Console développeur : `progressManager.getGlobalStats()` pour voir les stats
 - Console développeur : `progressManager.resetAllProgress()` pour reset complet
 
@@ -126,19 +133,19 @@ qcm-java/
 
 ## 🔧 Fonctions JavaScript importantes
 
-### Navigation (script.js)
+### Navigation (assets/js/script.js)
 - `nextQuestion()` / `prevQuestion()` : Navigation entre questions
 - `saveCurrentAnswer()` : Sauvegarde automatique des réponses
 - `loadSavedAnswer()` : Restauration des réponses lors du retour
 - `updateQuestionIndicator()` : Mise à jour des points de progression
 
-### Progression (progressManager.js)
+### Progression (assets/js/progressManager.js)
 - `saveExamResult(examId, score, total, timeSpent, mode)` : Sauvegarde résultat
 - `getExamBadgeInfo(examId)` : Retourne badge et infos d'un examen
 - `resetExamProgress(examId)` : Reset stats d'un examen
 - `resetAllProgress()` : Reset complet
 
-### Révision (script.js)
+### Révision (assets/js/script.js)
 - `showReview()` : Génère la page de révision avec formatage du code
 - `checkAnswerImmediate()` : Correction immédiate en mode entraînement
 
@@ -179,7 +186,7 @@ qcm-java/
 
 ## 🔄 Workflow de développement recommandé
 
-1. **Nouveaux examens** : Ajouter JSON dans `/data/` + mapping dans `index.html`
-2. **Nouvelles fonctionnalités** : Tester d'abord avec `test_reset.html`
+1. **Nouveaux examens** : Ajouter JSON dans `assets/data/` + mapping dans `index.html`
+2. **Nouvelles fonctionnalités** : Tester d'abord avec `tests/test_reset.html`
 3. **Styles** : Utiliser les classes existantes, éviter les styles inline
 4. **Debug** : Console + LocalStorage viewer du navigateur
