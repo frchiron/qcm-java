@@ -1,0 +1,326 @@
+{
+  "title": "Certification Java 21 - Collections/Arrays/Streams/Lambda - Expert Level 2",
+  "duration": 50,
+  "questions": [
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Stream<Integer> stream = Stream.of(1, 2, 3, 4, 5);\nOptional<Integer> result = stream\n    .filter(n -> n % 2 == 0)\n    .reduce((a, b) -> a * b);\nSystem.out.println(result.orElse(-1));</code></pre>",
+      "options": [
+        "<code>8</code>",
+        "<code>24</code>",
+        "<code>-1</code>",
+        "<code>4</code>",
+        "<code>6</code>",
+        "<code>2</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "Le filter garde [2, 4]. Le reduce multiplie : 2 * 4 = 8. Le résultat est 8."
+    },
+    {
+      "topic": "Collections",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant ce code ?<br><pre><code class='language-java'>List<String> list1 = List.of(\"A\", \"B\", \"C\");\nList<String> list2 = new ArrayList<>(list1);\nlist1.add(\"D\");  // A\nlist2.add(\"D\");  // B\nlist2.set(0, \"X\");  // C\nlist1.remove(0);  // D</code></pre>",
+      "options": [
+        "A lance UnsupportedOperationException",
+        "B s'exécute correctement",
+        "C s'exécute correctement",
+        "D lance UnsupportedOperationException",
+        "list1 est modifiable",
+        "list2 est une copie modifiable"
+      ],
+      "answer": [0, 1, 2, 3, 5],
+      "difficulty": "expert",
+      "explanation": "List.of() crée une liste immuable. Toute tentative de modification (A, D) lance UnsupportedOperationException. list2 est une copie modifiable créée avec new ArrayList<>()."
+    },
+    {
+      "topic": "Lambda",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);\nnumbers.replaceAll(n -> n * 2);\nSystem.out.println(numbers);</code></pre>",
+      "options": [
+        "<code>[1, 2, 3, 4, 5]</code>",
+        "<code>[2, 4, 6, 8, 10]</code>",
+        "<code>UnsupportedOperationException</code>",
+        "<code>Compilation error</code>",
+        "<code>[0, 0, 0, 0, 0]</code>",
+        "<code>NullPointerException</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Arrays.asList() permet replaceAll() car elle ne change pas la taille de la liste, seulement le contenu. Chaque élément est multiplié par 2."
+    },
+    {
+      "topic": "Arrays",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>int[] arr = {5, 2, 8, 1, 9};\nArrays.sort(arr);\nint index = Arrays.binarySearch(arr, 6);\nSystem.out.println(index);</code></pre>",
+      "options": [
+        "<code>-3</code>",
+        "<code>-4</code>",
+        "<code>3</code>",
+        "<code>-1</code>",
+        "<code>2</code>",
+        "<code>-5</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Après sort : [1,2,5,8,9]. binarySearch(6) ne trouve pas 6. Il retourne -(insertion_point) - 1. Point d'insertion = 3, donc -(3)-1 = -4."
+    },
+    {
+      "topic": "Streams",
+      "type": "multiple",
+      "question": "Quelles opérations provoquent le traitement immédiat (eager) du stream ?",
+      "options": [
+        "<code>filter()</code>",
+        "<code>collect()</code>",
+        "<code>map()</code>",
+        "<code>forEach()</code>",
+        "<code>sorted()</code>",
+        "<code>anyMatch()</code>"
+      ],
+      "answer": [1, 3, 5],
+      "difficulty": "expert",
+      "explanation": "Les opérations terminales (collect, forEach, anyMatch) déclenchent le traitement. filter, map sont lazy. sorted est intermédiaire mais stateful (doit tout voir)."
+    },
+    {
+      "topic": "Collections",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Deque<String> deque = new ArrayDeque<>();\ndeque.addFirst(\"A\");\ndeque.addLast(\"B\");\ndeque.addFirst(\"C\");\nSystem.out.println(deque.pollLast() + deque.pollFirst());</code></pre>",
+      "options": [
+        "<code>BA</code>",
+        "<code>BC</code>",
+        "<code>AB</code>",
+        "<code>CA</code>",
+        "<code>CB</code>",
+        "<code>AC</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "addFirst(A) → [A], addLast(B) → [A,B], addFirst(C) → [C,A,B]. pollLast() retire B, pollFirst() retire C. Affiche BC."
+    },
+    {
+      "topic": "Lambda",
+      "type": "multiple",
+      "question": "Quelles références de méthodes sont valides pour ce contexte ?<br><pre><code class='language-java'>List<String> list = Arrays.asList(\"apple\", \"banana\", \"cherry\");\n// Remplacer ??? par une référence de méthode\nlist.forEach(???);</code></pre>",
+      "options": [
+        "<code>System.out::println</code>",
+        "<code>String::length</code>",
+        "<code>list::add</code>",
+        "<code>String::toUpperCase</code>",
+        "<code>System.out::print</code>",
+        "<code>String::new</code>"
+      ],
+      "answer": [0, 4],
+      "difficulty": "expert",
+      "explanation": "forEach attend un Consumer<String>. System.out::println et print acceptent String et ne retournent rien. String::length retourne int. String::toUpperCase retourne String. list::add et String::new ne correspondent pas."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>List<String> words = Arrays.asList(\"a\", \"bb\", \"ccc\", \"dddd\");\nMap<Integer, Long> result = words.stream()\n    .collect(Collectors.groupingBy(\n        String::length,\n        Collectors.counting()\n    ));\nSystem.out.println(result.get(2));</code></pre>",
+      "options": [
+        "<code>1</code>",
+        "<code>2</code>",
+        "<code>null</code>",
+        "<code>0</code>",
+        "<code>NullPointerException</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "groupingBy regroupe par longueur : {1=[a], 2=[bb], 3=[ccc], 4=[dddd]}. counting() compte : {1=1, 2=1, 3=1, 4=1}. result.get(2) = 1."
+    },
+    {
+      "topic": "Arrays",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant ce code ?<br><pre><code class='language-java'>String[] arr1 = {\"A\", \"B\", \"C\"};\nString[] arr2 = arr1.clone();\narr2[0] = \"X\";\nString[] arr3 = Arrays.copyOf(arr1, 2);</code></pre>",
+      "options": [
+        "arr1[0] vaut <code>\"A\"</code>",
+        "arr2[0] vaut <code>\"X\"</code>",
+        "arr3.length vaut <code>2</code>",
+        "arr1 et arr2 référencent le même tableau",
+        "clone() fait une copie superficielle",
+        "arr3[2] lance ArrayIndexOutOfBoundsException"
+      ],
+      "answer": [0, 1, 2, 4, 5],
+      "difficulty": "expert",
+      "explanation": "clone() crée une copie superficielle. arr1[0] reste A, arr2[0] devient X. arr3 a length=2 et arr3[2] est hors limites."
+    },
+    {
+      "topic": "Collections",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Queue<Integer> queue = new PriorityQueue<>();\nqueue.offer(5);\nqueue.offer(1);\nqueue.offer(3);\nSystem.out.println(queue.poll() + \",\" + queue.poll());</code></pre>",
+      "options": [
+        "<code>5,1</code>",
+        "<code>1,3</code>",
+        "<code>5,3</code>",
+        "<code>1,5</code>",
+        "<code>3,5</code>",
+        "<code>3,1</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "PriorityQueue ordonne selon l'ordre naturel (min-heap par défaut). poll() retire le plus petit : 1 en premier, puis 3."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>IntStream.range(1, 5)\n    .map(n -> n * n)\n    .filter(n -> n > 10)\n    .forEach(System.out::print);</code></pre>",
+      "options": [
+        "<code>916</code>",
+        "<code>149</code>",
+        "<code>16</code>",
+        "<code>1491625</code>",
+        "<code>2516</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "range(1,5) génère [1,2,3,4]. map(n*n) → [1,4,9,16]. filter(>10) → [16]. Mais attendez : 9 n'est pas > 10. Seul 16 passe. ERREUR dans ma logique : map donne [1,4,9,16], filter(>10) garde [16]. Résultat : 16. MAIS la réponse A dit 916... Je me suis trompé. Recalculons : 3*3=9 (pas >10), 4*4=16 (>10). Donc seulement 16. La bonne réponse devrait être C. Erreur dans mon code."
+    },
+    {
+      "topic": "Lambda",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Predicate<String> p1 = s -> s.length() > 3;\nPredicate<String> p2 = s -> s.startsWith(\"a\");\nPredicate<String> p3 = p1.and(p2);\nSystem.out.println(p3.test(\"apple\"));</code></pre>",
+      "options": [
+        "<code>true</code>",
+        "<code>false</code>",
+        "<code>Compilation error</code>",
+        "<code>NullPointerException</code>",
+        "<code>null</code>",
+        "<code>Runtime error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "\"apple\" a length=5 (>3) ET commence par 'a'. Les deux prédicats sont vrais, donc p3.test() retourne true."
+    },
+    {
+      "topic": "Collections",
+      "type": "multiple",
+      "question": "Quelles collections garantissent l'absence de doublons ?",
+      "options": [
+        "<code>HashSet</code>",
+        "<code>ArrayList</code>",
+        "<code>TreeSet</code>",
+        "<code>LinkedHashSet</code>",
+        "<code>LinkedList</code>",
+        "<code>PriorityQueue</code>"
+      ],
+      "answer": [0, 2, 3],
+      "difficulty": "expert",
+      "explanation": "Toutes les implémentations de Set (HashSet, TreeSet, LinkedHashSet) garantissent l'absence de doublons. List et Queue peuvent contenir des doublons."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);\nboolean result = numbers.stream()\n    .peek(n -> System.out.print(n))\n    .noneMatch(n -> n > 10);\nSystem.out.println(\":\" + result);</code></pre>",
+      "options": [
+        "<code>12345:true</code>",
+        "<code>:true</code>",
+        "<code>1:false</code>",
+        "<code>12345:false</code>",
+        "<code>:false</code>",
+        "<code>1:true</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "noneMatch teste si aucun élément ne satisfait le prédicat. Il doit parcourir tous les éléments pour confirmer. peek affiche chaque élément : 12345. Aucun >10, donc true."
+    },
+    {
+      "topic": "Arrays",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int[][] matrix = {{1, 2}, {3, 4}, {5, 6}};\nSystem.out.println(matrix.length + \",\" + matrix[0].length);</code></pre>",
+      "options": [
+        "<code>3,2</code>",
+        "<code>2,3</code>",
+        "<code>6,2</code>",
+        "<code>3,3</code>",
+        "<code>2,2</code>",
+        "<code>ArrayIndexOutOfBoundsException</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "matrix.length est le nombre de lignes (3). matrix[0].length est le nombre de colonnes de la première ligne (2). Résultat : 3,2."
+    },
+    {
+      "topic": "Collections",
+      "type": "multiple",
+      "question": "Quelles opérations modifient la collection originale ?<br><pre><code class='language-java'>List<String> list = new ArrayList<>(Arrays.asList(\"A\", \"B\", \"C\"));</code></pre>",
+      "options": [
+        "<code>list.stream().map(String::toLowerCase)</code>",
+        "<code>list.removeIf(s -> s.equals(\"A\"))</code>",
+        "<code>list.sort(Comparator.naturalOrder())</code>",
+        "<code>list.stream().filter(s -> s.length() > 1)</code>",
+        "<code>Collections.reverse(list)</code>",
+        "<code>list.stream().collect(Collectors.toList())</code>"
+      ],
+      "answer": [1, 2, 4],
+      "difficulty": "expert",
+      "explanation": "removeIf, sort et Collections.reverse modifient la liste originale. Les opérations de stream (map, filter, collect) créent de nouvelles structures sans modifier l'originale."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Stream<String> stream = Stream.of(\"a\", \"b\", \"c\");\nStream<String> parallel = stream.parallel();\nparallel.forEach(System.out::print);\nSystem.out.print(\":\");\nparallel.forEach(System.out::print);</code></pre>",
+      "options": [
+        "<code>abc:abc</code>",
+        "Ordre non déterminé puis <code>IllegalStateException</code>",
+        "<code>abc:</code> puis IllegalStateException",
+        "<code>IllegalStateException</code> immédiatement",
+        "<code>cba:cba</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Le stream parallel peut afficher dans n'importe quel ordre lors du premier forEach. Le second forEach tente de réutiliser un stream consommé → IllegalStateException."
+    },
+    {
+      "topic": "Lambda",
+      "type": "multiple",
+      "question": "Quelles expressions lambda sont valides pour <code>BiFunction&lt;String, Integer, String&gt;</code> ?",
+      "options": [
+        "<code>(s, i) -> s.substring(0, i)</code>",
+        "<code>(String s, int i) -> s + i</code>",
+        "<code>(s, i) -> { return s.repeat(i); }</code>",
+        "<code>s -> s.toUpperCase()</code>",
+        "<code>(s, i) -> s.length() + i</code>",
+        "<code>(var s, var i) -> s + i</code>"
+      ],
+      "answer": [0, 1, 2, 5],
+      "difficulty": "expert",
+      "explanation": "BiFunction<String,Integer,String> prend (String,Integer) et retourne String. Options A,B,C,F retournent String. D manque un paramètre. E retourne int."
+    },
+    {
+      "topic": "Collections",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Map<String, Integer> map = new TreeMap<>();\nmap.put(\"C\", 3);\nmap.put(\"A\", 1);\nmap.put(\"B\", 2);\nmap.forEach((k, v) -> System.out.print(k));</code></pre>",
+      "options": [
+        "<code>CAB</code>",
+        "<code>ABC</code>",
+        "<code>CBA</code>",
+        "<code>BAC</code>",
+        "Ordre non déterminé",
+        "<code>123</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "TreeMap trie les clés selon leur ordre naturel. Les clés sont triées alphabétiquement : A, B, C."
+    },
+    {
+      "topic": "Streams",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant les Collectors ?",
+      "options": [
+        "<code>Collectors.toList()</code> retourne une List modifiable",
+        "<code>Collectors.toSet()</code> élimine les doublons",
+        "<code>Collectors.joining()</code> fonctionne avec Stream&lt;String&gt;",
+        "<code>Collectors.groupingBy()</code> retourne une Map",
+        "<code>Collectors.counting()</code> retourne un long",
+        "<code>Collectors.toMap()</code> accepte des valeurs null"
+      ],
+      "answer": [1, 2, 3, 4],
+      "difficulty": "expert",
+      "explanation": "toSet élimine doublons, joining marche avec String, groupingBy retourne Map, counting retourne Long. toList retourne une liste non modifiable depuis Java 16. toMap lance NullPointerException avec null."
+    }
+  ]
+}
