@@ -1,0 +1,326 @@
+{
+  "title": "Certification Java 21 - Expert OCP avec Choix Multiples",
+  "duration": 50,
+  "questions": [
+    {
+      "topic": "Polymorphisme",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant ce code ?<br><pre><code class='language-java'>class Animal {\n    void makeSound() { System.out.print(\"Animal\"); }\n}\nclass Dog extends Animal {\n    void makeSound() { System.out.print(\"Dog\"); }\n}\nAnimal a = new Dog();\na.makeSound();</code></pre>",
+      "options": [
+        "Le code affiche <code>Dog</code>",
+        "Le code affiche <code>Animal</code>",
+        "C'est un exemple de liaison dynamique",
+        "C'est un exemple de liaison statique",
+        "La méthode appelée est déterminée à l'exécution",
+        "La méthode appelée est déterminée à la compilation"
+      ],
+      "answer": [0, 2, 4],
+      "difficulty": "expert",
+      "explanation": "Le polymorphisme utilise la liaison dynamique : la méthode de Dog est appelée à l'exécution basée sur le type réel de l'objet."
+    },
+    {
+      "topic": "Overriding",
+      "type": "multiple",
+      "question": "Quelles redéfinitions de méthodes sont valides ?<br><pre><code class='language-java'>class Parent {\n    protected Number getValue() throws IOException { return 10; }\n}</code></pre>",
+      "options": [
+        "<code>public Integer getValue() throws IOException</code>",
+        "<code>public Number getValue() throws Exception</code>",
+        "<code>private Number getValue() throws IOException</code>",
+        "<code>protected Integer getValue()</code>",
+        "<code>public Double getValue() throws FileNotFoundException</code>",
+        "<code>Number getValue() throws IOException</code>"
+      ],
+      "answer": [0, 3, 4],
+      "difficulty": "expert",
+      "explanation": "Valides : type retour covariant (Integer, Double), visibilité élargie ou égale, exceptions plus spécifiques ou aucune. Invalide : private (réduit visibilité), Exception (plus large)."
+    },
+    {
+      "topic": "Interfaces",
+      "type": "multiple",
+      "question": "Que peut contenir une interface en Java 21 ?",
+      "options": [
+        "Des méthodes abstraites",
+        "Des méthodes default avec implémentation",
+        "Des méthodes static avec implémentation",
+        "Des méthodes private avec implémentation",
+        "Des variables d'instance non-final",
+        "Des constructeurs"
+      ],
+      "answer": [0, 1, 2, 3],
+      "difficulty": "expert",
+      "explanation": "Les interfaces peuvent contenir des méthodes abstraites, default, static et private (depuis Java 9). Pas de variables d'instance ni de constructeurs."
+    },
+    {
+      "topic": "Encapsulation",
+      "type": "multiple",
+      "question": "Quels modificateurs d'accès permettent l'accès depuis une classe du même package ?",
+      "options": [
+        "<code>public</code>",
+        "<code>protected</code>",
+        "<code>private</code>",
+        "package-private (aucun modificateur)",
+        "<code>final</code>",
+        "<code>static</code>"
+      ],
+      "answer": [0, 1, 3],
+      "difficulty": "expert",
+      "explanation": "public, protected et package-private permettent l'accès depuis le même package. private non. final et static ne sont pas des modificateurs d'accès."
+    },
+    {
+      "topic": "Polymorphisme",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant la surcharge (overloading) ?",
+      "options": [
+        "Les méthodes doivent avoir des signatures différentes",
+        "Le type de retour seul peut différencier deux surcharges",
+        "La résolution se fait à la compilation",
+        "Les méthodes static peuvent être surchargées",
+        "La visibilité doit être identique",
+        "Les exceptions lancées peuvent différer"
+      ],
+      "answer": [0, 2, 3, 5],
+      "difficulty": "expert",
+      "explanation": "La surcharge nécessite des signatures différentes (paramètres), se résout à la compilation, fonctionne avec static, et les exceptions peuvent différer. Le type de retour seul ne suffit pas."
+    },
+    {
+      "topic": "Overriding",
+      "type": "multiple",
+      "question": "Dans ce code, quelles méthodes causent une erreur de compilation ?<br><pre><code class='language-java'>class Base {\n    final void m1() {}\n    static void m2() {}\n    private void m3() {}\n}\nclass Derived extends Base {\n    void m1() {}        // A\n    void m2() {}        // B\n    public void m3() {} // C\n    void m4() {}        // D\n}</code></pre>",
+      "options": [
+        "Méthode A : redéfinition de m1",
+        "Méthode B : redéfinition de m2",
+        "Méthode C : redéfinition de m3",
+        "Méthode D : définition de m4",
+        "Aucune erreur",
+        "Toutes causent une erreur"
+      ],
+      "answer": [0],
+      "difficulty": "expert",
+      "explanation": "Seule A cause une erreur : on ne peut pas redéfinir une méthode final. B est une nouvelle méthode static (pas de redéfinition). C est une nouvelle méthode (private n'est pas héritée)."
+    },
+    {
+      "topic": "Interfaces",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant les interfaces sealed ?<br><pre><code class='language-java'>sealed interface Shape permits Circle, Rectangle {}\nfinal class Circle implements Shape {}\nfinal class Rectangle implements Shape {}</code></pre>",
+      "options": [
+        "Seules Circle et Rectangle peuvent implémenter Shape",
+        "On peut créer des classes anonymes de Shape",
+        "Les sous-types doivent être final, sealed ou non-sealed",
+        "Le pattern matching avec switch est exhaustif sans default",
+        "Sealed est disponible depuis Java 8",
+        "On peut ajouter d'autres implémentations sans modifier Shape"
+      ],
+      "answer": [0, 2, 3],
+      "difficulty": "expert",
+      "explanation": "Les sealed interfaces limitent les implémentations permises, nécessitent final/sealed/non-sealed, permettent un switch exhaustif. Disponibles depuis Java 17."
+    },
+    {
+      "topic": "Encapsulation",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant les records ?<br><pre><code class='language-java'>record Person(String name, int age) {}</code></pre>",
+      "options": [
+        "Les records sont implicitement final",
+        "Les records peuvent étendre d'autres classes",
+        "Les composants sont implicitement private final",
+        "On peut ajouter des méthodes personnalisées",
+        "Les records sont mutables par défaut",
+        "On peut implémenter des interfaces"
+      ],
+      "answer": [0, 2, 3, 5],
+      "difficulty": "expert",
+      "explanation": "Les records sont final, ont des composants private final, permettent des méthodes personnalisées et l'implémentation d'interfaces. Ils ne peuvent pas étendre de classes."
+    },
+    {
+      "topic": "Polymorphisme",
+      "type": "multiple",
+      "question": "Quelles méthodes seront appelées dans ce code ?<br><pre><code class='language-java'>class Test {\n    void method(int i) { System.out.print(\"int\"); }\n    void method(Integer i) { System.out.print(\"Integer\"); }\n    void method(Object o) { System.out.print(\"Object\"); }\n    void method(int... nums) { System.out.print(\"varargs\"); }\n}\nTest t = new Test();\nt.method(10);      // A\nt.method(null);    // B\nt.method(10, 20);  // C</code></pre>",
+      "options": [
+        "A appelle method(int)",
+        "A appelle method(Integer)",
+        "B appelle method(Integer)",
+        "B appelle method(Object)",
+        "C appelle method(int...)",
+        "B cause une erreur de compilation"
+      ],
+      "answer": [0, 5, 4],
+      "difficulty": "expert",
+      "explanation": "A : correspondance exacte avec int. B : ambiguïté entre Integer et Object (tous deux acceptent null). C : seul varargs accepte deux paramètres."
+    },
+    {
+      "topic": "Overriding",
+      "type": "multiple",
+      "question": "Quelles règles s'appliquent à la redéfinition de méthodes ?",
+      "options": [
+        "La signature doit être identique (nom et paramètres)",
+        "Le type de retour peut être un sous-type (covariance)",
+        "La visibilité peut être réduite",
+        "Les exceptions checked peuvent être plus larges",
+        "L'annotation @Override est obligatoire",
+        "Les méthodes static ne peuvent pas être redéfinies"
+      ],
+      "answer": [0, 1, 5],
+      "difficulty": "expert",
+      "explanation": "La redéfinition nécessite une signature identique, permet la covariance du retour, et les static ne sont pas redéfinies. La visibilité doit être élargie ou égale, les exceptions réduites."
+    },
+    {
+      "topic": "Interfaces",
+      "type": "multiple",
+      "question": "Comment résoudre ce conflit de méthodes default ?<br><pre><code class='language-java'>interface A { default void m() { System.out.print(\"A\"); } }\ninterface B { default void m() { System.out.print(\"B\"); } }\nclass C implements A, B { }</code></pre>",
+      "options": [
+        "La classe C doit redéfinir m()",
+        "Java choisit automatiquement A.m()",
+        "On peut appeler A.super.m() dans C",
+        "On peut appeler B.super.m() dans C",
+        "Le code compile sans modification",
+        "Il faut déclarer l'interface prioritaire"
+      ],
+      "answer": [0, 2, 3],
+      "difficulty": "expert",
+      "explanation": "En cas de conflit, la classe doit redéfinir la méthode et peut explicitement appeler A.super.m() ou B.super.m() pour résoudre l'ambiguïté."
+    },
+    {
+      "topic": "Encapsulation",
+      "type": "multiple",
+      "question": "Quelles pratiques améliorent l'encapsulation ?",
+      "options": [
+        "Déclarer les champs comme private",
+        "Utiliser des getters/setters publics",
+        "Retourner des copies défensives de collections mutables",
+        "Déclarer toutes les méthodes comme public",
+        "Utiliser des classes immuables",
+        "Exposer directement les tableaux internes"
+      ],
+      "answer": [0, 1, 2, 4],
+      "difficulty": "expert",
+      "explanation": "Une bonne encapsulation utilise des champs private, des accesseurs contrôlés, des copies défensives et l'immutabilité. Éviter d'exposer les structures mutables directement."
+    },
+    {
+      "topic": "Polymorphisme",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant ce code ?<br><pre><code class='language-java'>class Parent {\n    static void method() { System.out.print(\"Parent\"); }\n}\nclass Child extends Parent {\n    static void method() { System.out.print(\"Child\"); }\n}\nParent p = new Child();\np.method();</code></pre>",
+      "options": [
+        "Le code affiche <code>Parent</code>",
+        "Le code affiche <code>Child</code>",
+        "Les méthodes static utilisent la liaison dynamique",
+        "Les méthodes static utilisent la liaison statique",
+        "C'est un exemple de redéfinition (overriding)",
+        "C'est un exemple de masquage (hiding)"
+      ],
+      "answer": [0, 3, 5],
+      "difficulty": "expert",
+      "explanation": "Les méthodes static ne sont pas polymorphes : elles utilisent la liaison statique basée sur le type de référence. C'est du masquage, pas de la redéfinition."
+    },
+    {
+      "topic": "Overriding",
+      "type": "multiple",
+      "question": "Quelles exceptions peuvent être déclarées dans une redéfinition de cette méthode ?<br><pre><code class='language-java'>class Parent {\n    void method() throws IOException {}\n}</code></pre>",
+      "options": [
+        "<code>throws IOException</code>",
+        "<code>throws Exception</code>",
+        "<code>throws FileNotFoundException</code>",
+        "<code>throws RuntimeException</code>",
+        "Aucune exception (pas de throws)",
+        "<code>throws Throwable</code>"
+      ],
+      "answer": [0, 2, 3, 4],
+      "difficulty": "expert",
+      "explanation": "On peut déclarer la même exception, des sous-classes (FileNotFoundException), des RuntimeException, ou aucune exception. Pas d'exceptions plus larges (Exception, Throwable)."
+    },
+    {
+      "topic": "Interfaces",
+      "type": "multiple",
+      "question": "Quelles caractéristiques sont vraies pour les méthodes dans les interfaces ?",
+      "options": [
+        "Les méthodes abstraites sont implicitement public",
+        "Les méthodes default peuvent être private",
+        "Les méthodes static peuvent être appelées via une instance",
+        "Les méthodes private sont disponibles depuis Java 9",
+        "Les méthodes default peuvent appeler des méthodes private",
+        "Toutes les méthodes doivent être abstract"
+      ],
+      "answer": [0, 3, 4],
+      "difficulty": "expert",
+      "explanation": "Les méthodes abstraites sont public implicitement, private est disponible depuis Java 9 pour factoriser le code des default. Les static s'appellent sur l'interface, pas l'instance."
+    },
+    {
+      "topic": "Encapsulation",
+      "type": "multiple",
+      "question": "Quels problèmes d'encapsulation existent dans ce code ?<br><pre><code class='language-java'>class User {\n    private List<String> roles;\n    public User(List<String> roles) { this.roles = roles; }\n    public List<String> getRoles() { return roles; }\n}</code></pre>",
+      "options": [
+        "Le constructeur accepte une référence externe",
+        "getRoles() expose la liste interne",
+        "Les rôles peuvent être modifiés de l'extérieur",
+        "La classe devrait être final",
+        "roles devrait être final",
+        "Aucun problème d'encapsulation"
+      ],
+      "answer": [0, 1, 2],
+      "difficulty": "expert",
+      "explanation": "Le constructeur et le getter exposent la référence interne permettant des modifications externes. Il faut utiliser des copies défensives : new ArrayList<>(roles)."
+    },
+    {
+      "topic": "Polymorphisme",
+      "type": "multiple",
+      "question": "Que se passe-t-il lors de la résolution de cette surcharge ?<br><pre><code class='language-java'>class Test {\n    void method(Object o) { System.out.print(\"Object\"); }\n    void method(String s) { System.out.print(\"String\"); }\n}\nTest t = new Test();\nObject obj = \"Hello\";\nt.method(obj);</code></pre>",
+      "options": [
+        "Le code affiche <code>Object</code>",
+        "Le code affiche <code>String</code>",
+        "La résolution se fait sur le type de référence",
+        "La résolution se fait sur le type réel de l'objet",
+        "C'est de la liaison dynamique",
+        "C'est de la liaison statique"
+      ],
+      "answer": [0, 2, 5],
+      "difficulty": "expert",
+      "explanation": "La résolution de surcharge est statique, basée sur le type de référence (Object). Le type réel (String) n'est pas considéré à la compilation."
+    },
+    {
+      "topic": "Overriding",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant la covariance des types de retour ?",
+      "options": [
+        "Le type de retour peut être un sous-type",
+        "Le type de retour peut être un super-type",
+        "Les types primitifs supportent la covariance",
+        "La covariance fonctionne avec les classes et interfaces",
+        "On peut changer int en Integer",
+        "On peut changer Number en Integer"
+      ],
+      "answer": [0, 3, 5],
+      "difficulty": "expert",
+      "explanation": "La covariance permet de retourner un sous-type (Number → Integer), fonctionne avec les types référence, mais pas avec les primitifs (int ≠ Integer en covariance)."
+    },
+    {
+      "topic": "Interfaces",
+      "type": "multiple",
+      "question": "Quelles déclarations sont valides pour une interface fonctionnelle ?",
+      "options": [
+        "<code>@FunctionalInterface interface F { void method(); }</code>",
+        "<code>@FunctionalInterface interface F { void m1(); void m2(); }</code>",
+        "<code>@FunctionalInterface interface F { void m(); default void d() {} }</code>",
+        "<code>@FunctionalInterface interface F { void m(); static void s() {} }</code>",
+        "<code>@FunctionalInterface interface F extends Runnable { void method(); }</code>",
+        "<code>@FunctionalInterface interface F { }</code>"
+      ],
+      "answer": [0, 2, 3],
+      "difficulty": "expert",
+      "explanation": "Une interface fonctionnelle a exactement une méthode abstraite. Les default et static ne comptent pas. L'option E a deux abstraites (method + run)."
+    },
+    {
+      "topic": "Encapsulation",
+      "type": "multiple",
+      "question": "Quelles sont les différences entre classes internes et nested static ?",
+      "options": [
+        "Les classes internes ont accès aux membres d'instance de la classe externe",
+        "Les nested static ont accès aux membres d'instance de la classe externe",
+        "Les classes internes nécessitent une instance de la classe externe",
+        "Les nested static peuvent être instanciées sans instance externe",
+        "Les deux ont accès aux membres private de la classe externe",
+        "Aucune différence fonctionnelle"
+      ],
+      "answer": [0, 2, 3, 4],
+      "difficulty": "expert",
+      "explanation": "Les classes internes ont accès à l'instance externe et nécessitent celle-ci. Les nested static sont indépendantes. Les deux accèdent aux membres private de la classe externe."
+    }
+  ]
+}

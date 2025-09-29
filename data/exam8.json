@@ -1,0 +1,326 @@
+{
+  "title": "Certification Java 21 - Collections/Arrays/Streams/Lambda - Niveau Enthuware",
+  "duration": 50,
+  "questions": [
+    {
+      "topic": "Collections",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List<String> list = new ArrayList<>();\nlist.add(\"A\");\nlist.add(\"B\");\nlist.add(\"C\");\nlist.remove(1);\nlist.add(1, \"D\");\nlist.set(2, \"E\");\nSystem.out.println(list);</code></pre>",
+      "options": [
+        "<code>[A, D, E]</code>",
+        "<code>[A, D, C]</code>",
+        "<code>[A, B, E]</code>",
+        "<code>IndexOutOfBoundsException</code>",
+        "<code>[A, E]</code>",
+        "<code>[D, E, C]</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "remove(1) enlève B → [A,C], add(1,D) insère D à l'index 1 → [A,D,C], set(2,E) remplace C → [A,D,E]."
+    },
+    {
+      "topic": "Streams",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant ce code ?<br><pre><code class='language-java'>List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);\nStream<Integer> stream = numbers.stream();\nstream.filter(n -> n > 2);\nlong count = stream.count();</code></pre>",
+      "options": [
+        "Le code compile sans erreur",
+        "Le code lève IllegalStateException",
+        "count retourne 3",
+        "count retourne 5",
+        "Le stream est consommé deux fois",
+        "filter retourne un nouveau stream"
+      ],
+      "answer": [0, 3, 5],
+      "difficulty": "expert",
+      "explanation": "Le filter n'est pas chaîné avec count, donc count() compte tous les éléments (5). Le stream n'est utilisé qu'une fois. filter retourne un nouveau stream non utilisé."
+    },
+    {
+      "topic": "Lambda",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List<String> list = Arrays.asList(\"a\", \"b\", \"c\");\nlist.forEach(s -> s = s.toUpperCase());\nSystem.out.println(list);</code></pre>",
+      "options": [
+        "<code>[A, B, C]</code>",
+        "<code>[a, b, c]</code>",
+        "<code>Compilation error</code>",
+        "<code>UnsupportedOperationException</code>",
+        "<code>NullPointerException</code>",
+        "<code>[null, null, null]</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Le paramètre s est une copie locale. L'assignation s = s.toUpperCase() ne modifie pas la liste. La liste reste inchangée."
+    },
+    {
+      "topic": "Arrays",
+      "type": "multiple",
+      "question": "Quelles lignes causent une compilation error ou une exception ?<br><pre><code class='language-java'>int[] arr1 = {1, 2, 3};\nint[] arr2 = arr1;\narr2[0] = 10;                    // A\nSystem.out.println(arr1[0]);     // B\nint[] arr3 = Arrays.copyOf(arr1, 5);\nSystem.out.println(arr3[4]);     // C\nList<Integer> list = Arrays.asList(arr1); // D</code></pre>",
+      "options": [
+        "Ligne A",
+        "Ligne B",
+        "Ligne C",
+        "Ligne D",
+        "Aucune erreur",
+        "ArrayIndexOutOfBoundsException en C"
+      ],
+      "answer": [3],
+      "difficulty": "expert",
+      "explanation": "D cause une erreur : Arrays.asList() ne peut pas accepter un int[] primitif directement. Il créerait List<int[]> avec un seul élément. C affiche 0 (valeur par défaut)."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>List<String> list = Arrays.asList(\"a\", \"b\", \"c\", \"d\");\nString result = list.stream()\n    .filter(s -> {\n        System.out.print(s);\n        return s.length() == 1;\n    })\n    .findFirst()\n    .orElse(\"none\");\nSystem.out.print(\":\" + result);</code></pre>",
+      "options": [
+        "<code>abcd:a</code>",
+        "<code>a:a</code>",
+        "<code>abcd:none</code>",
+        "<code>a:none</code>",
+        "<code>:a</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "findFirst() est une opération court-circuit. Le stream s'arrête dès que le premier élément satisfait le prédicat. Seul 'a' est traité."
+    },
+    {
+      "topic": "Collections",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant les différentes implémentations de Map ?",
+      "options": [
+        "HashMap permet une clé null et plusieurs valeurs null",
+        "TreeMap permet une clé null",
+        "LinkedHashMap maintient l'ordre d'insertion",
+        "TreeMap trie les clés selon l'ordre naturel ou un Comparator",
+        "Hashtable est synchronized",
+        "ConcurrentHashMap permet des clés et valeurs null"
+      ],
+      "answer": [0, 2, 3, 4],
+      "difficulty": "expert",
+      "explanation": "HashMap accepte null. TreeMap ne permet pas de clé null (NullPointerException). LinkedHashMap garde l'ordre. TreeMap trie. Hashtable est synchronized. ConcurrentHashMap refuse null."
+    },
+    {
+      "topic": "Lambda",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 10;\nIntConsumer consumer = i -> {\n    x = x + i;\n    System.out.print(x);\n};\nconsumer.accept(5);</code></pre>",
+      "options": [
+        "<code>15</code>",
+        "<code>10</code>",
+        "<code>5</code>",
+        "<code>Compilation error</code>",
+        "<code>Runtime error</code>",
+        "<code>0</code>"
+      ],
+      "answer": 3,
+      "difficulty": "expert",
+      "explanation": "Les variables capturées par les lambdas doivent être effectively final. x ne peut pas être modifié après sa déclaration initiale."
+    },
+    {
+      "topic": "Streams",
+      "type": "multiple",
+      "question": "Quelles opérations sont des opérations terminales (terminal operations) ?",
+      "options": [
+        "<code>filter()</code>",
+        "<code>forEach()</code>",
+        "<code>map()</code>",
+        "<code>collect()</code>",
+        "<code>reduce()</code>",
+        "<code>peek()</code>"
+      ],
+      "answer": [1, 3, 4],
+      "difficulty": "expert",
+      "explanation": "Les opérations terminales déclenchent le traitement du stream : forEach, collect, reduce, count, findFirst, etc. filter, map, peek sont des opérations intermédiaires."
+    },
+    {
+      "topic": "Arrays",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>String[] arr = {\"c\", \"a\", \"b\"};\nArrays.sort(arr);\nint index = Arrays.binarySearch(arr, \"b\");\nSystem.out.print(index + \",\" + arr[index]);</code></pre>",
+      "options": [
+        "<code>1,b</code>",
+        "<code>2,b</code>",
+        "<code>0,a</code>",
+        "<code>-1,c</code>",
+        "<code>Résultat indéterminé</code>",
+        "<code>ArrayIndexOutOfBoundsException</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "Après sort : [a,b,c]. binarySearch trouve 'b' à l'index 1. Donc affiche 1,b."
+    },
+    {
+      "topic": "Collections",
+      "type": "multiple",
+      "question": "Que se passe-t-il avec ce code ?<br><pre><code class='language-java'>List<String> list = Arrays.asList(\"A\", \"B\", \"C\");\nlist.add(\"D\");           // A\nlist.set(0, \"X\");       // B\nlist.remove(1);         // C\nCollections.sort(list); // D</code></pre>",
+      "options": [
+        "A lance UnsupportedOperationException",
+        "B s'exécute correctement",
+        "C lance UnsupportedOperationException",
+        "D s'exécute correctement",
+        "Toutes les opérations réussissent",
+        "B lance UnsupportedOperationException"
+      ],
+      "answer": [0, 1, 2],
+      "difficulty": "expert",
+      "explanation": "Arrays.asList() retourne une liste de taille fixe. add() et remove() lancent UnsupportedOperationException. set() et sort() fonctionnent car ils ne changent pas la taille."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);\nOptional<Integer> result = numbers.stream()\n    .filter(n -> n > 10)\n    .findFirst();\nSystem.out.println(result.orElse(0) + result.orElseGet(() -> 100));</code></pre>",
+      "options": [
+        "<code>0</code>",
+        "<code>100</code>",
+        "<code>0100</code>",
+        "<code>Compilation error</code>",
+        "<code>NoSuchElementException</code>",
+        "<code>NullPointerException</code>"
+      ],
+      "answer": 3,
+      "difficulty": "expert",
+      "explanation": "result.orElse(0) retourne un int, puis on essaie d'ajouter result.orElseGet() qui retourne aussi un int, ce qui donne une addition : 0 + 100 = 100. Mais la question est piège : affiche 100 pas \"0100\"."
+    },
+    {
+      "topic": "Lambda",
+      "type": "multiple",
+      "question": "Quelles interfaces fonctionnelles correspondent à ces lambdas ?<br><pre><code class='language-java'>// A: (String s) -> s.length()\n// B: (int x, int y) -> x + y\n// C: () -> System.out.println(\"Hello\")\n// D: (String s) -> { System.out.println(s); }</code></pre>",
+      "options": [
+        "A: <code>Function&lt;String, Integer&gt;</code>",
+        "B: <code>BinaryOperator&lt;Integer&gt;</code>",
+        "C: <code>Runnable</code>",
+        "D: <code>Consumer&lt;String&gt;</code>",
+        "A: <code>Predicate&lt;String&gt;</code>",
+        "B: <code>BiFunction&lt;Integer, Integer, Integer&gt;</code>"
+      ],
+      "answer": [0, 1, 2, 3, 5],
+      "difficulty": "expert",
+      "explanation": "A retourne un Integer depuis String (Function). B combine deux int (BinaryOperator ou BiFunction). C ne prend rien et retourne void (Runnable). D consomme un String (Consumer)."
+    },
+    {
+      "topic": "Collections",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Set<Integer> set = new HashSet<>();\nset.add(1);\nset.add(2);\nset.add(1);\nset.add(3);\nSystem.out.println(set.size());</code></pre>",
+      "options": [
+        "<code>3</code>",
+        "<code>4</code>",
+        "<code>2</code>",
+        "<code>Compilation error</code>",
+        "<code>1</code>",
+        "<code>L'ordre n'est pas garanti</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "Un Set n'accepte pas de doublons. Le deuxième add(1) est ignoré. Le set contient {1, 2, 3}, donc size() = 3."
+    },
+    {
+      "topic": "Streams",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant ce code ?<br><pre><code class='language-java'>Stream<String> stream = Stream.of(\"a\", \"b\", \"c\");\nstream.peek(System.out::print);\nstream.forEach(System.out::print);</code></pre>",
+      "options": [
+        "Le code affiche <code>abcabc</code>",
+        "Le code lève IllegalStateException",
+        "peek() n'est jamais exécuté",
+        "Le stream est consommé deux fois",
+        "Le code compile correctement",
+        "peek() est une opération terminale"
+      ],
+      "answer": [1, 3, 4],
+      "difficulty": "expert",
+      "explanation": "Le premier peek() ne déclenche rien (opération intermédiaire non suivie d'une terminale). forEach() essaie de consommer un stream déjà consommé → IllegalStateException."
+    },
+    {
+      "topic": "Arrays",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>int[] arr = new int[3];\nArrays.fill(arr, 5);\narr = Arrays.copyOfRange(arr, 1, 4);\nSystem.out.println(arr.length + \",\" + arr[2]);</code></pre>",
+      "options": [
+        "<code>3,5</code>",
+        "<code>3,0</code>",
+        "<code>2,5</code>",
+        "<code>4,5</code>",
+        "<code>ArrayIndexOutOfBoundsException</code>",
+        "<code>3,null</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "fill remplit [5,5,5]. copyOfRange(1,4) copie depuis index 1 jusqu'à 4 (exclusif) → [5,5,0]. Length = 3, arr[2] = 0 (valeur par défaut pour l'extension)."
+    },
+    {
+      "topic": "Lambda",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List<String> list = new ArrayList<>();\nlist.add(\"Java\");\nlist.add(\"Python\");\nlist.removeIf(s -> s.startsWith(\"J\"));\nSystem.out.println(list);</code></pre>",
+      "options": [
+        "<code>[Java, Python]</code>",
+        "<code>[Python]</code>",
+        "<code>[Java]</code>",
+        "<code>[]</code>",
+        "<code>ConcurrentModificationException</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "removeIf() enlève tous les éléments qui satisfont le prédicat. \"Java\" commence par 'J' donc est supprimé. Reste [Python]."
+    },
+    {
+      "topic": "Streams",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant flatMap ?<br><pre><code class='language-java'>List<List<Integer>> nested = Arrays.asList(\n    Arrays.asList(1, 2),\n    Arrays.asList(3, 4)\n);\nList<Integer> flat = nested.stream()\n    .flatMap(list -> list.stream())\n    .collect(Collectors.toList());</code></pre>",
+      "options": [
+        "flat contient <code>[1, 2, 3, 4]</code>",
+        "flatMap transforme un Stream de Streams en un seul Stream",
+        "flatMap est équivalent à map dans ce cas",
+        "Le résultat est une liste à deux dimensions",
+        "flatMap est utilisé pour aplatir des structures",
+        "flat contient <code>[[1, 2], [3, 4]]</code>"
+      ],
+      "answer": [0, 1, 4],
+      "difficulty": "expert",
+      "explanation": "flatMap aplatit une structure imbriquée en transformant chaque élément en Stream puis en les fusionnant. Résultat : une liste plate [1,2,3,4]."
+    },
+    {
+      "topic": "Collections",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Map<String, Integer> map = new HashMap<>();\nmap.put(\"A\", 1);\nmap.put(\"B\", 2);\nmap.put(\"C\", 3);\nmap.computeIfAbsent(\"D\", k -> 4);\nmap.computeIfPresent(\"A\", (k, v) -> v + 10);\nSystem.out.println(map.get(\"A\") + \",\" + map.get(\"D\"));</code></pre>",
+      "options": [
+        "<code>1,4</code>",
+        "<code>11,4</code>",
+        "<code>1,null</code>",
+        "<code>11,null</code>",
+        "<code>NullPointerException</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "computeIfAbsent ajoute D→4 car D n'existe pas. computeIfPresent modifie A : 1+10=11. Donc A=11, D=4."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>List<String> words = Arrays.asList(\"apple\", \"banana\", \"cherry\");\nlong count = words.stream()\n    .filter(w -> w.length() > 5)\n    .map(String::toUpperCase)\n    .peek(System.out::print)\n    .count();\nSystem.out.println(\":\" + count);</code></pre>",
+      "options": [
+        "<code>BANANACHERRY:2</code>",
+        "<code>:2</code>",
+        "<code>BANANACHERRY:3</code>",
+        "<code>:3</code>",
+        "<code>BANANA:1</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "count() est optimisé et ne déclenche pas les opérations intermédiaires inutiles comme peek(). Le stream compte directement sans exécuter peek(). Résultat : 2 mots > 5 caractères."
+    },
+    {
+      "topic": "Collections",
+      "type": "multiple",
+      "question": "Quelles opérations sont thread-safe par défaut ?",
+      "options": [
+        "<code>Vector.add()</code>",
+        "<code>ArrayList.add()</code>",
+        "<code>Collections.synchronizedList(list).add()</code>",
+        "<code>CopyOnWriteArrayList.add()</code>",
+        "<code>LinkedList.add()</code>",
+        "<code>ConcurrentHashMap.put()</code>"
+      ],
+      "answer": [0, 2, 3, 5],
+      "difficulty": "expert",
+      "explanation": "Vector est synchronized (legacy). Collections.synchronizedList() crée un wrapper thread-safe. CopyOnWriteArrayList et ConcurrentHashMap sont thread-safe. ArrayList et LinkedList ne le sont pas."
+    }
+  ]
+}
