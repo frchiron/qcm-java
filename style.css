@@ -284,3 +284,15 @@ body.home-page {
 .pie-chart.danger {
     background: conic-gradient(#ef4444 0deg var(--success-angle), #e5e7eb var(--success-angle) 360deg);
 }
+
+/* Bouton retour à l'accueil fixe en bas à droite */
+#home-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    font-size: 0.9rem;
+    padding: 10px 16px;
+}
+
