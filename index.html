@@ -217,11 +217,19 @@ function updateExamCard(cardId, badgeInfo) {
                 card.insertBefore(scoreDisplay, card.querySelector('.exam-actions'));
             }
 
-            if (badgeInfo.score !== null) {
-                scoreDisplay.innerHTML = `
-                    <small>Meilleur score: <strong>${badgeInfo.score}%</strong></small>
-                    ${badgeInfo.attempts > 1 ? `<small>• ${badgeInfo.attempts} tentatives</small>` : ''}
-                `;
+            if (badgeInfo.bestScore !== null && badgeInfo.bestScore > 0) {
+                let scoreHTML = `<small>Meilleur: <strong>${badgeInfo.bestScore}%</strong></small>`;
+
+                // Afficher la moyenne seulement s'il y a plus d'une tentative
+                if (badgeInfo.attempts > 1 && badgeInfo.averageScore > 0) {
+                    scoreHTML += `<small> • Moyenne: <strong>${badgeInfo.averageScore}%</strong></small>`;
+                }
+
+                if (badgeInfo.attempts > 1) {
+                    scoreHTML += `<small> • ${badgeInfo.attempts} tentatives</small>`;
+                }
+
+                scoreDisplay.innerHTML = scoreHTML;
                 scoreDisplay.style.display = 'block';
             } else {
                 scoreDisplay.style.display = 'none';

@@ -46,7 +46,9 @@ class ProgressManager {
                 totalTimeSpent: 0,
                 status: 'new',
                 mode: mode,
-                completed: false
+                completed: false,
+                allScores: [], // Nouveau: stocker tous les scores
+                averagePercentage: 0 // Nouveau: moyenne des pourcentages
             };
         }
 
@@ -59,6 +61,18 @@ class ProgressManager {
         examProgress.lastAttempt = now;
         examProgress.totalTimeSpent += timeSpent;
         examProgress.mode = mode;
+
+        // Ajouter le nouveau score à la liste
+        examProgress.allScores.push({
+            score: score,
+            percentage: percentage,
+            date: now,
+            timeSpent: timeSpent
+        });
+
+        // Calculer la moyenne des pourcentages
+        const totalPercentage = examProgress.allScores.reduce((sum, attempt) => sum + attempt.percentage, 0);
+        examProgress.averagePercentage = Math.round(totalPercentage / examProgress.allScores.length);
 
         // Mettre à jour le meilleur score
         if (percentage > examProgress.bestPercentage) {
@@ -125,7 +139,16 @@ class ProgressManager {
 
     getExamProgress(examId) {
         const data = this.getData();
-        return data.userProgress[examId] || null;
+        const progress = data.userProgress[examId];
+
+        // Migration des anciennes données
+        if (progress && !progress.allScores) {
+            progress.allScores = [];
+            progress.averagePercentage = progress.bestPercentage || 0;
+            this.saveData(data);
+        }
+
+        return progress || null;
     }
 
     getAllExamProgress() {
@@ -187,7 +210,8 @@ class ProgressManager {
             badge: statusInfo.badge,
             text: statusInfo.text,
             color: statusInfo.color,
-            score: progress.bestPercentage,
+            bestScore: progress.bestPercentage,
+            averageScore: progress.averagePercentage || 0,
             attempts: progress.attempts,
             lastAttempt: progress.lastAttempt
         };
