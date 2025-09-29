@@ -165,6 +165,19 @@
 
 <script src="progressManager.js"></script>
 <script>
+// Mapping global des examens avec leurs IDs
+const examMappings = {
+    'exam1.json': 'DEV',
+    'exam5.json': 'H1',
+    'exam6.json': 'H2',
+    'exam7.json': 'H3',
+    'exam-12-heritage_and_co.json': 'H4',
+    'exam8.json': 'C1',
+    'exam9.json': 'C2',
+    'exam10.json': 'C3',
+    'exam11.json': 'C4'
+};
+
 // Charger et afficher les badges de progression
 document.addEventListener('DOMContentLoaded', function() {
     updateExamBadges();
@@ -172,26 +185,13 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function updateExamBadges() {
-    // Mapping des examens avec leurs IDs
-    const examMappings = {
-        'exam1.json': 'DEV',
-        'exam5.json': 'H1',
-        'exam6.json': 'H2',
-        'exam7.json': 'H3',
-        'exam-12-heritage_and_co.json': 'H4',
-        'exam8.json': 'C1',
-        'exam9.json': 'C2',
-        'exam10.json': 'C3',
-        'exam11.json': 'C4'
-    };
-
     Object.entries(examMappings).forEach(([examId, cardId]) => {
         const badgeInfo = progressManager.getExamBadgeInfo(examId);
-        updateExamCard(cardId, badgeInfo);
+        updateExamCard(cardId, badgeInfo, examId);
     });
 }
 
-function updateExamCard(cardId, badgeInfo) {
+function updateExamCard(cardId, badgeInfo, examId) {
     // Trouver la carte par le numéro d'examen
     const examCards = document.querySelectorAll('.exam-card.compact');
 
@@ -231,11 +231,83 @@ function updateExamCard(cardId, badgeInfo) {
 
                 scoreDisplay.innerHTML = scoreHTML;
                 scoreDisplay.style.display = 'block';
+
+                // Ajouter le bouton reset pour cet examen
+                let resetBtn = card.querySelector('.reset-exam-btn');
+                if (!resetBtn) {
+                    resetBtn = document.createElement('button');
+                    resetBtn.className = 'reset-exam-btn';
+                    resetBtn.innerHTML = '🗑️';
+                    resetBtn.title = 'Supprimer les statistiques de cet examen';
+                    card.querySelector('.exam-actions').appendChild(resetBtn);
+                }
+
+                // Ajouter l'event listener avec les bonnes données
+                const examTitle = card.querySelector('h4').textContent;
+
+                // Supprimer l'ancien listener et ajouter le nouveau
+                resetBtn.replaceWith(resetBtn.cloneNode(true));
+                resetBtn = card.querySelector('.reset-exam-btn');
+
+                resetBtn.onclick = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    resetExamStats(examId, examTitle);
+                };
             } else {
                 scoreDisplay.style.display = 'none';
+
+                // Supprimer le bouton reset s'il n'y a pas de stats
+                const resetBtn = card.querySelector('.reset-exam-btn');
+                if (resetBtn) {
+                    resetBtn.remove();
+                }
             }
         }
     });
+}
+
+function resetAllStats() {
+    const confirmation = confirm(
+        `⚠️ ATTENTION !\n\nÊtes-vous sûr de vouloir supprimer TOUTES vos statistiques ?\n\nCeci effacera définitivement :\n• Tous vos scores et moyennes\n• Vos temps d'étude\n• Votre historique complet\n\nCette action est irréversible !`
+    );
+
+    if (confirmation) {
+        const secondConfirmation = confirm(
+            "🚨 DERNIÈRE CHANCE !\n\nConfirmez-vous vraiment la suppression de toutes vos données ?\n\nTapez OK pour confirmer la suppression complète."
+        );
+
+        if (secondConfirmation) {
+            progressManager.resetAllProgress();
+            updateExamBadges();
+            displayGlobalStats();
+
+            // Notification de succès
+            alert("✅ Toutes les statistiques ont été supprimées avec succès !");
+        }
+    }
+}
+
+function resetExamStats(examId, examName) {
+    console.log('Reset demandé pour:', examId, examName);
+
+    const confirmation = confirm(
+        `⚠️ Supprimer les statistiques de "${examName}" ?\n\nCeci effacera :\n• Vos scores et moyenne pour cet examen\n• Votre temps d'étude pour cet examen\n• Votre historique pour cet examen\n\nCette action est irréversible !`
+    );
+
+    if (confirmation) {
+        console.log('Confirmation reçue, reset en cours...');
+        const success = progressManager.resetExamProgress(examId);
+        console.log('Résultat du reset:', success);
+
+        if (success) {
+            updateExamBadges();
+            displayGlobalStats();
+            alert(`✅ Statistiques de "${examName}" supprimées !`);
+        } else {
+            alert("❌ Erreur lors de la suppression.");
+        }
+    }
 }
 
 function displayGlobalStats() {
@@ -251,27 +323,45 @@ function displayGlobalStats() {
         card.insertBefore(statsSection, document.querySelector('.exam-categories'));
     }
 
-    if (stats.totalExamsAttempted > 0) {
+    const hasAnyProgress = progressManager.getTotalExamsWithProgress() > 0;
+
+    if (hasAnyProgress) {
+        let statsHTML = '';
+
+        if (stats.totalExamsAttempted > 0) {
+            statsHTML = `
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <span class="stat-number">${stats.totalExamsCompleted}</span>
+                        <span class="stat-label">Examens réussis</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">${stats.averageScore}%</span>
+                        <span class="stat-label">Score moyen</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">${progressManager.formatTime(stats.totalStudyTime)}</span>
+                        <span class="stat-label">Temps d'étude</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">${stats.bestScore}%</span>
+                        <span class="stat-label">Meilleur score</span>
+                    </div>
+                </div>`;
+        }
+
         statsSection.innerHTML = `
-            <div class="stats-container">
-                <div class="stat-item">
-                    <span class="stat-number">${stats.totalExamsCompleted}</span>
-                    <span class="stat-label">Examens réussis</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">${stats.averageScore}%</span>
-                    <span class="stat-label">Score moyen</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">${progressManager.formatTime(stats.totalStudyTime)}</span>
-                    <span class="stat-label">Temps d'étude</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">${stats.bestScore}%</span>
-                    <span class="stat-label">Meilleur score</span>
-                </div>
+            ${statsHTML}
+            <div class="reset-section">
+                <button id="reset-all-btn" class="reset-btn">🗑️ Reset toutes les statistiques</button>
             </div>
         `;
+
+        // Ajouter l'event listener pour le bouton reset global
+        const resetBtn = document.getElementById('reset-all-btn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', resetAllStats);
+        }
     } else {
         statsSection.innerHTML = '<p style="text-align: center; color: #666; font-style: italic;">Commencez votre premier examen pour voir vos statistiques !</p>';
     }

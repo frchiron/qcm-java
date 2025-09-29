@@ -518,6 +518,66 @@ body.home-page {
     flex: 1;
 }
 
+/* Boutons de reset */
+.reset-section {
+    margin-top: 15px;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    padding-top: 15px;
+}
+
+.reset-btn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reset-btn:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+
+.reset-btn:active {
+    transform: translateY(0);
+}
+
+/* Bouton reset sur les cartes d'examen */
+.reset-exam-btn {
+    background: #f87171;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: 4px;
+    opacity: 0.8;
+}
+
+.reset-exam-btn:hover {
+    background: #ef4444;
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.reset-exam-btn:active {
+    transform: scale(0.95);
+}
+
+.exam-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .container .card {
@@ -597,6 +657,20 @@ body.home-page {
     .score-display small:not(:first-child) {
         margin-left: 0;
         margin-top: 2px;
+    }
+
+    .reset-btn {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+    }
+
+    .reset-exam-btn {
+        padding: 3px 5px;
+        font-size: 0.65rem;
+    }
+
+    .exam-actions {
+        gap: 6px;
     }
 }
 

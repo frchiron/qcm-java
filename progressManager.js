@@ -224,10 +224,37 @@ class ProgressManager {
         return `${Math.round(seconds / 3600)}h`;
     }
 
-    // Reset des données (pour debug)
-    resetProgress() {
+    // Reset complet de toutes les données
+    resetAllProgress() {
         localStorage.removeItem(this.storageKey);
         this.initializeStorage();
+        return true;
+    }
+
+    // Reset d'un examen spécifique
+    resetExamProgress(examId) {
+        const data = this.getData();
+
+        if (data.userProgress[examId]) {
+            delete data.userProgress[examId];
+
+            // Recalculer les statistiques globales
+            this.updateGlobalStats(data);
+            this.saveData(data);
+            return true;
+        }
+        return false;
+    }
+
+    // Obtenir le nombre total d'examens avec progression
+    getTotalExamsWithProgress() {
+        const data = this.getData();
+        return Object.keys(data.userProgress).length;
+    }
+
+    // Reset des données (pour debug - gardé pour compatibilité)
+    resetProgress() {
+        return this.resetAllProgress();
     }
 }
 

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Reset Functions</title>
+</head>
+<body>
+    <h1>Test des fonctions de reset</h1>
+
+    <button onclick="testProgressManager()">Test ProgressManager</button>
+    <button onclick="addTestData()">Ajouter données de test</button>
+    <button onclick="testResetExam()">Test Reset Examen</button>
+    <button onclick="testResetAll()">Test Reset Global</button>
+
+    <div id="results"></div>
+
+    <script src="progressManager.js"></script>
+    <script>
+        function log(message) {
+            document.getElementById('results').innerHTML += '<p>' + message + '</p>';
+            console.log(message);
+        }
+
+        function testProgressManager() {
+            log('=== Test ProgressManager ===');
+            const stats = progressManager.getGlobalStats();
+            log('Stats globales: ' + JSON.stringify(stats, null, 2));
+
+            const totalExams = progressManager.getTotalExamsWithProgress();
+            log('Nombre d\'examens avec progression: ' + totalExams);
+
+            const examProgress = progressManager.getExamProgress('exam1.json');
+            log('Progression exam1: ' + JSON.stringify(examProgress, null, 2));
+        }
+
+        function addTestData() {
+            log('=== Ajout données de test ===');
+            progressManager.saveExamResult('exam1.json', 16, 20, 300, 'exam');
+            progressManager.saveExamResult('exam5.json', 18, 20, 450, 'exam');
+            log('Données de test ajoutées');
+            testProgressManager();
+        }
+
+        function testResetExam() {
+            log('=== Test Reset Examen ===');
+            const before = progressManager.getExamProgress('exam1.json');
+            log('Avant reset: ' + JSON.stringify(before, null, 2));
+
+            const success = progressManager.resetExamProgress('exam1.json');
+            log('Reset réussi: ' + success);
+
+            const after = progressManager.getExamProgress('exam1.json');
+            log('Après reset: ' + JSON.stringify(after, null, 2));
+        }
+
+        function testResetAll() {
+            log('=== Test Reset Global ===');
+            const before = progressManager.getTotalExamsWithProgress();
+            log('Examens avant reset: ' + before);
+
+            const success = progressManager.resetAllProgress();
+            log('Reset global réussi: ' + success);
+
+            const after = progressManager.getTotalExamsWithProgress();
+            log('Examens après reset: ' + after);
+        }
+    </script>
+</body>
+</html>
