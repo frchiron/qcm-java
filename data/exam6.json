@@ -1,0 +1,266 @@
+{
+  "title": "Certification Java 21 - Niveau Expert OCP",
+  "duration": 50,
+  "questions": [
+    {
+      "topic": "Polymorphisme",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class A {\n    void method(A a) { System.out.print(\"A-A\"); }\n    void method(B b) { System.out.print(\"A-B\"); }\n}\nclass B extends A {\n    void method(A a) { System.out.print(\"B-A\"); }\n    void method(B b) { System.out.print(\"B-B\"); }\n}\nA obj1 = new B();\nB obj2 = new B();\nobj1.method(obj2);</code></pre>",
+      "options": [
+        "<code>A-B</code>",
+        "<code>B-B</code>",
+        "<code>B-A</code>",
+        "<code>A-A</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "La résolution de surcharge se fait à la compilation sur le type statique (A obj1, B obj2), donc method(B). Le polymorphisme choisit l'implémentation de B."
+    },
+    {
+      "topic": "Héritage",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>class Parent {\n    static { System.out.print(\"1\"); }\n    { System.out.print(\"2\"); }\n    Parent() { method(); }\n    void method() { System.out.print(\"3\"); }\n}\nclass Child extends Parent {\n    int x = 4;\n    { System.out.print(x); }\n    void method() { System.out.print(x); }\n}\nnew Child();</code></pre>",
+      "options": [
+        "<code>1234</code>",
+        "<code>1024</code>",
+        "<code>1304</code>",
+        "<code>1234</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Init static Parent (1), bloc instance Parent (2), constructeur Parent appelle method() de Child mais x pas encore initialisé (0), bloc instance Child (4)."
+    },
+    {
+      "topic": "Interfaces",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>interface I1 { default String get() { return \"I1\"; } }\ninterface I2 { default String get() { return \"I2\"; } }\ninterface I3 extends I1 { }\ninterface I4 extends I2 { }\nclass C implements I3, I4 {\n    public String get() { return I3.super.get(); }\n}\nSystem.out.print(new C().get());</code></pre>",
+      "options": [
+        "<code>I1</code>",
+        "<code>I2</code>",
+        "<code>Compilation error - I3 has no default</code>",
+        "<code>Compilation error - ambiguous</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "I3.super.get() remonte à l'implémentation de I1 via I3. I3 hérite de la méthode default de I1."
+    },
+    {
+      "topic": "Encapsulation",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>record Wrapper(StringBuilder sb) {\n    public Wrapper {\n        sb.append(\"init\");\n    }\n    public StringBuilder sb() { return new StringBuilder(sb); }\n}\nStringBuilder original = new StringBuilder(\"test\");\nWrapper w = new Wrapper(original);\nw.sb().append(\"X\");\nSystem.out.print(original);</code></pre>",
+      "options": [
+        "<code>test</code>",
+        "<code>testinit</code>",
+        "<code>testinitX</code>",
+        "<code>testX</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Le constructeur compact modifie original (testinit). L'accesseur retourne une copie, donc append(\"X\") n'affecte pas original."
+    },
+    {
+      "topic": "Overriding",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Base {\n    void method(int i, long l) { System.out.print(\"Base\"); }\n}\nclass Derived extends Base {\n    void method(long l, int i) { System.out.print(\"Derived\"); }\n}\nDerived d = new Derived();\nd.method(10, 20L);</code></pre>",
+      "options": [
+        "<code>Base</code>",
+        "<code>Derived</code>",
+        "<code>Compilation error - ambiguous</code>",
+        "<code>Runtime error</code>"
+      ],
+      "answer": 2,
+      "difficulty": "expert",
+      "explanation": "Les deux signatures (int,long) et (long,int) correspondent avec élargissement. Le compilateur ne peut pas décider, erreur d'ambiguïté."
+    },
+    {
+      "topic": "Polymorphisme",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>class X {\n    X method() { System.out.print(\"X\"); return this; }\n}\nclass Y extends X {\n    Y method() { System.out.print(\"Y\"); return this; }\n}\nclass Z extends Y {\n    X method() { System.out.print(\"Z\"); return this; }\n}\nnew Z().method();</code></pre>",
+      "options": [
+        "<code>Z</code>",
+        "<code>Y</code>",
+        "<code>X</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 3,
+      "difficulty": "expert",
+      "explanation": "Z.method() retourne X, ce qui n'est pas un type covariant valide car Y.method() retourne Y (plus spécifique). On ne peut pas \"élargir\" le type de retour."
+    },
+    {
+      "topic": "Héritage",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class A {\n    A(int x) { System.out.print(\"A\" + x); }\n}\nclass B extends A {\n    static { System.out.print(\"S\"); }\n    { System.out.print(\"I\"); }\n    B() { super(getValue()); }\n    static int getValue() { System.out.print(\"V\"); return 1; }\n}\nnew B();</code></pre>",
+      "options": [
+        "<code>SVA1I</code>",
+        "<code>SVIA1</code>",
+        "<code>VA1SI</code>",
+        "<code>SVA1</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "Init static B (S), constructeur B appelle getValue (V), super(1) appelle A (A1), puis bloc instance B (I)."
+    },
+    {
+      "topic": "Interfaces",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>interface Service {\n    default void process() { helper(); }\n    private void helper() { System.out.print(\"Private\"); }\n    static void run() { new Service() {}.process(); }\n}\nService.run();</code></pre>",
+      "options": [
+        "<code>Private</code>",
+        "<code>Compilation error - anonymous class</code>",
+        "<code>Compilation error - private method</code>",
+        "<code>Runtime error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "Les classes anonymes peuvent implémenter des interfaces avec méthodes default. helper() est accessible car private dans l'interface même."
+    },
+    {
+      "topic": "Encapsulation",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Outer {\n    private int x = 1;\n    class Inner {\n        private int x = 2;\n        class InnerMost {\n            private int x = 3;\n            void show() { System.out.print(x + \",\" + Inner.this.x + \",\" + Outer.this.x); }\n        }\n    }\n}\nnew Outer().new Inner().new InnerMost().show();</code></pre>",
+      "options": [
+        "<code>1,2,3</code>",
+        "<code>3,2,1</code>",
+        "<code>3,3,3</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "x local à InnerMost (3), Inner.this.x de Inner (2), Outer.this.x de Outer (1). Chaque niveau a son propre x."
+    },
+    {
+      "topic": "Overriding",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>class A {\n    void method() throws IOException { System.out.print(\"A\"); }\n}\nclass B extends A {\n    @Override void method() { System.out.print(\"B\"); }\n}\nclass C extends B {\n    @Override void method() throws Exception { System.out.print(\"C\"); }\n}</code></pre>",
+      "options": [
+        "<code>Compilation error dans B</code>",
+        "<code>Compilation error dans C</code>",
+        "<code>No compilation error</code>",
+        "<code>Compilation error dans A</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "B peut ne pas déclarer d'exception (sous-ensemble de IOException). Mais C ne peut pas déclarer Exception (plus large que ce que B déclare)."
+    },
+    {
+      "topic": "Polymorphisme",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Test {\n    void method(int... nums) { System.out.print(\"int-varargs\"); }\n    void method(Integer i1, Integer i2) { System.out.print(\"Integer-two\"); }\n    void method(int i1, int i2) { System.out.print(\"int-two\"); }\n}\nnew Test().method(1, 2);</code></pre>",
+      "options": [
+        "<code>int-varargs</code>",
+        "<code>Integer-two</code>",
+        "<code>int-two</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 2,
+      "difficulty": "expert",
+      "explanation": "La résolution privilégie les signatures exactes avant varargs et avant autoboxing. int-two correspond exactement."
+    },
+    {
+      "topic": "Héritage",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>sealed class Vehicle permits Car, Truck {}\nfinal class Car extends Vehicle {}\nnon-sealed class Truck extends Vehicle {}\nclass PickupTruck extends Truck {}\nVehicle v = new PickupTruck();\nSystem.out.print(v instanceof Truck);</code></pre>",
+      "options": [
+        "<code>true</code>",
+        "<code>false</code>",
+        "<code>Compilation error - sealed violation</code>",
+        "<code>Runtime error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "non-sealed permet à Truck d'avoir des sous-classes. PickupTruck extends Truck est valide, et instanceof Truck retourne true."
+    },
+    {
+      "topic": "Interfaces",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>interface A { String VALUE = \"A\"; }\ninterface B extends A { String VALUE = \"B\"; }\ninterface C extends A { String VALUE = \"C\"; }\nclass D implements B, C {\n    void show() { System.out.print(VALUE); }\n}\nnew D().show();</code></pre>",
+      "options": [
+        "<code>A</code>",
+        "<code>B</code>",
+        "<code>C</code>",
+        "<code>Compilation error - ambiguous</code>"
+      ],
+      "answer": 3,
+      "difficulty": "expert",
+      "explanation": "VALUE est ambigu entre B.VALUE et C.VALUE. Il faut qualifier explicitement : B.VALUE ou C.VALUE."
+    },
+    {
+      "topic": "Encapsulation",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>class Box<T> {\n    private T value;\n    Box(T value) { this.value = value; }\n    T getValue() { return value; }\n}\nclass StringBox extends Box<String> {\n    StringBox(String s) { super(s); }\n    Integer getValue() { return Integer.parseInt(super.getValue()); }\n}\nBox<String> box = new StringBox(\"42\");\nSystem.out.print(box.getValue());</code></pre>",
+      "options": [
+        "<code>42</code> (Integer)",
+        "<code>42</code> (String)",
+        "<code>Compilation error dans StringBox</code>",
+        "<code>Runtime error</code>"
+      ],
+      "answer": 2,
+      "difficulty": "expert",
+      "explanation": "Integer n'est pas un type de retour covariant valide pour String. Les types de retour covariants doivent être des sous-types, pas des types incompatibles."
+    },
+    {
+      "topic": "Overriding",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Parent {\n    void method(Number n) { System.out.print(\"Parent\"); }\n}\nclass Child extends Parent {\n    void method(Integer i) { System.out.print(\"Child\"); }\n}\nChild c = new Child();\nNumber n = 10;\nc.method(n);</code></pre>",
+      "options": [
+        "<code>Parent</code>",
+        "<code>Child</code>",
+        "<code>Compilation error</code>",
+        "<code>Runtime error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "method(Integer) est une surcharge, pas une redéfinition. method(Number) est héritée. Le type statique Number choisit method(Number)."
+    },
+    {
+      "topic": "Polymorphisme",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>abstract class Animal {\n    abstract void sound();\n    final void makeSound() { sound(); }\n}\nclass Dog extends Animal {\n    void sound() { System.out.print(\"Bark\"); }\n    void makeSound() { System.out.print(\"Dog:\"); super.makeSound(); }\n}</code></pre>",
+      "options": [
+        "<code>Compilation error - cannot override final</code>",
+        "<code>Compilation error - cannot override abstract</code>",
+        "<code>No error</code>",
+        "<code>Runtime error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "makeSound() est final dans Animal et ne peut pas être redéfinie dans Dog. Erreur de compilation."
+    },
+    {
+      "topic": "Héritage",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class A {\n    int x = 10;\n    A(int x) { this.x = x; System.out.print(this.x); }\n}\nclass B extends A {\n    int x = 20;\n    B() { super(++x); System.out.print(x); }\n}\nnew B();</code></pre>",
+      "options": [
+        "<code>2120</code>",
+        "<code>2121</code>",
+        "<code>Compilation error</code>",
+        "<code>1020</code>"
+      ],
+      "answer": 2,
+      "difficulty": "expert",
+      "explanation": "On ne peut pas référencer le champ d'instance x dans super(++x) car les champs ne sont pas initialisés avant l'appel à super()."
+    },
+    {
+      "topic": "Interfaces",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>interface Calculator {\n    static int add(int a, int b) { return a + b; }\n    default int multiply(int a, int b) { return a * b; }\n}\nclass MyCalc implements Calculator {\n    static int add(int a, int b) { return a + b + 1; }\n}\nSystem.out.print(MyCalc.add(2, 3));</code></pre>",
+      "options": [
+        "<code>5</code>",
+        "<code>6</code>",
+        "<code>Compilation error - static conflict</code>",
+        "<code>Runtime error</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Les méthodes static d'interfaces ne sont pas héritées. MyCalc.add() est une nouvelle méthode static indépendante qui retourne 6."
+    },
+    {
+      "topic": "Encapsulation",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Test {\n    private void method() { System.out.print(\"Private\"); }\n    void execute() { \n        Runnable r = this::method;\n        r.run();\n    }\n}\nclass SubTest extends Test {\n    public void method() { System.out.print(\"Public\"); }\n}\nnew SubTest().execute();</code></pre>",
+      "options": [
+        "<code>Private</code>",
+        "<code>Public</code>",
+        "<code>Compilation error</code>",
+        "<code>Runtime error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "La référence de méthode this::method est résolue à la compilation dans le contexte de Test, donc elle pointe vers Test.method() (private)."
+    },
+    {
+      "topic": "Overriding",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>class Parent {\n    strictfp double calculate() { return 1.0; }\n}\nclass Child extends Parent {\n    double calculate() { return 2.0; }\n}\nParent p = new Child();\nSystem.out.print(p.calculate());</code></pre>",
+      "options": [
+        "<code>1.0</code>",
+        "<code>2.0</code>",
+        "<code>Compilation error - must be strictfp</code>",
+        "<code>Depends on JVM</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "strictfp n'est pas requis dans la redéfinition (depuis Java 17, strictfp est d'ailleurs obsolète). Le polymorphisme appelle Child.calculate()."
+    }
+  ]
+}
