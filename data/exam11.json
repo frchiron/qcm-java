@@ -1,0 +1,326 @@
+{
+  "title": "Certification Java 21 - Collections/Streams/Lambda - Focus reduce()",
+  "duration": 50,
+  "questions": [
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Stream<Integer> stream = Stream.of(1, 2, 3, 4);\nOptional<Integer> result = stream.reduce((a, b) -> a * b);\nSystem.out.println(result.get());</code></pre>",
+      "options": [
+        "<code>10</code>",
+        "<code>24</code>",
+        "<code>1</code>",
+        "<code>4</code>",
+        "<code>NoSuchElementException</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "reduce sans valeur initiale retourne Optional<T>. Il multiplie : 1 * 2 * 3 * 4 = 24."
+    },
+    {
+      "topic": "Streams",
+      "type": "multiple",
+      "question": "Quelles signatures de reduce() existent sur Stream<T> ?",
+      "options": [
+        "<code>Optional&lt;T&gt; reduce(BinaryOperator&lt;T&gt; accumulator)</code>",
+        "<code>T reduce(T identity, BinaryOperator&lt;T&gt; accumulator)</code>",
+        "<code>&lt;U&gt; U reduce(U identity, BiFunction&lt;U,? super T,U&gt; accumulator, BinaryOperator&lt;U&gt; combiner)</code>",
+        "<code>T reduce(BinaryOperator&lt;T&gt; accumulator)</code>",
+        "<code>Optional&lt;T&gt; reduce(T identity, BinaryOperator&lt;T&gt; accumulator)</code>",
+        "<code>int reduce(int identity, IntBinaryOperator op)</code>"
+      ],
+      "answer": [0, 1, 2],
+      "difficulty": "expert",
+      "explanation": "Stream<T> a 3 surcharges de reduce : (BinaryOperator) retournant Optional<T>, (identity, BinaryOperator) retournant T, et (identity, BiFunction, combiner) pour type différent."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>IntStream stream = IntStream.of(2, 4, 6, 8);\nint result = stream.reduce((a, b) -> a + b).getAsInt();\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "<code>20</code>",
+        "<code>0</code>",
+        "<code>8</code>",
+        "<code>Compilation error</code>",
+        "<code>NoSuchElementException</code>",
+        "<code>2</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "IntStream.reduce(IntBinaryOperator) retourne OptionalInt. L'addition donne : 2 + 4 + 6 + 8 = 20."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Stream<String> stream = Stream.of(\"a\", \"b\", \"c\");\nString result = stream.reduce(\"\", (s1, s2) -> s1 + s2);\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "<code>abc</code>",
+        "<code>\"\"</code>",
+        "<code>c</code>",
+        "<code>Compilation error</code>",
+        "<code>Optional[abc]</code>",
+        "<code>a</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "reduce avec identity \"\" concatène : \"\" + \"a\" + \"b\" + \"c\" = \"abc\". Cette surcharge retourne T, pas Optional<T>."
+    },
+    {
+      "topic": "Streams",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant ce code ?<br><pre><code class='language-java'>IntStream stream = IntStream.empty();\nOptionalInt result1 = stream.reduce((a, b) -> a + b);\nint result2 = IntStream.empty().reduce(10, (a, b) -> a + b);</code></pre>",
+      "options": [
+        "result1.isPresent() retourne false",
+        "result1.getAsInt() lance NoSuchElementException",
+        "result2 vaut 0",
+        "result2 vaut 10",
+        "result1 est null",
+        "Le code compile correctement"
+      ],
+      "answer": [0, 1, 3, 5],
+      "difficulty": "expert",
+      "explanation": "Sur stream vide sans identity : OptionalInt vide (isPresent=false, getAsInt lance exception). Avec identity (10) : retourne l'identity car aucun élément à traiter."
+    },
+    {
+      "topic": "Collections",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);\nInteger result = list.stream()\n    .reduce(0, (a, b) -> a + b, (a, b) -> a * b);\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "<code>15</code>",
+        "<code>0</code>",
+        "<code>120</code>",
+        "<code>Compilation error</code>",
+        "<code>5</code>",
+        "<code>1</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "Le combiner (a*b) n'est utilisé que pour les streams parallèles. En séquentiel, seul l'accumulator est utilisé : 0+1+2+3+4+5 = 15."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>Stream<Integer> stream = Stream.of(5, 10, 15);\nOptional<Integer> result = stream.reduce(Integer::max);\nSystem.out.println(result.orElse(-1));</code></pre>",
+      "options": [
+        "<code>15</code>",
+        "<code>5</code>",
+        "<code>30</code>",
+        "<code>-1</code>",
+        "<code>10</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "reduce avec Integer::max trouve le maximum : max(5, 10) = 10, puis max(10, 15) = 15."
+    },
+    {
+      "topic": "Streams",
+      "type": "multiple",
+      "question": "Quelles différences existent entre reduce() sur Stream<T> et IntStream ?",
+      "options": [
+        "Stream<T>.reduce(BinaryOperator) retourne Optional<T>",
+        "IntStream.reduce(IntBinaryOperator) retourne OptionalInt",
+        "IntStream n'a pas de surcharge avec 3 paramètres",
+        "Stream<T> peut utiliser un combiner pour le parallélisme",
+        "IntStream.reduce() peut retourner long",
+        "Les deux supportent les mêmes signatures"
+      ],
+      "answer": [0, 1, 3],
+      "difficulty": "expert",
+      "explanation": "Stream<T> retourne Optional<T>, IntStream retourne OptionalInt. Les deux ont 2 surcharges (avec/sans identity). Stream<T> a une 3ème surcharge avec combiner pour types différents."
+    },
+    {
+      "topic": "Lambda",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>BinaryOperator<Integer> op = (a, b) -> a - b;\nStream<Integer> stream = Stream.of(10, 3, 2);\nOptional<Integer> result = stream.reduce(op);\nSystem.out.println(result.get());</code></pre>",
+      "options": [
+        "<code>5</code>",
+        "<code>15</code>",
+        "<code>-5</code>",
+        "<code>10</code>",
+        "<code>Compilation error</code>",
+        "<code>9</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "reduce applique l'opérateur de gauche à droite : (10 - 3) - 2 = 7 - 2 = 5."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>List<String> words = Arrays.asList(\"Java\", \"Python\", \"C++\");\nint totalLength = words.stream()\n    .reduce(0, \n            (sum, word) -> sum + word.length(), \n            (sum1, sum2) -> sum1 + sum2);\nSystem.out.println(totalLength);</code></pre>",
+      "options": [
+        "<code>14</code>",
+        "<code>0</code>",
+        "<code>3</code>",
+        "<code>Compilation error</code>",
+        "<code>ClassCastException</code>",
+        "<code>7</code>"
+      ],
+      "answer": 3,
+      "difficulty": "expert",
+      "explanation": "Erreur de compilation : le premier paramètre (0) doit être de type String, pas int. La signature est <U> U reduce(U identity, BiFunction<U,T,U>, BinaryOperator<U>)."
+    },
+    {
+      "topic": "Arrays",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int[] arr = {1, 2, 3, 4, 5};\nint sum = Arrays.stream(arr).reduce(0, (a, b) -> a + b);\nSystem.out.println(sum);</code></pre>",
+      "options": [
+        "<code>15</code>",
+        "<code>0</code>",
+        "<code>5</code>",
+        "<code>Compilation error</code>",
+        "<code>10</code>",
+        "<code>1</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "Arrays.stream(int[]) crée un IntStream. reduce(0, op) additionne tous les éléments : 0+1+2+3+4+5 = 15."
+    },
+    {
+      "topic": "Streams",
+      "type": "multiple",
+      "question": "Quand le combiner est-il utilisé dans reduce() ?",
+      "options": [
+        "Toujours, même sur les streams séquentiels",
+        "Uniquement sur les streams parallèles",
+        "Pour combiner les résultats partiels des threads",
+        "Jamais, il est ignoré",
+        "Quand l'identity et le type de retour diffèrent du type d'élément",
+        "Seulement avec la surcharge à 3 paramètres"
+      ],
+      "answer": [1, 2, 4, 5],
+      "difficulty": "expert",
+      "explanation": "Le combiner n'est utilisé que pour les streams parallèles (ou la surcharge 3 paramètres avec types différents) pour combiner les résultats partiels calculés par différents threads."
+    },
+    {
+      "topic": "Collections",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List<Integer> numbers = List.of(1, 2, 3, 4);\nInteger product = numbers.parallelStream()\n    .reduce(1, (a, b) -> a * b, (a, b) -> a + b);\nSystem.out.println(product);</code></pre>",
+      "options": [
+        "<code>24</code>",
+        "<code>10</code>",
+        "Résultat imprévisible",
+        "<code>1</code>",
+        "<code>Compilation error</code>",
+        "<code>4</code>"
+      ],
+      "answer": 2,
+      "difficulty": "expert",
+      "explanation": "Accumulator multiplie, combiner additionne : incohérent ! Les résultats partiels multipliés sont ensuite additionnés, donnant un résultat imprévisible selon la partition."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>IntStream.range(1, 4)\n    .reduce((a, b) -> {\n        System.out.print(a + \",\" + b + \";\");\n        return a + b;\n    });\nSystem.out.print(\"END\");</code></pre>",
+      "options": [
+        "<code>1,2;3,3;END</code>",
+        "<code>END</code>",
+        "<code>1,2;END</code>",
+        "<code>Compilation error</code>",
+        "<code>1,2;3,3;6,4;END</code>",
+        "<code>1,2;1,3;END</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "range(1,4) génère [1,2,3]. reduce combine : (1,2)→3, puis (3,3)→6. Affiche 1,2;3,3;END. Le reduce retourne OptionalInt mais n'est pas terminé par get()."
+    },
+    {
+      "topic": "Lambda",
+      "type": "multiple",
+      "question": "Quels types fonctionnels peuvent être utilisés avec reduce() ?",
+      "options": [
+        "<code>BinaryOperator&lt;T&gt;</code>",
+        "<code>BiFunction&lt;T, T, T&gt;</code>",
+        "<code>IntBinaryOperator</code>",
+        "<code>BiConsumer&lt;T, T&gt;</code>",
+        "<code>Function&lt;T, T&gt;</code>",
+        "<code>BiFunction&lt;U, T, U&gt;</code>"
+      ],
+      "answer": [0, 1, 2, 5],
+      "difficulty": "expert",
+      "explanation": "reduce utilise BinaryOperator<T> (qui extends BiFunction<T,T,T>), IntBinaryOperator pour IntStream, et BiFunction<U,T,U> pour l'accumulator dans la surcharge 3 paramètres."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Stream<Integer> stream = Stream.of(2, 3, 4);\nOptional<Integer> result = stream\n    .map(n -> n * n)\n    .reduce(Integer::sum);\nSystem.out.println(result.orElse(0));</code></pre>",
+      "options": [
+        "<code>29</code>",
+        "<code>24</code>",
+        "<code>9</code>",
+        "<code>0</code>",
+        "<code>Compilation error</code>",
+        "<code>4</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "map(n*n) transforme [2,3,4] en [4,9,16]. reduce(Integer::sum) additionne : 4 + 9 + 16 = 29."
+    },
+    {
+      "topic": "Collections",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant ce code ?<br><pre><code class='language-java'>List<String> list = new ArrayList<>();\nlist.add(\"a\");\nlist.add(\"b\");\nString result = list.stream().reduce((s1, s2) -> s1 + s2).get();</code></pre>",
+      "options": [
+        "result vaut <code>\"ab\"</code>",
+        "result vaut <code>\"ba\"</code>",
+        "Le code compile correctement",
+        "get() peut lancer NoSuchElementException si list est vide",
+        "reduce retourne Optional<String>",
+        "reduce retourne String"
+      ],
+      "answer": [0, 2, 3, 4],
+      "difficulty": "expert",
+      "explanation": "reduce sans identity retourne Optional<String>. Pour cette liste, concatène \"a\" + \"b\" = \"ab\". get() lancerait exception si la liste était vide."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>LongStream stream = LongStream.of(100L, 200L, 300L);\nlong result = stream.reduce(50L, (a, b) -> a + b);\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "<code>650</code>",
+        "<code>600</code>",
+        "<code>50</code>",
+        "<code>300</code>",
+        "<code>Compilation error</code>",
+        "<code>150</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "LongStream.reduce(50L, op) additionne avec l'identity : 50 + 100 + 200 + 300 = 650."
+    },
+    {
+      "topic": "Arrays",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>double[] arr = {1.5, 2.5, 3.5};\nOptionalDouble result = Arrays.stream(arr)\n    .reduce((a, b) -> a * b);\nSystem.out.println(result.isPresent() ? result.getAsDouble() : 0);</code></pre>",
+      "options": [
+        "<code>13.125</code>",
+        "<code>7.5</code>",
+        "<code>0.0</code>",
+        "<code>Compilation error</code>",
+        "<code>3.5</code>",
+        "<code>1.5</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "Arrays.stream(double[]) crée DoubleStream. reduce multiplie : 1.5 * 2.5 * 3.5 = 13.125."
+    },
+    {
+      "topic": "Streams",
+      "type": "multiple",
+      "question": "Quelles sont les conditions pour qu'un reduce() fonctionne correctement en parallèle ?",
+      "options": [
+        "L'opération doit être associative",
+        "L'opération doit être commutative",
+        "L'identity doit être l'élément neutre",
+        "Le combiner doit être cohérent avec l'accumulator",
+        "L'ordre des éléments doit être préservé",
+        "Les opérations doivent être sans état (stateless)"
+      ],
+      "answer": [0, 2, 3, 5],
+      "difficulty": "expert",
+      "explanation": "Pour reduce parallèle : associativité requise, identity = élément neutre (identity op x = x), combiner cohérent avec accumulator, opérations stateless. Commutativité souhaitable mais pas obligatoire."
+    }
+  ]
+}

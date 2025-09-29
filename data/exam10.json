@@ -1,0 +1,326 @@
+{
+  "title": "Certification Java 21 - Collections/Arrays/Streams/Lambda - Expert Level 3",
+  "duration": 50,
+  "questions": [
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);\nInteger result = list.stream()\n    .reduce(10, (a, b) -> a + b);\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "<code>15</code>",
+        "<code>25</code>",
+        "<code>10</code>",
+        "<code>5</code>",
+        "<code>Compilation error</code>",
+        "<code>NullPointerException</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "reduce avec une valeur initiale (10) additionne : 10 + 1 + 2 + 3 + 4 + 5 = 25. La valeur initiale fait partie du calcul."
+    },
+    {
+      "topic": "Collections",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant ce code ?<br><pre><code class='language-java'>List<String> list = new ArrayList<>();\nlist.add(\"A\");\nlist.add(\"B\");\nIterator<String> it = list.iterator();\nlist.add(\"C\");\nwhile(it.hasNext()) {\n    System.out.print(it.next());\n}</code></pre>",
+      "options": [
+        "Le code affiche <code>AB</code>",
+        "Le code affiche <code>ABC</code>",
+        "Le code lance <code>ConcurrentModificationException</code>",
+        "L'itérateur détecte la modification structurelle",
+        "Le code compile sans erreur",
+        "it.next() lance l'exception"
+      ],
+      "answer": [2, 3, 4, 5],
+      "difficulty": "expert",
+      "explanation": "L'ajout de \"C\" après création de l'itérateur modifie structurellement la liste. L'itérateur fail-fast détecte cela et lance ConcurrentModificationException lors de next()."
+    },
+    {
+      "topic": "Lambda",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Function<String, String> f1 = s -> s.toUpperCase();\nFunction<String, String> f2 = s -> s + \"!\";\nFunction<String, String> f3 = f1.andThen(f2);\nSystem.out.println(f3.apply(\"hello\"));</code></pre>",
+      "options": [
+        "<code>HELLO!</code>",
+        "<code>hello!</code>",
+        "<code>HELLO</code>",
+        "<code>hello!HELLO</code>",
+        "<code>Compilation error</code>",
+        "<code>!HELLO</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "andThen exécute f1 puis f2 sur le résultat. f1 transforme \"hello\" en \"HELLO\", puis f2 ajoute \"!\" → \"HELLO!\"."
+    },
+    {
+      "topic": "Arrays",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>int[] arr1 = {1, 2, 3};\nint[] arr2 = {1, 2, 3};\nSystem.out.println(arr1 == arr2);\nSystem.out.println(Arrays.equals(arr1, arr2));</code></pre>",
+      "options": [
+        "<code>true</code> puis <code>true</code>",
+        "<code>false</code> puis <code>true</code>",
+        "<code>true</code> puis <code>false</code>",
+        "<code>false</code> puis <code>false</code>",
+        "<code>Compilation error</code>",
+        "<code>NullPointerException</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "== compare les références (différentes) → false. Arrays.equals() compare le contenu élément par élément → true."
+    },
+    {
+      "topic": "Streams",
+      "type": "multiple",
+      "question": "Quelles opérations peuvent court-circuiter le traitement d'un stream ?",
+      "options": [
+        "<code>findFirst()</code>",
+        "<code>allMatch()</code>",
+        "<code>forEach()</code>",
+        "<code>anyMatch()</code>",
+        "<code>count()</code>",
+        "<code>limit()</code>"
+      ],
+      "answer": [0, 1, 3, 5],
+      "difficulty": "expert",
+      "explanation": "Les opérations de court-circuit : findFirst, findAny, anyMatch, allMatch, noneMatch, limit. forEach et count traitent tous les éléments."
+    },
+    {
+      "topic": "Collections",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Map<String, String> map = new HashMap<>();\nmap.put(\"key1\", \"value1\");\nmap.put(\"key2\", \"value2\");\nmap.merge(\"key1\", \"new\", (old, nev) -> old + nev);\nmap.merge(\"key3\", \"value3\", (old, nev) -> old + nev);\nSystem.out.println(map.get(\"key1\") + \",\" + map.get(\"key3\"));</code></pre>",
+      "options": [
+        "<code>value1new,value3</code>",
+        "<code>new,value3</code>",
+        "<code>value1,null</code>",
+        "<code>value1new,null</code>",
+        "<code>newvalue1,value3</code>",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "merge pour key1 existant applique la fonction : value1 + new = value1new. Pour key3 absent, insère value3 sans appeler la fonction."
+    },
+    {
+      "topic": "Lambda",
+      "type": "multiple",
+      "question": "Quelles sont des interfaces fonctionnelles valides en Java ?",
+      "options": [
+        "<code>Runnable</code>",
+        "<code>Comparable</code>",
+        "<code>Comparator</code>",
+        "<code>Cloneable</code>",
+        "<code>Supplier&lt;T&gt;</code>",
+        "<code>AutoCloseable</code>"
+      ],
+      "answer": [0, 1, 2, 4, 5],
+      "difficulty": "expert",
+      "explanation": "Une interface fonctionnelle a exactement une méthode abstraite. Runnable (run), Comparable (compareTo), Comparator (compare), Supplier (get), AutoCloseable (close). Cloneable n'a aucune méthode."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Stream<String> stream = Stream.of(\"a\", \"b\", \"c\", \"d\");\nlong count = stream\n    .filter(s -> s.compareTo(\"b\") > 0)\n    .peek(System.out::print)\n    .limit(2)\n    .count();\nSystem.out.println(\":\" + count);</code></pre>",
+      "options": [
+        "<code>cd:2</code>",
+        "<code>:2</code>",
+        "<code>c:1</code>",
+        "<code>cd:4</code>",
+        "<code>abcd:2</code>",
+        "<code>:4</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "count() est optimisé et peut ignorer les opérations intermédiaires comme peek(). Il compte directement : filter donne [c,d], limit(2) garde les 2 → count = 2, sans exécuter peek."
+    },
+    {
+      "topic": "Arrays",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant ce code ?<br><pre><code class='language-java'>String[] arr = {\"apple\", \"banana\", \"cherry\"};\nList<String> list = Arrays.asList(arr);\narr[0] = \"apricot\";\nlist.set(1, \"blueberry\");</code></pre>",
+      "options": [
+        "arr[0] vaut <code>\"apricot\"</code>",
+        "arr[1] vaut <code>\"blueberry\"</code>",
+        "list.get(0) vaut <code>\"apricot\"</code>",
+        "list.get(1) vaut <code>\"blueberry\"</code>",
+        "arr et list sont indépendants",
+        "Les modifications sont bidirectionnelles"
+      ],
+      "answer": [0, 1, 2, 3, 5],
+      "difficulty": "expert",
+      "explanation": "Arrays.asList() crée une vue sur le tableau. Les modifications de arr affectent list et vice-versa. Elles partagent le même stockage sous-jacent."
+    },
+    {
+      "topic": "Collections",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Set<Integer> set = new TreeSet<>();\nset.add(3);\nset.add(1);\nset.add(2);\nset.add(1);\nSystem.out.println(set);</code></pre>",
+      "options": [
+        "<code>[3, 1, 2, 1]</code>",
+        "<code>[1, 2, 3]</code>",
+        "<code>[3, 1, 2]</code>",
+        "<code>[1, 1, 2, 3]</code>",
+        "<code>[2, 1, 3]</code>",
+        "Ordre non déterminé"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "TreeSet élimine les doublons (le second 1 est ignoré) et trie selon l'ordre naturel : [1, 2, 3]."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>Optional<String> opt = Optional.ofNullable(null);\nString result = opt\n    .map(String::toUpperCase)\n    .orElse(\"DEFAULT\");\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "<code>null</code>",
+        "<code>DEFAULT</code>",
+        "<code>NullPointerException</code>",
+        "<code>Compilation error</code>",
+        "<code>Empty optional</code>",
+        "<code>\"\"</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Optional.ofNullable(null) crée un Optional vide. map() n'est pas exécuté sur un Optional vide. orElse() retourne la valeur par défaut : \"DEFAULT\"."
+    },
+    {
+      "topic": "Lambda",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List<String> list = Arrays.asList(\"a\", \"b\", \"c\");\nUnaryOperator<String> op = String::toUpperCase;\nlist.replaceAll(op);\nSystem.out.println(list);</code></pre>",
+      "options": [
+        "<code>[a, b, c]</code>",
+        "<code>[A, B, C]</code>",
+        "<code>UnsupportedOperationException</code>",
+        "<code>Compilation error</code>",
+        "<code>[null, null, null]</code>",
+        "<code>[]</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Arrays.asList() permet replaceAll() car elle ne change pas la taille. UnaryOperator<String> transforme chaque élément en majuscules."
+    },
+    {
+      "topic": "Collections",
+      "type": "multiple",
+      "question": "Quelles méthodes existent sur l'interface Map ?",
+      "options": [
+        "<code>putIfAbsent(K key, V value)</code>",
+        "<code>computeIfPresent(K key, BiFunction remapping)</code>",
+        "<code>getOrDefault(K key, V defaultValue)</code>",
+        "<code>merge(K key, V value, BiFunction remapping)</code>",
+        "<code>filter(Predicate predicate)</code>",
+        "<code>forEach(BiConsumer action)</code>"
+      ],
+      "answer": [0, 1, 2, 3, 5],
+      "difficulty": "expert",
+      "explanation": "Map a putIfAbsent, computeIfPresent, getOrDefault, merge, forEach. filter() n'existe pas sur Map (seulement sur Stream)."
+    },
+    {
+      "topic": "Streams",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant les streams parallèles ?",
+      "options": [
+        "Ils peuvent améliorer les performances pour les grandes collections",
+        "L'ordre des éléments est toujours garanti",
+        "Ils utilisent le ForkJoinPool commun par défaut",
+        "forEach() maintient l'ordre",
+        "forEachOrdered() maintient l'ordre",
+        "Ils sont thread-safe automatiquement"
+      ],
+      "answer": [0, 2, 4],
+      "difficulty": "expert",
+      "explanation": "Les streams parallèles peuvent améliorer les performances, utilisent ForkJoinPool, et forEachOrdered() maintient l'ordre. forEach() ne garantit pas l'ordre. Thread-safety dépend des opérations."
+    },
+    {
+      "topic": "Arrays",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int[] arr = {1, 2, 3, 4, 5};\nArrays.setAll(arr, i -> arr[i] * 2);\nSystem.out.println(Arrays.toString(arr));</code></pre>",
+      "options": [
+        "<code>[2, 4, 6, 8, 10]</code>",
+        "<code>[1, 2, 3, 4, 5]</code>",
+        "<code>[0, 2, 4, 6, 8]</code>",
+        "<code>ArrayIndexOutOfBoundsException</code>",
+        "<code>Compilation error</code>",
+        "<code>[1, 4, 9, 16, 25]</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "setAll() applique la fonction à chaque index. Pour i=0: arr[0]*2=2, i=1: arr[1]*2=4, etc. Résultat : [2, 4, 6, 8, 10]."
+    },
+    {
+      "topic": "Collections",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>List<String> list = new LinkedList<>();\nlist.add(\"A\");\nlist.add(\"B\");\nlist.add(\"C\");\nlist.subList(1, 2).clear();\nSystem.out.println(list);</code></pre>",
+      "options": [
+        "<code>[A, B, C]</code>",
+        "<code>[A, C]</code>",
+        "<code>[B]</code>",
+        "<code>[A, B]</code>",
+        "<code>UnsupportedOperationException</code>",
+        "<code>[]</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "subList(1, 2) retourne une vue [B]. clear() sur cette vue supprime B de la liste originale. Résultat : [A, C]."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List<String> list = Arrays.asList(\"a\", \"b\", \"c\");\nString result = list.stream()\n    .collect(Collectors.joining(\"-\", \"[\", \"]\"));\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "<code>a-b-c</code>",
+        "<code>[a-b-c]</code>",
+        "<code>[a]-[b]-[c]</code>",
+        "<code>-a-b-c-</code>",
+        "<code>Compilation error</code>",
+        "<code>abc</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "joining(\"-\", \"[\", \"]\") joint les éléments avec \"-\" comme délimiteur, \"[\" comme préfixe et \"]\" comme suffixe : [a-b-c]."
+    },
+    {
+      "topic": "Lambda",
+      "type": "multiple",
+      "question": "Quelles références de méthodes sont équivalentes à <code>s -> s.length()</code> ?",
+      "options": [
+        "<code>String::length</code>",
+        "<code>s::length</code>",
+        "<code>String::valueOf</code>",
+        "<code>s -> String.length()</code>",
+        "Aucune équivalence exacte",
+        "<code>(String s) -> s.length()</code>"
+      ],
+      "answer": [0],
+      "difficulty": "expert",
+      "explanation": "String::length est la référence de méthode équivalente à s -> s.length(). s::length est invalide (s n'est pas une variable). Option F est syntaxiquement différente mais sémantiquement équivalente (mais pas une méthode référence)."
+    },
+    {
+      "topic": "Collections",
+      "type": "multiple",
+      "question": "Quelles collections maintiennent l'ordre d'insertion ?",
+      "options": [
+        "<code>LinkedHashSet</code>",
+        "<code>HashSet</code>",
+        "<code>LinkedHashMap</code>",
+        "<code>TreeMap</code>",
+        "<code>ArrayList</code>",
+        "<code>PriorityQueue</code>"
+      ],
+      "answer": [0, 2, 4],
+      "difficulty": "expert",
+      "explanation": "LinkedHashSet, LinkedHashMap et ArrayList maintiennent l'ordre d'insertion. HashSet n'a pas d'ordre, TreeMap trie, PriorityQueue ordonne par priorité."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>IntStream.iterate(1, n -> n + 1)\n    .limit(5)\n    .skip(2)\n    .forEach(System.out::print);</code></pre>",
+      "options": [
+        "<code>12345</code>",
+        "<code>345</code>",
+        "<code>123</code>",
+        "<code>3</code>",
+        "<code>45</code>",
+        "<code>12</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "iterate génère [1,2,3,4,5] avec limit(5). skip(2) saute les 2 premiers → [3,4,5]. forEach affiche : 345."
+    }
+  ]
+}
