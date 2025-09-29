@@ -18,8 +18,10 @@
                 <div class="exam-grid">
                     <div class="exam-card compact">
                         <div class="exam-header">
-                            <span class="exam-number">DEV</span>
-                            <h4>Exam développement</h4>
+                            <div class="exam-title-group">
+                                <span class="exam-number">DEV</span>
+                                <h4>Exam développement</h4>
+                            </div>
                         </div>
                         <div class="exam-actions">
                             <a class="btn-mini" href="exam.html?exam=exam1.json&mode=exam">Examen</a>
@@ -35,8 +37,10 @@
                 <div class="exam-grid">
                     <div class="exam-card compact">
                         <div class="exam-header">
-                            <span class="exam-number">H1</span>
-                            <h4>Examen blanc 1</h4>
+                            <div class="exam-title-group">
+                                <span class="exam-number">H1</span>
+                                <h4>Examen blanc 1</h4>
+                            </div>
                         </div>
                         <p class="exam-desc">20 questions • Héritage/Polymorphisme/Overriding/Encapsulation</p>
                         <div class="exam-actions">
@@ -47,8 +51,10 @@
 
                     <div class="exam-card compact">
                         <div class="exam-header">
-                            <span class="exam-number">H2</span>
-                            <h4>Examen blanc 2</h4>
+                            <div class="exam-title-group">
+                                <span class="exam-number">H2</span>
+                                <h4>Examen blanc 2</h4>
+                            </div>
                         </div>
                         <p class="exam-desc">20 questions • Héritage/Polymorphisme/Overriding/Encapsulation</p>
                         <div class="exam-actions">
@@ -59,8 +65,10 @@
 
                     <div class="exam-card compact">
                         <div class="exam-header">
-                            <span class="exam-number">H3</span>
-                            <h4>Examen blanc 3</h4>
+                            <div class="exam-title-group">
+                                <span class="exam-number">H3</span>
+                                <h4>Examen blanc 3</h4>
+                            </div>
                         </div>
                         <p class="exam-desc">20 questions • Héritage/Polymorphisme/Overriding/Encapsulation</p>
                         <div class="exam-actions">
@@ -71,8 +79,10 @@
 
                     <div class="exam-card compact">
                         <div class="exam-header">
-                            <span class="exam-number">H4</span>
-                            <h4>Examen blanc 3 bis</h4>
+                            <div class="exam-title-group">
+                                <span class="exam-number">H4</span>
+                                <h4>Examen blanc 3 bis</h4>
+                            </div>
                         </div>
                         <p class="exam-desc">20 questions • Héritage/Polymorphisme/Overriding/Encapsulation</p>
                         <div class="exam-actions">
@@ -89,8 +99,10 @@
                 <div class="exam-grid">
                     <div class="exam-card compact">
                         <div class="exam-header">
-                            <span class="exam-number">C1</span>
-                            <h4>Examen blanc 4</h4>
+                            <div class="exam-title-group">
+                                <span class="exam-number">C1</span>
+                                <h4>Examen blanc 4</h4>
+                            </div>
                         </div>
                         <p class="exam-desc">20 questions • Collections/Arrays/Streams/Lambda</p>
                         <div class="exam-actions">
@@ -101,8 +113,10 @@
 
                     <div class="exam-card compact">
                         <div class="exam-header">
-                            <span class="exam-number">C2</span>
-                            <h4>Examen blanc 5</h4>
+                            <div class="exam-title-group">
+                                <span class="exam-number">C2</span>
+                                <h4>Examen blanc 5</h4>
+                            </div>
                         </div>
                         <p class="exam-desc">20 questions • Collections/Arrays/Streams/Lambda</p>
                         <div class="exam-actions">
@@ -113,8 +127,10 @@
 
                     <div class="exam-card compact">
                         <div class="exam-header">
-                            <span class="exam-number">C3</span>
-                            <h4>Examen blanc 6</h4>
+                            <div class="exam-title-group">
+                                <span class="exam-number">C3</span>
+                                <h4>Examen blanc 6</h4>
+                            </div>
                         </div>
                         <p class="exam-desc">20 questions • Collections/Arrays/Streams/Lambda</p>
                         <div class="exam-actions">
@@ -125,8 +141,10 @@
 
                     <div class="exam-card compact">
                         <div class="exam-header">
-                            <span class="exam-number">C4</span>
-                            <h4>Examen blanc 7</h4>
+                            <div class="exam-title-group">
+                                <span class="exam-number">C4</span>
+                                <h4>Examen blanc 7</h4>
+                            </div>
                         </div>
                         <p class="exam-desc">20 questions • Collections/Arrays/Streams/Lambda • Special reduce</p>
                         <div class="exam-actions">
@@ -144,5 +162,112 @@
         </div>
     </div>
 </div>
+
+<script src="progressManager.js"></script>
+<script>
+// Charger et afficher les badges de progression
+document.addEventListener('DOMContentLoaded', function() {
+    updateExamBadges();
+    displayGlobalStats();
+});
+
+function updateExamBadges() {
+    // Mapping des examens avec leurs IDs
+    const examMappings = {
+        'exam1.json': 'DEV',
+        'exam5.json': 'H1',
+        'exam6.json': 'H2',
+        'exam7.json': 'H3',
+        'exam-12-heritage_and_co.json': 'H4',
+        'exam8.json': 'C1',
+        'exam9.json': 'C2',
+        'exam10.json': 'C3',
+        'exam11.json': 'C4'
+    };
+
+    Object.entries(examMappings).forEach(([examId, cardId]) => {
+        const badgeInfo = progressManager.getExamBadgeInfo(examId);
+        updateExamCard(cardId, badgeInfo);
+    });
+}
+
+function updateExamCard(cardId, badgeInfo) {
+    // Trouver la carte par le numéro d'examen
+    const examCards = document.querySelectorAll('.exam-card.compact');
+
+    examCards.forEach(card => {
+        const examNumber = card.querySelector('.exam-number');
+        if (examNumber && examNumber.textContent === cardId) {
+            // Ajouter le badge de statut
+            let statusBadge = card.querySelector('.status-badge');
+            if (!statusBadge) {
+                statusBadge = document.createElement('div');
+                statusBadge.className = 'status-badge';
+                card.querySelector('.exam-header').appendChild(statusBadge);
+            }
+
+            statusBadge.innerHTML = `${badgeInfo.badge} <span>${badgeInfo.text}</span>`;
+            statusBadge.style.color = badgeInfo.color;
+
+            // Ajouter le score si disponible
+            let scoreDisplay = card.querySelector('.score-display');
+            if (!scoreDisplay) {
+                scoreDisplay = document.createElement('div');
+                scoreDisplay.className = 'score-display';
+                card.insertBefore(scoreDisplay, card.querySelector('.exam-actions'));
+            }
+
+            if (badgeInfo.score !== null) {
+                scoreDisplay.innerHTML = `
+                    <small>Meilleur score: <strong>${badgeInfo.score}%</strong></small>
+                    ${badgeInfo.attempts > 1 ? `<small>• ${badgeInfo.attempts} tentatives</small>` : ''}
+                `;
+                scoreDisplay.style.display = 'block';
+            } else {
+                scoreDisplay.style.display = 'none';
+            }
+        }
+    });
+}
+
+function displayGlobalStats() {
+    const stats = progressManager.getGlobalStats();
+
+    // Ajouter une section de statistiques globales en haut
+    const card = document.querySelector('.card');
+    let statsSection = document.querySelector('.global-stats');
+
+    if (!statsSection) {
+        statsSection = document.createElement('div');
+        statsSection.className = 'global-stats';
+        card.insertBefore(statsSection, document.querySelector('.exam-categories'));
+    }
+
+    if (stats.totalExamsAttempted > 0) {
+        statsSection.innerHTML = `
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span class="stat-number">${stats.totalExamsCompleted}</span>
+                    <span class="stat-label">Examens réussis</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">${stats.averageScore}%</span>
+                    <span class="stat-label">Score moyen</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">${progressManager.formatTime(stats.totalStudyTime)}</span>
+                    <span class="stat-label">Temps d'étude</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">${stats.bestScore}%</span>
+                    <span class="stat-label">Meilleur score</span>
+                </div>
+            </div>
+        `;
+    } else {
+        statsSection.innerHTML = '<p style="text-align: center; color: #666; font-style: italic;">Commencez votre premier examen pour voir vos statistiques !</p>';
+    }
+}
+</script>
 </body>
 </html>

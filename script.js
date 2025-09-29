@@ -4,11 +4,15 @@ let score = 0;
 let timer;
 let mode = "exam"; // exam ou train
 let userAnswers = []; // Stocker les réponses de l'utilisateur
+let startTime; // Pour calculer le temps passé
+let currentExamId; // ID de l'examen en cours
 
 async function loadExam() {
     const urlParams = new URLSearchParams(window.location.search);
     const examFile = urlParams.get("exam") || "exam1.json";
     mode = urlParams.get("mode") || "exam";
+    currentExamId = examFile; // Stocker l'ID de l'examen
+    startTime = Date.now(); // Enregistrer l'heure de début
 
     const res = await fetch(`data/${examFile}`);
     examData = await res.json();
@@ -182,6 +186,15 @@ function endExam() {
     const total = examData.questions.length;
     const percent = Math.round((score / total) * 100);
 
+    // Calculer le temps passé en secondes
+    const timeSpent = Math.round((Date.now() - startTime) / 1000);
+
+    // Sauvegarder la progression (seulement si progressManager est disponible)
+    if (typeof progressManager !== 'undefined') {
+        const examProgress = progressManager.saveExamResult(currentExamId, score, total, timeSpent, mode);
+        console.log('Progression sauvegardée:', examProgress);
+    }
+
     let cssClass = "success";
     if (percent < 67) cssClass = "danger";
     else if (percent <= 80) cssClass = "warning";
@@ -196,6 +209,7 @@ function endExam() {
       </div>
       <p>Score : <strong>${score}</strong> / ${total}</p>
       <p>Résultat : <strong>${percent}%</strong></p>
+      <p style="font-size: 0.9rem; color: #666;">Temps passé : <strong>${Math.round(timeSpent / 60)} min</strong></p>
       <div style="margin-top: 20px;">
         <button id="review-btn" class="btn btn-outline" style="margin-right: 10px;">Réviser mes réponses</button>
         <a href="index.html" class="btn">Retour à l'accueil</a>
