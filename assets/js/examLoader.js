@@ -6,10 +6,9 @@ class ExamLoader {
         this.examsData = {};
         this.categoryOrder = {
             'heritage': { order: 1, icon: '🏗️', title: 'Héritage/Polymorphisme/Encapsulation/Overriding' },
-            'collections': { order: 2, icon: '📊', title: 'Collections & Streams',
+            'collections': { order: 2, icon: '📊', title: 'Collections & Streams' },
             'dev': { order: 3, icon: '🛠️', title: 'Développement & Test' }
-            }
-        };
+            };
     }
 
     // Automatic discovery of JSON files in assets/data/
