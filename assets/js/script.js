@@ -413,12 +413,12 @@ function showReview() {
         }
 
         reviewHtml += `
-            <div class="review-question ${isCorrect ? 'correct-answer' : 'incorrect-answer'}" style="margin-bottom: 30px; padding: 20px; border-radius: 10px; border: 2px solid ${isCorrect ? '#10b981' : '#ef4444'}; background: ${isCorrect ? '#f0fdf4' : '#fef2f2'};">
+            <div class="review-question ${isCorrect ? 'correct-answer' : 'incorrect-answer'}" style="border: 2px solid ${isCorrect ? '#10b981' : '#ef4444'}; background: ${isCorrect ? '#f0fdf4' : '#fef2f2'};">
                 <div style="display: flex; align-items: center; margin-bottom: 10px;">
                     <span style="font-size: 1.2em; margin-right: 10px;">${isCorrect ? '✅' : '❌'}</span>
                     <h4>Question ${index + 1} - ${q.topic}</h4>
                 </div>
-                <p><strong>${q.question}</strong></p>
+                <div class="question-content">${q.question}</div>
 
                 <div style="margin: 15px 0;">
                     ${q.options.map((opt, i) => {
@@ -444,7 +444,7 @@ function showReview() {
                             (correctAnswers.includes(i) ? '☑️' : '☐') :
                             (correctAnswers.includes(i) ? '🔘' : '⚪');
 
-                        return `<div style="padding: 8px; margin: 5px 0; border-radius: 5px; ${optionStyle}">${prefix} ${opt}</div>`;
+                        return `<div class="option-review" style="padding: 8px; margin: 5px 0; border-radius: 5px; ${optionStyle}">${prefix} ${opt}</div>`;
                     }).join("")}
                 </div>
 

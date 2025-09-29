@@ -802,3 +802,76 @@ body.home-page {
     }
 }
 
+/* Styles pour la page de révision */
+.review-question {
+    margin-bottom: 30px !important;
+    padding: 20px !important;
+    border-radius: 10px !important;
+}
+
+.review-question p, .review-question div {
+    white-space: pre-line !important;
+}
+
+.review-question .question-content {
+    font-weight: bold;
+    margin-bottom: 15px;
+    white-space: pre-line !important;
+}
+
+.review-question .question-content pre,
+.review-question .question-content code {
+    white-space: pre !important;
+}
+
+/* Code dans la page de révision */
+.review-question pre {
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+    padding: 12px !important;
+    background-color: #2d3748 !important;
+    color: #e2e8f0 !important;
+    border: 1px solid #4a5568 !important;
+    border-radius: 8px !important;
+    overflow-x: auto !important;
+    max-height: 200px !important;
+    margin: 12px 0 !important;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+    white-space: pre !important;
+}
+
+.review-question code {
+    font-size: 0.8rem !important;
+    background-color: #4a5568 !important;
+    color: #e2e8f0 !important;
+    padding: 2px 4px !important;
+    border-radius: 4px !important;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+    white-space: pre !important;
+}
+
+/* Code dans les options de la page de révision */
+.review-question .option-review {
+    white-space: pre-line !important;
+}
+
+.review-question .option-review pre,
+.review-question .option-review code {
+    font-size: 0.75rem !important;
+    white-space: pre !important;
+    line-height: 1.3 !important;
+    background-color: #2d3748 !important;
+    color: #e2e8f0 !important;
+    padding: 8px !important;
+    border-radius: 4px !important;
+    margin: 4px 0 !important;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+}
+
+.review-question div[style*="padding: 8px"] pre,
+.review-question div[style*="padding: 8px"] code {
+    font-size: 0.75rem !important;
+    white-space: pre !important;
+    line-height: 1.3 !important;
+}
+
