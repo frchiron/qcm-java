@@ -19,14 +19,77 @@ async function loadExam() {
 
     document.getElementById("exam-title").textContent = examData.title;
 
-    if (mode === "exam") startTimer(examData.duration);
+    if (mode === "exam") {
+        startTimer(examData.duration);
+        setupNavigationButtons();
+    }
 
-    // Masquer le bouton par défaut en mode entraînement
+    // Masquer les boutons par défaut en mode entraînement
     if (mode === "train") {
         document.getElementById("next-btn").style.display = "none";
+        document.getElementById("prev-btn").style.display = "none";
     }
 
     showQuestion();
+    if (mode === "exam") {
+        createQuestionIndicator();
+    }
+}
+
+function createQuestionIndicator() {
+    const indicator = document.getElementById("question-indicator");
+    if (!indicator) return;
+
+    indicator.innerHTML = '';
+    for (let i = 0; i < examData.questions.length; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'question-dot';
+        dot.setAttribute('data-question', i + 1);  // +1 pour afficher le bon numéro
+        dot.title = `Question ${i + 1}`;
+
+        // Permettre de cliquer sur le point pour aller à la question
+        dot.addEventListener('click', () => {
+            if (mode === "exam") {
+                saveCurrentAnswer();
+                currentQuestion = i;
+                showQuestion();
+            }
+        });
+
+        indicator.appendChild(dot);
+    }
+    updateQuestionIndicator();
+}
+
+function updateQuestionIndicator() {
+    const dots = document.querySelectorAll('.question-dot');
+    dots.forEach((dot, index) => {
+        dot.classList.remove('current', 'answered', 'unanswered');
+
+        if (index === currentQuestion) {
+            dot.classList.add('current');
+        } else if (userAnswers[index] !== null && userAnswers[index] !== undefined) {
+            dot.classList.add('answered');
+        } else {
+            dot.classList.add('unanswered');
+        }
+    });
+}
+
+function setupNavigationButtons() {
+    const prevBtn = document.getElementById("prev-btn");
+    const nextBtn = document.getElementById("next-btn");
+
+    if (prevBtn) {
+        prevBtn.addEventListener("click", () => {
+            prevQuestion();
+        });
+    }
+
+    if (nextBtn) {
+        // L'event listener pour next-btn sera ajouté plus bas dans le script
+        // On garde juste la configuration ici
+    }
 }
 
 function startTimer(minutes) {
@@ -41,6 +104,42 @@ function startTimer(minutes) {
             endExam();
         }
     }, 1000);
+}
+
+function saveCurrentAnswer() {
+    const q = examData.questions[currentQuestion];
+    const isMultiple = q.type === "multiple" || Array.isArray(q.answer);
+    const selectedOptions = document.querySelectorAll(".option.selected");
+
+    if (selectedOptions.length > 0) {
+        if (isMultiple) {
+            const userResponse = Array.from(selectedOptions).map(opt => parseInt(opt.dataset.index));
+            userAnswers[currentQuestion] = userResponse;
+        } else {
+            const chosen = parseInt(selectedOptions[0].dataset.index);
+            userAnswers[currentQuestion] = chosen;
+        }
+    } else {
+        userAnswers[currentQuestion] = null; // Pas de réponse
+    }
+}
+
+function loadSavedAnswer() {
+    const savedAnswer = userAnswers[currentQuestion];
+    if (savedAnswer !== null && savedAnswer !== undefined) {
+        const q = examData.questions[currentQuestion];
+        const isMultiple = q.type === "multiple" || Array.isArray(q.answer);
+
+        if (isMultiple && Array.isArray(savedAnswer)) {
+            savedAnswer.forEach(index => {
+                const option = document.querySelector(`.option[data-index="${index}"]`);
+                if (option) option.classList.add("selected");
+            });
+        } else if (!isMultiple && typeof savedAnswer === 'number') {
+            const option = document.querySelector(`.option[data-index="${savedAnswer}"]`);
+            if (option) option.classList.add("selected");
+        }
+    }
 }
 
 function showQuestion() {
@@ -63,6 +162,9 @@ function showQuestion() {
 
     Prism.highlightAll();
 
+    // Charger la réponse sauvegardée s'il y en a une
+    loadSavedAnswer();
+
     document.querySelectorAll(".option").forEach(opt => {
         opt.addEventListener("click", () => {
             if (isMultiple) {
@@ -71,11 +173,37 @@ function showQuestion() {
                 document.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
                 opt.classList.add("selected");
             }
+            // Sauvegarder automatiquement la réponse en mode examen
+            if (mode === "exam") {
+                saveCurrentAnswer();
+            }
         });
     });
 
+    // Mettre à jour les boutons de navigation et l'indicateur
+    updateNavigationButtons();
+    if (mode === "exam") {
+        updateQuestionIndicator();
+    }
+
     if (mode === "train") {
         document.getElementById("check-btn").addEventListener("click", checkAnswerImmediate);
+    }
+}
+
+function updateNavigationButtons() {
+    const prevBtn = document.getElementById("prev-btn");
+    const nextBtn = document.getElementById("next-btn");
+
+    if (prevBtn) {
+        prevBtn.disabled = currentQuestion === 0;
+        prevBtn.style.opacity = currentQuestion === 0 ? "0.5" : "1";
+    }
+
+    if (nextBtn) {
+        if (mode === "exam") {
+            nextBtn.textContent = currentQuestion === examData.questions.length - 1 ? "Terminer l'examen" : "Question suivante";
+        }
     }
 }
 
@@ -144,41 +272,65 @@ function checkAnswerImmediate() {
     });
 }
 
-document.getElementById("next-btn").addEventListener("click", () => {
-    if (mode === "train") return;
+function calculateScore() {
+    let newScore = 0;
 
-    const q = examData.questions[currentQuestion];
-    const isMultiple = q.type === "multiple" || Array.isArray(q.answer);
-    const selectedOptions = document.querySelectorAll(".option.selected");
+    for (let i = 0; i < examData.questions.length; i++) {
+        const q = examData.questions[i];
+        const userResponse = userAnswers[i];
 
-    // Stocker la réponse de l'utilisateur
-    if (selectedOptions.length > 0) {
-        if (isMultiple) {
-            const userResponse = Array.from(selectedOptions).map(opt => parseInt(opt.dataset.index));
-            userAnswers[currentQuestion] = userResponse;
-
+        if (userResponse !== null && userResponse !== undefined) {
+            const isMultiple = q.type === "multiple" || Array.isArray(q.answer);
             const correctAnswers = Array.isArray(q.answer) ? q.answer : [q.answer];
-            const isCorrect = userResponse.length === correctAnswers.length &&
-                             userResponse.every(ans => correctAnswers.includes(ans));
-            if (isCorrect) score++;
-        } else {
-            const chosen = parseInt(selectedOptions[0].dataset.index);
-            userAnswers[currentQuestion] = chosen;
 
-            const correctAnswer = Array.isArray(q.answer) ? q.answer[0] : q.answer;
-            if (chosen === correctAnswer) score++;
+            if (isMultiple) {
+                const userArray = Array.isArray(userResponse) ? userResponse : [userResponse];
+                const isCorrect = userArray.length === correctAnswers.length &&
+                                userArray.every(ans => correctAnswers.includes(ans));
+                if (isCorrect) newScore++;
+            } else {
+                if (correctAnswers.includes(userResponse)) newScore++;
+            }
         }
-    } else {
-        userAnswers[currentQuestion] = null; // Pas de réponse
     }
 
-    currentQuestion++;
-    if (currentQuestion < examData.questions.length) {
+    score = newScore;
+}
+
+function nextQuestion() {
+    if (mode === "exam") {
+        saveCurrentAnswer();
+    }
+
+    if (currentQuestion < examData.questions.length - 1) {
+        currentQuestion++;
         showQuestion();
     } else {
+        // C'est la dernière question, terminer l'examen
+        if (mode === "exam") {
+            calculateScore(); // Recalculer le score final
+        }
         endExam();
     }
+}
+
+function prevQuestion() {
+    if (mode === "exam") {
+        saveCurrentAnswer();
+    }
+
+    if (currentQuestion > 0) {
+        currentQuestion--;
+        showQuestion();
+    }
+}
+
+document.getElementById("next-btn").addEventListener("click", () => {
+    if (mode === "train") return;
+    nextQuestion();
 });
+
+// Event listener pour next-btn maintenu pour compatibilité
 
 function endExam() {
     clearInterval(timer);

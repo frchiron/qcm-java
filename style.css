@@ -578,6 +578,107 @@ body.home-page {
     align-items: center;
 }
 
+/* Navigation entre les questions */
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+}
+
+.navigation-buttons .btn {
+    flex: 1;
+    max-width: 200px;
+}
+
+/* Indicateur visuel des questions */
+.question-indicator {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.question-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.question-dot::after {
+    content: attr(data-question);
+    transform: translateX(1px); /* Légère correction du centrage */
+}
+
+.question-dot.current {
+    background: #3b82f6;
+    color: white;
+    transform: scale(1.2);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+}
+
+.question-dot.answered {
+    background: #10b981;
+    color: white;
+}
+
+.question-dot.answered:hover {
+    background: #059669;
+    transform: scale(1.1);
+}
+
+.question-dot.unanswered {
+    background: #e5e7eb;
+    color: #6b7280;
+    border: 2px solid #d1d5db;
+}
+
+.question-dot.unanswered:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+    transform: scale(1.1);
+}
+
+.question-dot.current::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: -3px;
+    right: -3px;
+    bottom: -3px;
+    border: 2px solid #3b82f6;
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .container .card {
@@ -671,6 +772,33 @@ body.home-page {
 
     .exam-actions {
         gap: 6px;
+    }
+
+    /* Navigation responsive */
+    .navigation-buttons {
+        gap: 10px;
+    }
+
+    .navigation-buttons .btn {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+
+    /* Indicateur de questions responsive */
+    .question-indicator {
+        gap: 6px;
+        padding: 8px;
+        margin-top: 10px;
+    }
+
+    .question-dot {
+        width: 20px;
+        height: 20px;
+        font-size: 0.65rem;
+    }
+
+    .question-dot.current {
+        transform: scale(1.1);
     }
 }
 
