@@ -49,6 +49,17 @@ h1 {
     transition: all 0.2s ease;
 }
 
+.option.multiple::before {
+    content: "☐ ";
+    margin-right: 8px;
+    font-size: 1.2em;
+}
+
+.option.multiple.selected::before {
+    content: "☑ ";
+    color: #3b82f6;
+}
+
 .option:hover {
     background: #eef4ff;
     border-color: #3b82f6;

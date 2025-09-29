@@ -41,6 +41,7 @@ function startTimer(minutes) {
 function showQuestion() {
     const q = examData.questions[currentQuestion];
     let container = document.getElementById("question-container");
+    const isMultiple = q.type === "multiple" || Array.isArray(q.answer);
 
     document.getElementById("progress").textContent =
         `Question ${currentQuestion + 1} / ${examData.questions.length}`;
@@ -48,8 +49,9 @@ function showQuestion() {
     container.innerHTML = `
     <p class="topic">Topic : <strong>${q.topic}</strong></p>
     <h3>${q.question}</h3>
+    ${isMultiple ? '<p style="color: #666; font-style: italic; margin-bottom: 10px;">📝 Plusieurs réponses possibles</p>' : ''}
     ${q.options.map((opt, i) => `
-      <div class="option" data-index="${i}">${opt}</div>
+      <div class="option ${isMultiple ? 'multiple' : ''}" data-index="${i}">${opt}</div>
     `).join("")}
     ${mode === "train" ? '<button id="check-btn" class="btn">Valider</button>' : ""}
   `;
@@ -58,8 +60,12 @@ function showQuestion() {
 
     document.querySelectorAll(".option").forEach(opt => {
         opt.addEventListener("click", () => {
-            document.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
-            opt.classList.add("selected");
+            if (isMultiple) {
+                opt.classList.toggle("selected");
+            } else {
+                document.querySelectorAll(".option").forEach(o => o.classList.remove("selected"));
+                opt.classList.add("selected");
+            }
         });
     });
 
@@ -70,20 +76,46 @@ function showQuestion() {
 
 function checkAnswerImmediate() {
     const q = examData.questions[currentQuestion];
-    const selected = document.querySelector(".option.selected");
+    const isMultiple = q.type === "multiple" || Array.isArray(q.answer);
+    const selectedOptions = document.querySelectorAll(".option.selected");
 
-    if (!selected) return;
+    if (selectedOptions.length === 0) return;
 
-    const chosen = parseInt(selected.dataset.index);
+    let isCorrect = false;
 
-    if (chosen === q.answer) {
-        selected.classList.add("correct");
-        score++;
+    if (isMultiple) {
+        const userAnswers = Array.from(selectedOptions).map(opt => parseInt(opt.dataset.index));
+        const correctAnswers = Array.isArray(q.answer) ? q.answer : [q.answer];
+
+        // Vérifier si les réponses correspondent exactement
+        isCorrect = userAnswers.length === correctAnswers.length &&
+                   userAnswers.every(ans => correctAnswers.includes(ans));
+
+        // Marquer toutes les options
+        document.querySelectorAll(".option").forEach(opt => {
+            const index = parseInt(opt.dataset.index);
+            if (correctAnswers.includes(index)) {
+                opt.classList.add("correct");
+            } else if (userAnswers.includes(index)) {
+                opt.classList.add("incorrect");
+            }
+        });
     } else {
-        selected.classList.add("incorrect");
-        document.querySelector(`.option[data-index="${q.answer}"]`)
-            .classList.add("correct");
+        const chosen = parseInt(selectedOptions[0].dataset.index);
+        const correctAnswer = Array.isArray(q.answer) ? q.answer[0] : q.answer;
+
+        isCorrect = chosen === correctAnswer;
+
+        if (isCorrect) {
+            selectedOptions[0].classList.add("correct");
+        } else {
+            selectedOptions[0].classList.add("incorrect");
+            document.querySelector(`.option[data-index="${correctAnswer}"]`)
+                .classList.add("correct");
+        }
     }
+
+    if (isCorrect) score++;
 
     // explication
     if (q.explanation) {
@@ -111,11 +143,24 @@ document.getElementById("next-btn").addEventListener("click", () => {
     if (mode === "train") return;
 
     const q = examData.questions[currentQuestion];
-    const selected = document.querySelector(".option.selected");
+    const isMultiple = q.type === "multiple" || Array.isArray(q.answer);
+    const selectedOptions = document.querySelectorAll(".option.selected");
 
-    if (selected && parseInt(selected.dataset.index) === q.answer) {
-        score++;
+    if (selectedOptions.length > 0) {
+        if (isMultiple) {
+            const userAnswers = Array.from(selectedOptions).map(opt => parseInt(opt.dataset.index));
+            const correctAnswers = Array.isArray(q.answer) ? q.answer : [q.answer];
+
+            const isCorrect = userAnswers.length === correctAnswers.length &&
+                             userAnswers.every(ans => correctAnswers.includes(ans));
+            if (isCorrect) score++;
+        } else {
+            const chosen = parseInt(selectedOptions[0].dataset.index);
+            const correctAnswer = Array.isArray(q.answer) ? q.answer[0] : q.answer;
+            if (chosen === correctAnswer) score++;
+        }
     }
+
     currentQuestion++;
     if (currentQuestion < examData.questions.length) {
         showQuestion();
