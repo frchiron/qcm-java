@@ -16,6 +16,11 @@ async function loadExam() {
 
     if (mode === "exam") startTimer(examData.duration);
 
+    // Masquer le bouton par défaut en mode entraînement
+    if (mode === "train") {
+        document.getElementById("next-btn").style.display = "none";
+    }
+
     showQuestion();
 }
 
