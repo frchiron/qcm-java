@@ -1,4 +1,13 @@
 {
+  "metadata": {
+    "id": "exam6.json",
+    "mainTopic": "Héritage/Polymorphisme/Encapsulation/Overriding",
+    "category": "heritage",
+    "examNumber": "H2",
+    "examName": "Examen blanc 2",
+    "questionsCount": 20,
+    "description": "20 questions"
+  },
   "title": "Certification Java 21 - Niveau Expert OCP",
   "duration": 50,
   "questions": [

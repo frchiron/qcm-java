@@ -1,0 +1,27 @@
+{
+  "metadata": {
+    "id": "exam-13-heritage_and_co.json",
+    "mainTopic": "Héritage/Polymorphisme/Encapsulation/Overriding",
+    "category": "heritage",
+    "examNumber": "H5",
+    "examName": "Examen blanc 3 ter",
+    "questionsCount": 20,
+    "description": "20 questions"
+  },
+  "title": "Certification Java 21 - POO Avancée : Héritage & Polymorphisme",
+  "duration": 50,
+  "questions": [
+    {
+      "topic": "Polymorphisme",
+      "question": "Ce fichier d'examen est en cours de développement. Veuillez choisir un autre examen.",
+      "options": [
+        "Option temporaire A",
+        "Option temporaire B",
+        "Option temporaire C",
+        "Option temporaire D"
+      ],
+      "answer": 0,
+      "explanation": "Cet examen est en cours de développement."
+    }
+  ]
+}

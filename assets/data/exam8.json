@@ -1,4 +1,13 @@
 {
+  "metadata": {
+    "id": "exam8.json",
+    "mainTopic": "Collections & Streams",
+    "category": "collections",
+    "examNumber": "C1",
+    "examName": "Examen blanc 4",
+    "questionsCount": 20,
+    "description": "20 questions"
+  },
   "title": "Certification Java 21 - Collections/Arrays/Streams/Lambda - Niveau Enthuware",
   "duration": 50,
   "questions": [

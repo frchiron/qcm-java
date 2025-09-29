@@ -1,4 +1,13 @@
 {
+  "metadata": {
+    "id": "exam-12-heritage_and_co.json",
+    "mainTopic": "Héritage/Polymorphisme/Encapsulation/Overriding",
+    "category": "heritage",
+    "examNumber": "H4",
+    "examName": "Examen blanc 3 bis",
+    "questionsCount": 20,
+    "description": "20 questions"
+  },
   "title": "Certification Java 21 - POO Avancée : Sealed, Records, Overloading",
   "duration": 50,
   "questions": [

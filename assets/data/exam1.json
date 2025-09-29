@@ -1,4 +1,13 @@
 {
+  "metadata": {
+    "id": "exam1.json",
+    "mainTopic": "Développement & Test",
+    "category": "dev",
+    "examNumber": "DEV",
+    "examName": "Exam for test purpose only",
+    "questionsCount": 3,
+    "description": null
+  },
   "title": "Test Questions Multiples - Collections Java",
   "duration": 5,
   "questions": [

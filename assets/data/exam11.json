@@ -1,4 +1,13 @@
 {
+  "metadata": {
+    "id": "exam11.json",
+    "mainTopic": "Collections & Streams",
+    "category": "collections",
+    "examNumber": "C4",
+    "examName": "Examen blanc 7",
+    "questionsCount": 20,
+    "description": "20 questions • Special reduce"
+  },
   "title": "Certification Java 21 - Collections/Streams/Lambda - Focus reduce()",
   "duration": 50,
   "questions": [

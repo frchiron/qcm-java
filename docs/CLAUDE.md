@@ -2,30 +2,29 @@
 
 ## 📋 Vue d'ensemble du projet
 
-Application web de QCM (Questionnaires à Choix Multiples) pour la préparation à la certification Java 21.
+Application web de QCM (Questionnaires à Choix Multiples) pour la préparation à la certification Java 21 avec **système de chargement dynamique** des examens.
 
 ### Structure du projet
 ```
 qcm-java/
 ├── README.md               # Documentation utilisateur
-├── index.html              # Page d'accueil avec sélection d'examens
+├── index.html              # Page d'accueil (génération dynamique)
 ├── exam.html               # Interface d'examen/entraînement
 ├── assets/
 │   ├── css/
 │   │   └── style.css       # Styles CSS complets
 │   ├── js/
 │   │   ├── script.js       # Logique principale de l'application
-│   │   └── progressManager.js  # Gestion de la progression et LocalStorage
-│   └── data/               # Fichiers JSON des examens
-│       ├── exam1.json      # Examen de test/développement
-│       ├── exam5.json      # Héritage/Polymorphisme - Examen 1
-│       ├── exam6.json      # Héritage/Polymorphisme - Examen 2
-│       ├── exam7.json      # Héritage/Polymorphisme - Examen 3
-│       ├── exam-12-heritage_and_co.json  # Héritage/Polymorphisme - Examen 4
-│       ├── exam8.json      # Collections/Streams - Examen 1
-│       ├── exam9.json      # Collections/Streams - Examen 2
-│       ├── exam10.json     # Collections/Streams - Examen 3
-│       └── exam11.json     # Collections/Streams - Examen 4 (spécial reduce)
+│   │   ├── progressManager.js  # Gestion de la progression et LocalStorage
+│   │   └── examLoader.js   # 🆕 Système de chargement dynamique
+│   ├── data/               # Fichiers JSON des examens (auto-détection)
+│   │   ├── exam1.json      # Test/développement
+│   │   ├── exam5-7.json    # Héritage/Polymorphisme - Examens 1-3
+│   │   ├── exam-12*.json   # Héritage/Polymorphisme - Examens 4-5
+│   │   ├── exam8-11.json   # Collections/Streams - Examens 1-4
+│   │   ├── exam-14*.json   # Collections/Streams - Examen 5
+│   │   └── ...             # Nouveaux examens (ajout automatique)
+│   └── favicon.svg         # 🆕 Logo Java pour navigateur
 ├── docs/
 │   └── CLAUDE.md           # Documentation technique (ce fichier)
 └── tests/
@@ -34,25 +33,33 @@ qcm-java/
 
 ## 🎯 Fonctionnalités principales
 
-### 1. Système d'examens
+### 1. 🆕 Système de chargement dynamique (examLoader.js)
+- **Auto-détection** des fichiers JSON dans `assets/data/`
+- **Génération automatique** des cartes d'examen sur index.html
+- **Catégorisation intelligente** par sujet (dev/heritage/collections)
+- **Tri automatique** par numéro d'examen (DEV, H1-H5, C1-C5)
+- **Compatibilité** avec le système de progression existant
+
+### 2. Système d'examens
 - **Deux modes** : Examen (chronométré) et Entraînement (avec correction immédiate)
 - **Navigation flexible** en mode examen (précédent/suivant)
 - **Questions à choix unique et multiple**
 - **Coloration syntaxique** du code Java (Prism.js)
 - **Timer automatique** en mode examen
 
-### 2. Système de progression (LocalStorage)
+### 3. Système de progression (LocalStorage)
 - **Suivi automatique** des scores et performances
 - **Statistiques globales** : examens réussis, score moyen, temps d'étude, meilleur score
 - **Badges de statut** : Nouveau ⚪, En cours 🟡, À revoir 🔄, Réussi ✅
 - **Moyenne et meilleur score** affichés par examen
 - **Fonctions de reset** : global et par examen individuel
 
-### 3. Interface utilisateur
+### 4. Interface utilisateur
 - **Design responsive** (mobile + desktop)
 - **Organisation par catégories** : Développement/Test, Héritage & Polymorphisme, Collections & Streams
 - **Indicateur visuel** des questions (points numérotés en mode examen)
 - **Page de révision** complète avec formatage du code
+- **🆕 Logo Java** : Favicon personnalisé
 
 ## 🛠 Commandes de développement
 
@@ -61,9 +68,18 @@ qcm-java/
 - Console développeur : `progressManager.getGlobalStats()` pour voir les stats
 - Console développeur : `progressManager.resetAllProgress()` pour reset complet
 
-### Structure JSON des examens
+### 🆕 Structure JSON des examens (avec metadata)
 ```json
 {
+  "metadata": {
+    "id": "exam-nouveau.json",              // nom du fichier
+    "mainTopic": "Collections & Streams",   // sujet principal
+    "category": "collections",              // catégorie technique (dev/heritage/collections)
+    "examNumber": "C6",                     // identifiant d'affichage
+    "examName": "Examen blanc 9",           // nom affiché
+    "questionsCount": 20,                   // nombre de questions
+    "description": "20 questions • Sujet spécial"  // description optionnelle
+  },
   "title": "Nom de l'examen",
   "duration": 60,  // durée en minutes
   "questions": [
@@ -83,6 +99,11 @@ qcm-java/
   ]
 }
 ```
+
+### Catégories disponibles
+- `dev` : Développement & Test (icône 🛠️)
+- `heritage` : Héritage/Polymorphisme/Encapsulation/Overriding (icône 🏗️)
+- `collections` : Collections & Streams (icône 📊)
 
 ## 🎨 Architecture CSS
 
@@ -133,6 +154,14 @@ qcm-java/
 
 ## 🔧 Fonctions JavaScript importantes
 
+### 🆕 Chargement dynamique (assets/js/examLoader.js)
+- `ExamLoader.discoverExams()` : Auto-détection des fichiers JSON
+- `ExamLoader.getExamsByCategory()` : Groupement et tri par catégorie
+- `ExamLoader.generateExamCardHTML()` : Génération HTML des cartes
+- `ExamLoader.generateCategoryHTML()` : Génération HTML des sections
+- `ExamLoader.generateExamMappings()` : Mappings pour progressManager
+- `ExamLoader.init()` : Initialisation complète du système
+
 ### Navigation (assets/js/script.js)
 - `nextQuestion()` / `prevQuestion()` : Navigation entre questions
 - `saveCurrentAnswer()` : Sauvegarde automatique des réponses
@@ -149,21 +178,57 @@ qcm-java/
 - `showReview()` : Génère la page de révision avec formatage du code
 - `checkAnswerImmediate()` : Correction immédiate en mode entraînement
 
+## 🆕 Comment ajouter un nouvel examen
+
+**Plus besoin de modifier index.html !** Le système de chargement dynamique détecte automatiquement les nouveaux examens.
+
+### Étapes simples :
+1. **Créer le fichier JSON** dans `assets/data/` avec le bon format (voir structure ci-dessus)
+2. **Respecter la nomenclature** : `exam-[nom].json` ou `exam[N].json`
+3. **Inclure les metadata complètes** avec les champs requis
+4. **Actualiser la page** : l'examen apparaît automatiquement !
+
+### Exemple complet :
+```json
+{
+  "metadata": {
+    "id": "exam-15-async.json",
+    "mainTopic": "Collections & Streams",
+    "category": "collections",
+    "examNumber": "C6",
+    "examName": "Async & CompletableFuture",
+    "questionsCount": 15,
+    "description": "15 questions • Programmation asynchrone"
+  },
+  "title": "Java 21 - Programmation Asynchrone",
+  "duration": 40,
+  "questions": [
+    // vos questions ici
+  ]
+}
+```
+
 ## 🚀 Points d'extension possibles
 
-1. **Nouvelles fonctionnalités**
+1. **🆕 Améliorations du système dynamique**
+   - API REST pour listage des fichiers (remplacement de la liste hardcodée)
+   - Validation automatique des metadata
+   - Support d'autres formats (YAML, XML)
+   - Import/export bulk des examens
+
+2. **Nouvelles fonctionnalités**
    - Export/import des données de progression
    - Graphiques de progression détaillés
    - Mode révision intelligente (questions ratées uniquement)
    - Système de bookmarks pour questions difficiles
 
-2. **Optimisations techniques**
+3. **Optimisations techniques**
    - Service Worker pour mode hors-ligne
    - Compression des données JSON
    - Lazy loading des examens
    - Cache des résultats Prism.js
 
-3. **UX améliorations**
+4. **UX améliorations**
    - Raccourcis clavier (1-4 pour sélection, Espace pour suivant)
    - Animations de transition entre questions
    - Son de notification fin d'examen
@@ -171,6 +236,9 @@ qcm-java/
 
 ## 🐛 Points d'attention
 
+- **🆕 ExamLoader** : Liste hardcodée des fichiers possibles dans `discoverExams()` - à maintenir
+- **🆕 Metadata obligatoires** : Examens sans metadata sont ignorés silencieusement
+- **🆕 Compatibilité** : examMappings généré dynamiquement, ne plus le modifier manuellement
 - **Prism.js** doit être appelé après insertion dynamique de HTML (`Prism.highlightAll()`)
 - **LocalStorage** : Vérifier la disponibilité avant utilisation
 - **Questions multiples** : Bien distinguer `Array.isArray(answer)` vs `type === "multiple"`
@@ -186,7 +254,14 @@ qcm-java/
 
 ## 🔄 Workflow de développement recommandé
 
-1. **Nouveaux examens** : Ajouter JSON dans `assets/data/` + mapping dans `index.html`
+1. **🆕 Nouveaux examens** :
+   - Créer JSON avec metadata dans `assets/data/`
+   - Ajouter le nom du fichier à la liste dans `examLoader.js` si nécessaire
+   - Tester le chargement automatique
+
 2. **Nouvelles fonctionnalités** : Tester d'abord avec `tests/test_reset.html`
 3. **Styles** : Utiliser les classes existantes, éviter les styles inline
-4. **Debug** : Console + LocalStorage viewer du navigateur
+4. **Debug** :
+   - Console + LocalStorage viewer du navigateur
+   - `examLoader.examFiles` pour voir les examens chargés
+   - `examLoader.examsData` pour voir les données complètes

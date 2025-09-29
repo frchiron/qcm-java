@@ -1,4 +1,13 @@
 {
+  "metadata": {
+    "id": "exam5.json",
+    "mainTopic": "Héritage/Polymorphisme/Encapsulation/Overriding",
+    "category": "heritage",
+    "examNumber": "H1",
+    "examName": "Examen blanc 1",
+    "questionsCount": 20,
+    "description": "20 questions"
+  },
   "title": "Certification Java 21 - Niveau OCP 830",
   "duration": 45,
   "questions": [

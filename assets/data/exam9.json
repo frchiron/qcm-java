@@ -1,4 +1,13 @@
 {
+  "metadata": {
+    "id": "exam9.json",
+    "mainTopic": "Collections & Streams",
+    "category": "collections",
+    "examNumber": "C2",
+    "examName": "Examen blanc 5",
+    "questionsCount": 20,
+    "description": "20 questions"
+  },
   "title": "Certification Java 21 - Collections/Arrays/Streams/Lambda - Expert Level 2",
   "duration": 50,
   "questions": [

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>QCM Java 21</title>
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body class="home-page">
@@ -11,198 +12,57 @@
         <h1>Préparation Certification Java 21</h1>
         <p>Choisissez un examen blanc :</p>
 
-        <div class="exam-categories">
-            <!-- Section Développement/Test -->
-            <div class="category-section">
-                <h2 class="category-title">🛠️ Développement & Test</h2>
-                <div class="exam-grid">
-                    <div class="exam-card compact">
-                        <div class="exam-header">
-                            <div class="exam-title-group">
-                                <span class="exam-number">DEV</span>
-                                <h4>Exam for test purpose only</h4>
-                            </div>
-                        </div>
-                        <div class="exam-actions">
-                            <a class="btn-mini" href="exam.html?exam=exam1.json&mode=exam">Examen</a>
-                            <a class="btn-mini outline" href="exam.html?exam=exam1.json&mode=train">Entraînement</a>
-                        </div>
-                    </div>
-                </div>
+        <div class="exam-categories" id="exam-categories">
+            <div class="loading-message" style="text-align: center; padding: 40px; color: #666;">
+                📚 Chargement des examens...
             </div>
-
-            <!-- Section Héritage & Polymorphisme -->
-            <div class="category-section">
-                <h2 class="category-title">🏗️ Héritage/Polymorphisme/Encapsulation/Overriding</h2>
-                <div class="exam-grid">
-                    <div class="exam-card compact">
-                        <div class="exam-header">
-                            <div class="exam-title-group">
-                                <span class="exam-number">H1</span>
-                                <h4>Examen blanc 1</h4>
-                            </div>
-                        </div>
-                        <p class="exam-desc">20 questions</p>
-                        <div class="exam-actions">
-                            <a class="btn-mini" href="exam.html?exam=exam5.json&mode=exam">Examen</a>
-                            <a class="btn-mini outline" href="exam.html?exam=exam5.json&mode=train">Entraînement</a>
-                        </div>
-                    </div>
-
-                    <div class="exam-card compact">
-                        <div class="exam-header">
-                            <div class="exam-title-group">
-                                <span class="exam-number">H2</span>
-                                <h4>Examen blanc 2</h4>
-                            </div>
-                        </div>
-                        <p class="exam-desc">20 questions</p>
-                        <div class="exam-actions">
-                            <a class="btn-mini" href="exam.html?exam=exam6.json&mode=exam">Examen</a>
-                            <a class="btn-mini outline" href="exam.html?exam=exam6.json&mode=train">Entraînement</a>
-                        </div>
-                    </div>
-
-                    <div class="exam-card compact">
-                        <div class="exam-header">
-                            <div class="exam-title-group">
-                                <span class="exam-number">H3</span>
-                                <h4>Examen blanc 3</h4>
-                            </div>
-                        </div>
-                        <p class="exam-desc">20 questions</p>
-                        <div class="exam-actions">
-                            <a class="btn-mini" href="exam.html?exam=exam7.json&mode=exam">Examen</a>
-                            <a class="btn-mini outline" href="exam.html?exam=exam7.json&mode=train">Entraînement</a>
-                        </div>
-                    </div>
-
-                    <div class="exam-card compact">
-                        <div class="exam-header">
-                            <div class="exam-title-group">
-                                <span class="exam-number">H4</span>
-                                <h4>Examen blanc 3 bis</h4>
-                            </div>
-                        </div>
-                        <p class="exam-desc">20 questions</p>
-                        <div class="exam-actions">
-                            <a class="btn-mini" href="exam.html?exam=exam-12-heritage_and_co.json&mode=exam">Examen</a>
-                            <a class="btn-mini outline" href="exam.html?exam=exam-12-heritage_and_co.json&mode=train">Entraînement</a>
-                        </div>
-                    </div>
-                <div class="exam-card compact">
-                    <div class="exam-header">
-                        <div class="exam-title-group">
-                            <span class="exam-number">H4</span>
-                            <h4>Examen blanc 3 ter</h4>
-                        </div>
-                    </div>
-                    <p class="exam-desc">20 questions</p>
-                    <div class="exam-actions">
-                        <a class="btn-mini" href="exam.html?exam=exam-13-heritage_and_co.json&mode=exam">Examen</a>
-                        <a class="btn-mini outline" href="exam.html?exam=exam-13-heritage_and_co.json&mode=train">Entraînement</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Section Collections & Streams -->
-            <div class="category-section">
-                <h2 class="category-title">📊 Collections & Streams </h2>
-                <div class="exam-grid">
-                    <div class="exam-card compact">
-                        <div class="exam-header">
-                            <div class="exam-title-group">
-                                <span class="exam-number">C1</span>
-                                <h4>Examen blanc 4</h4>
-                            </div>
-                        </div>
-                        <p class="exam-desc">20 questions</p>
-                        <div class="exam-actions">
-                            <a class="btn-mini" href="exam.html?exam=exam8.json&mode=exam">Examen</a>
-                            <a class="btn-mini outline" href="exam.html?exam=exam8.json&mode=train">Entraînement</a>
-                        </div>
-                    </div>
-
-                    <div class="exam-card compact">
-                        <div class="exam-header">
-                            <div class="exam-title-group">
-                                <span class="exam-number">C2</span>
-                                <h4>Examen blanc 5</h4>
-                            </div>
-                        </div>
-                        <p class="exam-desc">20 questions</p>
-                        <div class="exam-actions">
-                            <a class="btn-mini" href="exam.html?exam=exam9.json&mode=exam">Examen</a>
-                            <a class="btn-mini outline" href="exam.html?exam=exam9.json&mode=train">Entraînement</a>
-                        </div>
-                    </div>
-
-                    <div class="exam-card compact">
-                        <div class="exam-header">
-                            <div class="exam-title-group">
-                                <span class="exam-number">C3</span>
-                                <h4>Examen blanc 6</h4>
-                            </div>
-                        </div>
-                        <p class="exam-desc">20 questions</p>
-                        <div class="exam-actions">
-                            <a class="btn-mini" href="exam.html?exam=exam10.json&mode=exam">Examen</a>
-                            <a class="btn-mini outline" href="exam.html?exam=exam10.json&mode=train">Entraînement</a>
-                        </div>
-                    </div>
-
-                    <div class="exam-card compact">
-                        <div class="exam-header">
-                            <div class="exam-title-group">
-                                <span class="exam-number">C4</span>
-                                <h4>Examen blanc 7</h4>
-                            </div>
-                        </div>
-                        <p class="exam-desc">20 questions • Special reduce</p>
-                        <div class="exam-actions">
-                            <a class="btn-mini" href="exam.html?exam=exam11.json&mode=exam">Examen</a>
-                            <a class="btn-mini outline" href="exam.html?exam=exam11.json&mode=train">Entraînement</a>
-                        </div>
-                    </div>
-                    <div class="exam-card compact">
-                        <div class="exam-header">
-                            <div class="exam-title-group">
-                                <span class="exam-number">C4</span>
-                                <h4>Examen blanc 8</h4>
-                            </div>
-                        </div>
-                        <p class="exam-desc">20 questions • Special Parallel Streams</p>
-                        <div class="exam-actions">
-                            <a class="btn-mini" href="exam.html?exam=exam-14_streams_special_parallel.json&mode=exam">Examen</a>
-                            <a class="btn-mini outline" href="exam.html?exam=exam-14_streams_special_parallel.json&mode=train">Entraînement</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 </div>
 
 <script src="assets/js/progressManager.js"></script>
+<script src="assets/js/examLoader.js"></script>
 <script>
-// Mapping global des examens avec leurs IDs
-const examMappings = {
-    'exam1.json': 'DEV',
-    'exam5.json': 'H1',
-    'exam6.json': 'H2',
-    'exam7.json': 'H3',
-    'exam-12-heritage_and_co.json': 'H4',
-    'exam8.json': 'C1',
-    'exam9.json': 'C2',
-    'exam10.json': 'C3',
-    'exam11.json': 'C4'
-};
+// Global exam mappings (will be generated dynamically)
+let examMappings = {};
 
-// Charger et afficher les badges de progression
-document.addEventListener('DOMContentLoaded', function() {
-    updateExamBadges();
-    displayGlobalStats();
+// Initialize dynamic loading
+document.addEventListener('DOMContentLoaded', async function() {
+    const loadingMessage = document.querySelector('.loading-message');
+    const examCategoriesContainer = document.getElementById('exam-categories');
+
+    try {
+        // Initialize exam loader
+        const success = await examLoader.init();
+
+        if (success) {
+            // Generate exam mappings for progressManager compatibility
+            examMappings = examLoader.generateExamMappings();
+
+            // Generate and insert HTML for all categories
+            const categoriesHTML = examLoader.generateAllCategoriesHTML();
+            examCategoriesContainer.innerHTML = categoriesHTML;
+
+            // Update progress badges and stats
+            updateExamBadges();
+            displayGlobalStats();
+
+            console.log('🎯 Dynamic exam loading completed successfully');
+        } else {
+            examCategoriesContainer.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #e74c3c;">
+                    ❌ Erreur lors du chargement des examens
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error during dynamic loading:', error);
+        examCategoriesContainer.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #e74c3c;">
+                ❌ Erreur lors du chargement des examens
+            </div>
+        `;
+    }
 });
 
 function updateExamBadges() {

@@ -1,4 +1,13 @@
 {
+  "metadata": {
+    "id": "exam-14_streams_special_parallel.json",
+    "mainTopic": "Collections & Streams",
+    "category": "collections",
+    "examNumber": "C5",
+    "examName": "Examen blanc 8",
+    "questionsCount": 20,
+    "description": "20 questions • Special Parallel Streams"
+  },
   "title": "Certification Java 21 - Streams/Arrays/Lambda - Parallel Streams Expert",
   "duration": 50,
   "questions": [
