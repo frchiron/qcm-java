@@ -5,6 +5,8 @@
     width: 100%;
     max-width: 800px;
     padding: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 header {
@@ -131,7 +133,16 @@ body {
     color: #111;
 }
 
-/* Carte centrale */
+/* Style pour les pages avec contenu défilant */
+body.exam-page,
+body.home-page {
+    align-items: flex-start;
+    min-height: 100vh;
+    height: auto;
+    padding: 20px 0;
+}
+
+/* Carte centrale pour la page d'accueil */
 .container .card {
     background: white;
     padding: 40px 30px;
