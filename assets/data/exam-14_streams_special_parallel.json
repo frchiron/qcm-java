@@ -1,0 +1,326 @@
+{
+  "title": "Certification Java 21 - Streams/Arrays/Lambda - Parallel Streams Expert",
+  "duration": 50,
+  "questions": [
+    {
+      "topic": "Parallel Streams",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List<Integer> list = Arrays.asList(1, 2, 3, 4);\nint sum = list.parallelStream()\n    .reduce(10, (a, b) -> a + b);\nSystem.out.println(sum);</code></pre>",
+      "options": [
+        "<code>20</code>",
+        "<code>50</code>",
+        "<code>60</code>",
+        "<code>10</code>",
+        "Résultat imprévisible",
+        "<code>25</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "En parallèle, l'identity est appliquée à chaque partition. Avec 4 threads possibles : (10+1)+(10+2)+(10+3)+(10+4) = 11+12+13+14 = 50."
+    },
+    {
+      "topic": "Parallel Streams",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant les parallel streams ?",
+      "options": [
+        "Ils utilisent le ForkJoinPool commun par défaut",
+        "forEach() garantit l'ordre des éléments",
+        "forEachOrdered() garantit l'ordre des éléments",
+        "Les opérations doivent être thread-safe",
+        "collect() avec Collector non-concurrent peut causer des problèmes",
+        "Ils sont toujours plus rapides que les streams séquentiels"
+      ],
+      "answer": [0, 2, 3, 4],
+      "difficulty": "expert",
+      "explanation": "Parallel streams utilisent ForkJoinPool, forEachOrdered préserve l'ordre, nécessitent thread-safety. forEach ne garantit pas l'ordre. Performance dépend du contexte."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>Stream<String> stream = Stream.of(\"a\", \"b\", \"c\");\nOptional<String> result = stream\n    .filter(s -> s.length() > 5)\n    .findFirst();\nSystem.out.println(result.orElseThrow());</code></pre>",
+      "options": [
+        "<code>a</code>",
+        "<code>Optional.empty</code>",
+        "<code>NoSuchElementException</code>",
+        "<code>null</code>",
+        "Compilation error",
+        "<code>c</code>"
+      ],
+      "answer": 2,
+      "difficulty": "expert",
+      "explanation": "Aucune chaîne n'a length > 5. findFirst() retourne Optional.empty(). orElseThrow() lance NoSuchElementException sur Optional vide."
+    },
+    {
+      "topic": "Parallel Streams",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);\nList<Integer> result = new ArrayList<>();\nnumbers.parallelStream()\n    .forEach(n -> result.add(n * 2));\nSystem.out.println(result.size());</code></pre>",
+      "options": [
+        "<code>5</code>",
+        "<code>0</code>",
+        "Résultat imprévisible ou exception",
+        "<code>10</code>",
+        "Compilation error",
+        "<code>ConcurrentModificationException</code>"
+      ],
+      "answer": 2,
+      "difficulty": "expert",
+      "explanation": "ArrayList n'est pas thread-safe. Plusieurs threads appelant add() simultanément peuvent causer des pertes de données ou ConcurrentModificationException. Résultat imprévisible."
+    },
+    {
+      "topic": "Lambda",
+      "type": "multiple",
+      "question": "Quelles variables peuvent être capturées par un lambda ?<br><pre><code class='language-java'>int a = 10;\nfinal int b = 20;\nint c = 30;\nc = 40;\nConsumer<Integer> consumer = x -> System.out.println(x + a + b + c);</code></pre>",
+      "options": [
+        "a peut être capturé",
+        "b peut être capturé",
+        "c peut être capturé",
+        "Aucune ne peut être capturée",
+        "Toutes peuvent être capturées",
+        "Seul b peut être capturé"
+      ],
+      "answer": [0, 1],
+      "difficulty": "expert",
+      "explanation": "Les lambdas capturent uniquement les variables effectively final. a et b sont effectively final. c est modifié après déclaration, donc ne peut pas être capturé."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>IntStream.iterate(1, n -> n + 1)\n    .filter(n -> n % 2 == 0)\n    .limit(3)\n    .forEach(System.out::print);</code></pre>",
+      "options": [
+        "<code>246</code>",
+        "<code>123</code>",
+        "<code>234</code>",
+        "<code>2468</code>",
+        "Boucle infinie",
+        "<code>Compilation error</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "iterate génère [1,2,3,4,5,6...], filter garde les pairs [2,4,6...], limit(3) prend les 3 premiers → [2,4,6]. Affiche 246."
+    },
+    {
+      "topic": "Parallel Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>List<String> list = Arrays.asList(\"a\", \"b\", \"c\", \"d\");\nString result = list.parallelStream()\n    .reduce(\"\", (s1, s2) -> s1 + s2, (s1, s2) -> s1 + s2);\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "<code>abcd</code>",
+        "<code>dcba</code>",
+        "Ordre imprévisible mais contient tous les éléments",
+        "<code>\"\"</code>",
+        "Compilation error",
+        "Runtime error"
+      ],
+      "answer": 2,
+      "difficulty": "expert",
+      "explanation": "En parallèle, l'ordre de concaténation dépend de l'ordre d'exécution des threads. Le résultat contient tous les éléments mais l'ordre peut varier (abcd, dcba, acbd, etc.)."
+    },
+    {
+      "topic": "Arrays",
+      "type": "multiple",
+      "question": "Quelles opérations sont valides sur ce tableau ?<br><pre><code class='language-java'>int[] arr = {5, 2, 8, 1, 9};</code></pre>",
+      "options": [
+        "<code>Arrays.sort(arr)</code>",
+        "<code>Arrays.parallelSort(arr)</code>",
+        "<code>Arrays.stream(arr).parallel()</code>",
+        "<code>arr.stream()</code>",
+        "<code>Arrays.asList(arr)</code> retourne List&lt;Integer&gt;",
+        "<code>Arrays.binarySearch(arr, 5)</code> sans sort préalable"
+      ],
+      "answer": [0, 1, 2],
+      "difficulty": "expert",
+      "explanation": "sort, parallelSort et stream().parallel() sont valides. arr.stream() n'existe pas (utiliser Arrays.stream). asList(int[]) crée List<int[]>. binarySearch sans sort donne résultat indéterminé."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5);\nboolean result = numbers.stream()\n    .peek(n -> System.out.print(n))\n    .anyMatch(n -> n > 3);\nSystem.out.println(\":\" + result);</code></pre>",
+      "options": [
+        "<code>12345:true</code>",
+        "<code>1234:true</code>",
+        "<code>:true</code>",
+        "<code>12:false</code>",
+        "<code>1:false</code>",
+        "<code>12345:false</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "anyMatch est une opération de court-circuit. Elle s'arrête dès qu'elle trouve un élément correspondant. peek affiche 1,2,3,4 puis anyMatch trouve 4>3 et s'arrête."
+    },
+    {
+      "topic": "Parallel Streams",
+      "type": "multiple",
+      "question": "Quelles conditions sont nécessaires pour un reduce() correct en parallèle ?",
+      "options": [
+        "L'opération doit être associative: (a op b) op c = a op (b op c)",
+        "L'opération doit être commutative: a op b = b op a",
+        "L'identity doit être un élément neutre: identity op x = x",
+        "Le combiner doit être cohérent avec l'accumulator",
+        "Les opérations doivent être déterministes",
+        "L'ordre doit être préservé"
+      ],
+      "answer": [0, 2, 3, 4],
+      "difficulty": "expert",
+      "explanation": "Pour reduce parallèle : associativité requise, identity = élément neutre, combiner cohérent, opérations déterministes. Commutativité souhaitable mais pas strictement requise. Ordre non garanti."
+    },
+    {
+      "topic": "Lambda",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>List<String> list = Arrays.asList(\"Java\", \"Python\");\nlist.replaceAll(s -> s.toUpperCase());\nlist.forEach(System.out::print);</code></pre>",
+      "options": [
+        "<code>JavaPython</code>",
+        "<code>JAVAPYTHON</code>",
+        "<code>javapython</code>",
+        "UnsupportedOperationException",
+        "Compilation error",
+        "NullPointerException"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Arrays.asList() retourne une liste de taille fixe mais modifiable. replaceAll() transforme chaque élément en majuscules. Affiche JAVAPYTHON."
+    },
+    {
+      "topic": "Parallel Streams",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Stream.of(\"a\", \"b\", \"c\")\n    .parallel()\n    .map(s -> {\n        System.out.print(Thread.currentThread().getName().charAt(0));\n        return s.toUpperCase();\n    })\n    .collect(Collectors.toList());</code></pre>",
+      "options": [
+        "Toujours le même caractère 3 fois",
+        "Différents caractères représentant différents threads",
+        "<code>abc</code>",
+        "Compilation error",
+        "Aucune sortie",
+        "<code>FFF</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "En parallèle, différents threads du ForkJoinPool traitent les éléments. Chaque thread a un nom différent, donc différents premiers caractères sont affichés."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>List<List<Integer>> nested = Arrays.asList(\n    Arrays.asList(1, 2),\n    Arrays.asList(3, 4, 5)\n);\nlong count = nested.stream()\n    .flatMap(list -> list.stream())\n    .count();\nSystem.out.println(count);</code></pre>",
+      "options": [
+        "<code>2</code>",
+        "<code>5</code>",
+        "<code>7</code>",
+        "<code>3</code>",
+        "Compilation error",
+        "<code>0</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "flatMap aplatit la structure : [[1,2],[3,4,5]] devient [1,2,3,4,5]. count() retourne 5."
+    },
+    {
+      "topic": "Arrays",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>String[] arr = {\"c\", \"a\", \"b\"};\nArrays.parallelSort(arr);\nSystem.out.print(Arrays.toString(arr));</code></pre>",
+      "options": [
+        "<code>[c, a, b]</code>",
+        "<code>[a, b, c]</code>",
+        "Ordre imprévisible",
+        "<code>[b, c, a]</code>",
+        "Compilation error",
+        "Runtime error"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "parallelSort() trie le tableau en place en utilisant le parallélisme. Le résultat est toujours trié selon l'ordre naturel : [a, b, c]."
+    },
+    {
+      "topic": "Parallel Streams",
+      "type": "multiple",
+      "question": "Quels Collectors sont thread-safe pour les parallel streams ?",
+      "options": [
+        "<code>Collectors.toList()</code>",
+        "<code>Collectors.toConcurrentMap()</code>",
+        "<code>Collectors.groupingByConcurrent()</code>",
+        "<code>Collectors.toSet()</code>",
+        "<code>Collectors.joining()</code>",
+        "Tous les Collectors sont thread-safe"
+      ],
+      "answer": [1, 2],
+      "difficulty": "expert",
+      "explanation": "Les Collectors concurrent (toConcurrentMap, groupingByConcurrent) sont optimisés pour le parallélisme. Les autres fonctionnent mais avec synchronisation interne."
+    },
+    {
+      "topic": "Lambda",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>Function<Integer, Integer> f = x -> x * 2;\nFunction<Integer, Integer> g = x -> x + 3;\nFunction<Integer, Integer> h = f.compose(g);\nSystem.out.println(h.apply(5));</code></pre>",
+      "options": [
+        "<code>13</code>",
+        "<code>16</code>",
+        "<code>10</code>",
+        "<code>8</code>",
+        "Compilation error",
+        "<code>11</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "compose exécute g puis f : g(5) = 8, puis f(8) = 16. Contrairement à andThen qui fait f puis g."
+    },
+    {
+      "topic": "Streams",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant ce code ?<br><pre><code class='language-java'>IntStream stream1 = IntStream.range(1, 5);\nIntStream stream2 = stream1.parallel();\nstream2.forEach(System.out::print);\nstream1.forEach(System.out::print);</code></pre>",
+      "options": [
+        "Le code affiche les nombres dans un ordre imprévisible",
+        "stream2 et stream1 référencent le même stream",
+        "La deuxième forEach lance IllegalStateException",
+        "parallel() crée un nouveau stream",
+        "Les deux forEach s'exécutent correctement",
+        "Compilation error"
+      ],
+      "answer": [1, 2],
+      "difficulty": "expert",
+      "explanation": "parallel() retourne le même stream configuré en parallèle, pas un nouveau. stream1 et stream2 référencent le même stream qui est consommé par la première forEach. La deuxième lance IllegalStateException."
+    },
+    {
+      "topic": "Parallel Streams",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List<Integer> list = Arrays.asList(1, 2, 3, 4, 5);\nint result = list.parallelStream()\n    .reduce(0, (a, b) -> a + b, (a, b) -> a * b);\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "<code>15</code>",
+        "<code>0</code>",
+        "Résultat imprévisible",
+        "<code>120</code>",
+        "Compilation error",
+        "<code>5</code>"
+      ],
+      "answer": 2,
+      "difficulty": "expert",
+      "explanation": "L'accumulator additionne, le combiner multiplie : incohérent ! Les résultats partiels sont additionnés puis multipliés selon la partition, donnant un résultat imprévisible."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>Stream<Integer> stream = Stream.of(1, 2, 3, 4, 5);\nOptional<Integer> result = stream\n    .filter(n -> n > 5)\n    .reduce((a, b) -> a + b);\nSystem.out.println(result.isPresent());</code></pre>",
+      "options": [
+        "<code>true</code>",
+        "<code>false</code>",
+        "<code>NoSuchElementException</code>",
+        "<code>null</code>",
+        "Compilation error",
+        "<code>0</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "filter(n > 5) ne produit aucun élément. reduce() sur un stream vide retourne Optional.empty(). isPresent() retourne false."
+    },
+    {
+      "topic": "Arrays",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant Arrays.parallelSort() ?",
+      "options": [
+        "Utilise l'algorithme de tri parallèle",
+        "Est toujours plus rapide que Arrays.sort()",
+        "Trie le tableau en place",
+        "Utilise le ForkJoinPool",
+        "Fonctionne avec tous les types de tableaux",
+        "Nécessite que les éléments soient Comparable ou un Comparator"
+      ],
+      "answer": [0, 2, 3, 4, 5],
+      "difficulty": "expert",
+      "explanation": "parallelSort utilise un tri parallèle via ForkJoinPool, trie en place, fonctionne avec tous types. Pas toujours plus rapide (overhead pour petits tableaux). Nécessite comparaison."
+    }
+  ]
+}
