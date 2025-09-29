@@ -215,29 +215,36 @@ function checkAnswerImmediate() {
     if (selectedOptions.length === 0) return;
 
     let isCorrect = false;
+    let userResponse = null;
 
     if (isMultiple) {
-        const userAnswers = Array.from(selectedOptions).map(opt => parseInt(opt.dataset.index));
+        userResponse = Array.from(selectedOptions).map(opt => parseInt(opt.dataset.index));
         const correctAnswers = Array.isArray(q.answer) ? q.answer : [q.answer];
 
+        // Sauvegarder la réponse de l'utilisateur
+        userAnswers[currentQuestion] = userResponse;
+
         // Vérifier si les réponses correspondent exactement
-        isCorrect = userAnswers.length === correctAnswers.length &&
-                   userAnswers.every(ans => correctAnswers.includes(ans));
+        isCorrect = userResponse.length === correctAnswers.length &&
+                   userResponse.every(ans => correctAnswers.includes(ans));
 
         // Marquer toutes les options
         document.querySelectorAll(".option").forEach(opt => {
             const index = parseInt(opt.dataset.index);
             if (correctAnswers.includes(index)) {
                 opt.classList.add("correct");
-            } else if (userAnswers.includes(index)) {
+            } else if (userResponse.includes(index)) {
                 opt.classList.add("incorrect");
             }
         });
     } else {
-        const chosen = parseInt(selectedOptions[0].dataset.index);
+        userResponse = parseInt(selectedOptions[0].dataset.index);
         const correctAnswer = Array.isArray(q.answer) ? q.answer[0] : q.answer;
 
-        isCorrect = chosen === correctAnswer;
+        // Sauvegarder la réponse de l'utilisateur
+        userAnswers[currentQuestion] = userResponse;
+
+        isCorrect = userResponse === correctAnswer;
 
         if (isCorrect) {
             selectedOptions[0].classList.add("correct");
