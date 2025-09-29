@@ -1,0 +1,326 @@
+{
+  "title": "Certification Java 21 - POO Avancée : Sealed, Records, Overloading",
+  "duration": 50,
+  "questions": [
+    {
+      "topic": "Sealed Classes",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>sealed class Animal permits Dog, Cat {}\nfinal class Dog extends Animal {}\nfinal class Cat extends Animal {}\nclass Bird extends Animal {}</code></pre>",
+      "options": [
+        "Le code compile correctement",
+        "Compilation error sur la ligne Bird",
+        "Compilation error sur la ligne Animal",
+        "Runtime error",
+        "Bird doit être sealed ou non-sealed",
+        "Compilation error - Bird pas dans permits"
+      ],
+      "answer": 5,
+      "difficulty": "expert",
+      "explanation": "Seules les classes listées dans permits peuvent étendre une sealed class. Bird n'est pas autorisée et provoque une erreur de compilation."
+    },
+    {
+      "topic": "Overriding",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant ce code ?<br><pre><code class='language-java'>class Parent {\n    private void method() { System.out.print(\"Parent\"); }\n}\nclass Child extends Parent {\n    private void method() { System.out.print(\"Child\"); }\n    public void test() { method(); }\n}</code></pre>",
+      "options": [
+        "Child.method() redéfinit Parent.method()",
+        "Les deux méthodes sont indépendantes",
+        "test() appelle Child.method()",
+        "Compilation error - cannot override private",
+        "Le code compile correctement",
+        "test() appelle Parent.method()"
+      ],
+      "answer": [1, 2, 4],
+      "difficulty": "expert",
+      "explanation": "Les méthodes private ne sont pas héritées donc ne peuvent pas être redéfinies. Child.method() est une nouvelle méthode indépendante. test() appelle la méthode de Child."
+    },
+    {
+      "topic": "Generics avec Héritage",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>List<Number> numbers = new ArrayList<Integer>();\nnumbers.add(10);</code></pre>",
+      "options": [
+        "Le code compile et s'exécute",
+        "Compilation error sur la ligne 1",
+        "Compilation error sur la ligne 2",
+        "Runtime error - ClassCastException",
+        "Le code compile mais add() lance une exception",
+        "NullPointerException"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Les génériques sont invariants. List<Integer> n'est pas un sous-type de List<Number>, même si Integer extends Number. Erreur de compilation à l'initialisation."
+    },
+    {
+      "topic": "Records",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant les records ?<br><pre><code class='language-java'>record Point(int x, int y) {}</code></pre>",
+      "options": [
+        "Les records sont implicitement final",
+        "Les records peuvent étendre d'autres classes",
+        "On peut déclarer des champs d'instance supplémentaires",
+        "Les composants sont implicitement private final",
+        "Les records peuvent implémenter des interfaces",
+        "On peut redéfinir les accesseurs"
+      ],
+      "answer": [0, 3, 4, 5],
+      "difficulty": "expert",
+      "explanation": "Les records sont final, ont des composants private final, peuvent implémenter des interfaces et redéfinir les accesseurs. Ils ne peuvent pas étendre de classes ni avoir de champs d'instance supplémentaires."
+    },
+    {
+      "topic": "Overloading",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Test {\n    void method(int i, long l) { System.out.print(\"int-long\"); }\n    void method(long l, int i) { System.out.print(\"long-int\"); }\n}\nnew Test().method(10, 20);</code></pre>",
+      "options": [
+        "<code>int-long</code>",
+        "<code>long-int</code>",
+        "Compilation error - ambiguous",
+        "Runtime error",
+        "Le premier est choisi par défaut",
+        "Compilation error - duplicate method"
+      ],
+      "answer": 2,
+      "difficulty": "expert",
+      "explanation": "Les deux méthodes peuvent correspondre avec élargissement (int→long). Le compilateur ne peut pas décider → ambiguïté, erreur de compilation."
+    },
+    {
+      "topic": "Sealed Classes",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>sealed interface Shape permits Circle {}\nfinal class Circle implements Shape {}\nnon-sealed class Square implements Shape {}</code></pre>",
+      "options": [
+        "Le code compile correctement",
+        "Compilation error - Square not permitted",
+        "Compilation error - interface cannot be sealed",
+        "Square doit être dans permits",
+        "Runtime error",
+        "Circle doit être non-sealed"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Square n'est pas dans la clause permits de Shape. Seules les classes/interfaces listées peuvent implémenter/étendre une sealed interface/classe."
+    },
+    {
+      "topic": "Overriding Static",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant ce code ?<br><pre><code class='language-java'>class Parent {\n    static void method() { System.out.print(\"Parent\"); }\n}\nclass Child extends Parent {\n    static void method() { System.out.print(\"Child\"); }\n}\nParent p = new Child();\np.method();</code></pre>",
+      "options": [
+        "Le code affiche <code>Parent</code>",
+        "Le code affiche <code>Child</code>",
+        "Les méthodes static ne sont pas redéfinies, elles sont masquées (hidden)",
+        "C'est du polymorphisme",
+        "La résolution se fait sur le type de référence",
+        "Compilation error"
+      ],
+      "answer": [0, 2, 4],
+      "difficulty": "expert",
+      "explanation": "Les méthodes static ne sont pas polymorphes. Elles sont masquées, pas redéfinies. La résolution se fait sur le type de référence (Parent), donc affiche \"Parent\"."
+    },
+    {
+      "topic": "Records",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>record Person(String name, int age) {\n    Person {\n        if (age < 0) age = 0;\n        name = name.toUpperCase();\n    }\n}\nPerson p = new Person(\"john\", -5);\nSystem.out.println(p.name() + \",\" + p.age());</code></pre>",
+      "options": [
+        "<code>john,-5</code>",
+        "<code>JOHN,0</code>",
+        "<code>john,0</code>",
+        "<code>JOHN,-5</code>",
+        "<code>Compilation error</code>",
+        "<code>null,0</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Le constructeur compact modifie les paramètres avant l'assignation automatique. name devient \"JOHN\" et age devient 0."
+    },
+    {
+      "topic": "Encapsulation",
+      "type": "multiple",
+      "question": "Quelles méthodes sont accessibles depuis une sous-classe dans un package différent ?<br><pre><code class='language-java'>package com.example;\npublic class Parent {\n    public void m1() {}\n    protected void m2() {}\n    void m3() {}\n    private void m4() {}\n}</code></pre>",
+      "options": [
+        "<code>m1()</code>",
+        "<code>m2()</code>",
+        "<code>m3()</code>",
+        "<code>m4()</code>",
+        "Toutes les méthodes",
+        "Aucune méthode"
+      ],
+      "answer": [0, 1],
+      "difficulty": "expert",
+      "explanation": "Depuis une sous-classe dans un autre package : public (m1) et protected (m2) sont accessibles. package-private (m3) et private (m4) ne le sont pas."
+    },
+    {
+      "topic": "Overloading",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Test {\n    void method(Object o) { System.out.print(\"Object\"); }\n    void method(String s) { System.out.print(\"String\"); }\n    void method(Integer i) { System.out.print(\"Integer\"); }\n}\nTest t = new Test();\nNumber n = 10;\nt.method(n);</code></pre>",
+      "options": [
+        "<code>Object</code>",
+        "<code>Integer</code>",
+        "<code>String</code>",
+        "Compilation error",
+        "Runtime error",
+        "<code>Number</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "n est de type Number (type de référence). Seul method(Object) correspond car Number extends Object. La résolution de surcharge se fait à la compilation sur le type statique."
+    },
+    {
+      "topic": "Sealed Classes",
+      "type": "multiple",
+      "question": "Quels modificateurs sont valides pour les sous-types d'une sealed class ?",
+      "options": [
+        "<code>final</code>",
+        "<code>sealed</code>",
+        "<code>non-sealed</code>",
+        "<code>abstract</code>",
+        "<code>public</code>",
+        "<code>open</code>"
+      ],
+      "answer": [0, 1, 2],
+      "difficulty": "expert",
+      "explanation": "Les sous-types directs d'une sealed class doivent être : final (ne peut plus être étendue), sealed (continue la hiérarchie fermée), ou non-sealed (ouvre la hiérarchie). 'open' n'existe pas en Java."
+    },
+    {
+      "topic": "Polymorphisme",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Animal {\n    String type = \"Animal\";\n    String getType() { return type; }\n}\nclass Dog extends Animal {\n    String type = \"Dog\";\n    String getType() { return type; }\n}\nAnimal a = new Dog();\nSystem.out.println(a.type + \",\" + a.getType());</code></pre>",
+      "options": [
+        "<code>Animal,Animal</code>",
+        "<code>Dog,Dog</code>",
+        "<code>Animal,Dog</code>",
+        "<code>Dog,Animal</code>",
+        "<code>Compilation error</code>",
+        "<code>Runtime error</code>"
+      ],
+      "answer": 2,
+      "difficulty": "expert",
+      "explanation": "Les champs ne sont pas polymorphes : a.type utilise le champ de Animal. Les méthodes sont polymorphes : getType() utilise l'implémentation de Dog."
+    },
+    {
+      "topic": "Overriding Protected",
+      "type": "multiple",
+      "question": "Quelles redéfinitions sont valides ?<br><pre><code class='language-java'>class Parent {\n    protected void method() throws IOException {}\n}</code></pre>",
+      "options": [
+        "<code>public void method() throws IOException</code>",
+        "<code>protected void method() throws Exception</code>",
+        "<code>void method() throws IOException</code>",
+        "<code>protected void method()</code>",
+        "<code>private void method() throws IOException</code>",
+        "<code>public void method() throws FileNotFoundException</code>"
+      ],
+      "answer": [0, 3, 5],
+      "difficulty": "expert",
+      "explanation": "Valides : élargir la visibilité (public), même visibilité, exceptions plus spécifiques ou aucune. Invalides : réduire visibilité (package-private, private), exceptions plus larges (Exception)."
+    },
+    {
+      "topic": "Records",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>record Data(int value) {\n    Data(int value) {\n        this.value = value * 2;\n    }\n}\nData d = new Data(5);\nSystem.out.println(d.value());</code></pre>",
+      "options": [
+        "<code>5</code>",
+        "<code>10</code>",
+        "<code>0</code>",
+        "Compilation error",
+        "Runtime error",
+        "<code>null</code>"
+      ],
+      "answer": 3,
+      "difficulty": "expert",
+      "explanation": "On ne peut pas déclarer un constructeur canonique explicite avec assignation manuelle dans un record. Utiliser le constructeur compact sans paramètres pour modification."
+    },
+    {
+      "topic": "Generics Extends",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List<? extends Number> list = new ArrayList<Integer>();\nlist.add(10);\nlist.add(10.5);\nSystem.out.println(list.size());</code></pre>",
+      "options": [
+        "<code>2</code>",
+        "<code>1</code>",
+        "<code>0</code>",
+        "Compilation error sur add(10)",
+        "Compilation error sur la déclaration",
+        "Runtime error"
+      ],
+      "answer": 3,
+      "difficulty": "expert",
+      "explanation": "List<? extends Number> ne permet pas d'ajouter des éléments (sauf null) car le type exact est inconnu. On ne peut pas garantir la sécurité de type."
+    },
+    {
+      "topic": "Overloading Varargs",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Test {\n    void method(int... nums) { System.out.print(\"varargs\"); }\n    void method(int n1, int n2) { System.out.print(\"two\"); }\n    void method(int n) { System.out.print(\"one\"); }\n}\nnew Test().method(5);</code></pre>",
+      "options": [
+        "<code>varargs</code>",
+        "<code>one</code>",
+        "<code>two</code>",
+        "Compilation error - ambiguous",
+        "Runtime error",
+        "Le premier déclaré est choisi"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "La résolution de surcharge privilégie : correspondance exacte > autoboxing/widening > varargs. method(int) correspond exactement."
+    },
+    {
+      "topic": "Sealed Classes",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>sealed class Vehicle permits Car {}\nfinal class Car extends Vehicle {}\nnon-sealed class Truck extends Vehicle {}</code></pre>",
+      "options": [
+        "Le code compile correctement",
+        "Compilation error - Truck not permitted",
+        "Car doit être non-sealed",
+        "Vehicle doit être abstract",
+        "Truck doit être dans permits",
+        "Runtime error"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Truck tente d'étendre Vehicle mais n'est pas dans la clause permits. Seul Car est autorisé. Erreur de compilation."
+    },
+    {
+      "topic": "Encapsulation",
+      "type": "multiple",
+      "question": "Quelles modifications violent l'encapsulation dans ce record ?<br><pre><code class='language-java'>record Container(List<String> items) {\n    public List<String> items() { return items; }\n}</code></pre>",
+      "options": [
+        "L'accesseur expose la référence interne",
+        "La liste peut être modifiée de l'extérieur",
+        "Le constructeur devrait faire une copie défensive",
+        "Les records ne peuvent pas contenir de collections",
+        "items devrait être private",
+        "Aucune violation d'encapsulation"
+      ],
+      "answer": [0, 1, 2],
+      "difficulty": "expert",
+      "explanation": "L'accesseur expose la liste interne permettant des modifications externes. Il faut faire des copies défensives au constructeur et dans l'accesseur."
+    },
+    {
+      "topic": "Overriding",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Base {\n    void method() { System.out.print(\"Base\"); }\n}\nclass Derived extends Base {\n    void method() { System.out.print(\"Derived\"); }\n    void test() { super.method(); }\n}\nnew Derived().test();</code></pre>",
+      "options": [
+        "<code>Base</code>",
+        "<code>Derived</code>",
+        "<code>BaseDerived</code>",
+        "<code>DerivedBase</code>",
+        "Compilation error",
+        "Runtime error"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "super.method() appelle explicitement la méthode de la classe parent, contournant le polymorphisme. Affiche \"Base\"."
+    },
+    {
+      "topic": "Polymorphisme",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant ce code ?<br><pre><code class='language-java'>class A {\n    void method(A a) { System.out.print(\"A-A\"); }\n}\nclass B extends A {\n    void method(B b) { System.out.print(\"B-B\"); }\n}\nA obj = new B();\nobj.method(new B());</code></pre>",
+      "options": [
+        "Le code affiche <code>A-A</code>",
+        "Le code affiche <code>B-B</code>",
+        "method(B) redéfinit method(A)",
+        "method(B) surcharge method(A)",
+        "La résolution se fait à la compilation",
+        "La résolution se fait à l'exécution"
+      ],
+      "answer": [0, 3, 4],
+      "difficulty": "expert",
+      "explanation": "method(B) est une surcharge, pas une redéfinition (paramètres différents). La résolution de surcharge est statique : obj de type A avec paramètre B (qui est un A) → appelle A.method(A)."
+    }
+  ]
+}
