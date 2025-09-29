@@ -5,9 +5,10 @@ class ExamLoader {
         this.examFiles = [];
         this.examsData = {};
         this.categoryOrder = {
-            'dev': { order: 1, icon: '🛠️', title: 'Développement & Test' },
-            'heritage': { order: 2, icon: '🏗️', title: 'Héritage/Polymorphisme/Encapsulation/Overriding' },
-            'collections': { order: 3, icon: '📊', title: 'Collections & Streams' }
+            'heritage': { order: 1, icon: '🏗️', title: 'Héritage/Polymorphisme/Encapsulation/Overriding' },
+            'collections': { order: 2, icon: '📊', title: 'Collections & Streams',
+            'dev': { order: 3, icon: '🛠️', title: 'Développement & Test' }
+            }
         };
     }
 
