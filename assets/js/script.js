@@ -7,6 +7,19 @@ let userAnswers = []; // Stocker les réponses de l'utilisateur
 let startTime; // Pour calculer le temps passé
 let currentExamId; // ID de l'examen en cours
 
+// Fonction pour échapper les caractères HTML uniquement dans les blocs de code Java
+function fixJavaCodeBlocks(text) {
+    if (!text) return text;
+
+    return text.replace(/<code class=['"]language-java['"]>(.*?)<\/code>/gs, (match, codeContent) => {
+        // Échapper seulement les caractères < et > dans le contenu du code Java
+        const escapedContent = codeContent
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+        return `<code class='language-java'>${escapedContent}</code>`;
+    });
+}
+
 async function loadExam() {
     const urlParams = new URLSearchParams(window.location.search);
     const examFile = urlParams.get("exam") || "exam1.json";
@@ -152,10 +165,10 @@ function showQuestion() {
 
     container.innerHTML = `
     <p class="topic">Topic : <strong>${q.topic}</strong></p>
-    <h3>${q.question}</h3>
+    <h3>${fixJavaCodeBlocks(q.question)}</h3>
     ${isMultiple ? '<p style="color: #666; font-style: italic; margin-bottom: 10px;">📝 Plusieurs réponses possibles</p>' : ''}
     ${q.options.map((opt, i) => `
-      <div class="option ${isMultiple ? 'multiple' : ''}" data-index="${i}">${opt}</div>
+      <div class="option ${isMultiple ? 'multiple' : ''}" data-index="${i}">${fixJavaCodeBlocks(opt)}</div>
     `).join("")}
     ${mode === "train" ? '<button id="check-btn" class="btn">Valider</button>' : ""}
   `;
@@ -260,7 +273,7 @@ function checkAnswerImmediate() {
     // explication
     if (q.explanation) {
         document.getElementById("question-container").innerHTML +=
-            `<p style="margin-top:10px;color:#555"><strong>Explication :</strong> ${q.explanation}</p>`;
+            `<p style="margin-top:10px;color:#555"><strong>Explication :</strong> ${fixJavaCodeBlocks(q.explanation)}</p>`;
     }
 
     document.getElementById("check-btn").style.display = "none";
@@ -418,7 +431,7 @@ function showReview() {
                     <span style="font-size: 1.2em; margin-right: 10px;">${isCorrect ? '✅' : '❌'}</span>
                     <h4>Question ${index + 1} - ${q.topic}</h4>
                 </div>
-                <div class="question-content">${q.question}</div>
+                <div class="question-content">${fixJavaCodeBlocks(q.question)}</div>
 
                 <div style="margin: 15px 0;">
                     ${q.options.map((opt, i) => {
@@ -444,7 +457,7 @@ function showReview() {
                             (correctAnswers.includes(i) ? '☑️' : '☐') :
                             (correctAnswers.includes(i) ? '🔘' : '⚪');
 
-                        return `<div class="option-review" style="padding: 8px; margin: 5px 0; border-radius: 5px; ${optionStyle}">${prefix} ${opt}</div>`;
+                        return `<div class="option-review" style="padding: 8px; margin: 5px 0; border-radius: 5px; ${optionStyle}">${prefix} ${fixJavaCodeBlocks(opt)}</div>`;
                     }).join("")}
                 </div>
 
@@ -457,7 +470,7 @@ function showReview() {
                         `Option ${userResponse + 1}`
                     }</p>
                     <p><strong>Bonne(s) réponse(s) :</strong> Options ${correctAnswers.map(i => i + 1).join(', ')}</p>
-                    ${q.explanation ? `<p style="margin-top: 10px; color: #555;"><strong>Explication :</strong> ${q.explanation}</p>` : ''}
+                    ${q.explanation ? `<p style="margin-top: 10px; color: #555;"><strong>Explication :</strong> ${fixJavaCodeBlocks(q.explanation)}</p>` : ''}
                 </div>
             </div>
         `;
