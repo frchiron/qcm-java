@@ -1,0 +1,665 @@
+{
+  "metadata": {
+    "id": "exam-18_full_quiz.json",
+    "mainTopic": "full",
+    "category": "full",
+    "examNumber": "F4",
+    "examName": "Examen blanc complet N°4",
+    "questionsCount": 50,
+    "description": "50 questions • Tous thèmes"
+  },
+  "title": "OCP-830 Java 21 - Questionnaire 4",
+  "duration": 75,
+  "questions": [
+    {
+      "topic": "Switch Expression & Yield",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int value = 2;\nint result = switch(value) {\n    case 1 -> 10;\n    case 2 -> {\n        int x = 20;\n        yield x + 10;\n    }\n    case 3 -> 30;\n    default -> throw new IllegalArgumentException();\n};\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "10",
+        "20",
+        "30",
+        "Ne compile pas car yield ne peut être utilisé avec ->",
+        "Ne compile pas car default avec throw n'est pas valide"
+      ],
+      "answer": 2,
+      "explanation": "Piège : on s'attend à 30 mais c'est un piège de lecture. Le case 2 utilise un bloc avec yield x + 10 où x=20, donc yield 30. Le résultat est 30, pas 20."
+    },
+    {
+      "topic": "Casting & Numeric Promotion",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>byte b = 10;\nshort s = 20;\nvar result = b + s;\nSystem.out.println(result instanceof Integer);</code></pre>",
+      "options": [
+        "true",
+        "false",
+        "Ne compile pas car var ne peut inférer le type",
+        "Ne compile pas car instanceof ne peut être utilisé avec primitives",
+        "Ne compile pas à la ligne var result"
+      ],
+      "answer": 3,
+      "explanation": "byte + short est promu en int (numeric promotion). Donc result est int (type primitif). instanceof ne peut être utilisé qu'avec des types référence, pas des primitives. Compilation échoue."
+    },
+    {
+      "topic": "Streams & Reduction",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List&lt;Integer&gt; nums = List.of(1, 2, 3, 4, 5);\nInteger result = nums.stream()\n    .reduce(0, (a, b) -> a - b);\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "15",
+        "-15",
+        "0",
+        "5",
+        "Ne compile pas"
+      ],
+      "answer": 1,
+      "explanation": "reduce avec soustraction : 0-1=-1, -1-2=-3, -3-3=-6, -6-4=-10, -10-5=-15. L'ordre compte avec des opérations non-commutatives comme la soustraction."
+    },
+    {
+      "topic": "Record Equals & HashCode",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>record Point(int x, int y) { }\n\nPoint p1 = new Point(5, 10);\nPoint p2 = new Point(5, 10);\nSystem.out.println(p1 == p2);\nSystem.out.println(p1.equals(p2));</code></pre>",
+      "options": [
+        "true true",
+        "true false",
+        "false true",
+        "false false",
+        "Ne compile pas"
+      ],
+      "answer": 2,
+      "explanation": "p1 et p2 sont deux instances différentes, donc == compare les références (false). Les records génèrent automatiquement equals() qui compare les valeurs des composants (true)."
+    },
+    {
+      "topic": "Exception Suppression",
+      "question": "Combien d'exceptions seront supprimées ?<br><pre><code class='language-java'>class R1 implements AutoCloseable {\n    public void close() { throw new Exception(\"R1\"); }\n}\nclass R2 implements AutoCloseable {\n    public void close() { throw new Exception(\"R2\"); }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        try(R1 r1 = new R1(); R2 r2 = new R2()) {\n            throw new Exception(\"try\");\n        } catch(Exception e) {\n            System.out.println(e.getSuppressed().length);\n        }\n    }\n}</code></pre>",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "Exception non catchée"
+      ],
+      "answer": 2,
+      "explanation": "L'exception du try est principale. Les close() s'exécutent en ordre inverse (R2 puis R1), leurs exceptions sont supprimées et attachées à l'exception principale. 2 exceptions supprimées."
+    },
+    {
+      "topic": "String Methods",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>String s = \"  hello world  \";\nSystem.out.println(s.trim().length());\nSystem.out.println(s.strip().length());\nSystem.out.println(s.length());</code></pre>",
+      "options": [
+        "11 11 15",
+        "11 11 11",
+        "15 15 15",
+        "11 15 15",
+        "Ne compile pas"
+      ],
+      "answer": 0,
+      "explanation": "trim() et strip() enlèvent les espaces (11 caractères). Mais String est immutable : s lui-même n'est pas modifié et garde sa longueur originale (15). Piège classique de l'immutabilité."
+    },
+    {
+      "topic": "LocalDate Arithmetic",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>LocalDate date = LocalDate.of(2024, 3, 31);\ndate.minusMonths(1);\nSystem.out.println(date);</code></pre>",
+      "options": [
+        "2024-02-29",
+        "2024-02-28",
+        "2024-03-31",
+        "Exception à l'exécution",
+        "2024-03-01"
+      ],
+      "answer": 2,
+      "explanation": "LocalDate est immutable. minusMonths() retourne un nouveau LocalDate mais le résultat n'est pas assigné. date reste inchangé : 2024-03-31."
+    },
+    {
+      "topic": "Generic Methods",
+      "question": "Quel code compile ?<br><pre><code class='language-java'>class TestClass {\n    //A\n    public static &lt;T&gt; T process(T item) { return item; }\n    \n    //B\n    public &lt;T&gt; static T process(T item) { return item; }\n    \n    //C\n    public static &lt;T extends Number&gt; T process(T item) { return item; }\n    \n    //D\n    public &lt;T&gt; T process(T item) { return item; }\n}</code></pre>",
+      "options": [
+        "A et C et D",
+        "A et B",
+        "Toutes",
+        "A, C, D",
+        "A uniquement"
+      ],
+      "answer": 3,
+      "explanation": "B échoue : pour les méthodes generics, le type parameter <T> doit venir avant le type de retour. L'ordre correct est modifiers <T> returnType. A, C (avec bounded type), et D compilent."
+    },
+    {
+      "topic": "Collector toMap",
+      "question": "Que va se passer ?<br><pre><code class='language-java'>List&lt;String&gt; list = List.of(\"a\", \"b\", \"a\", \"c\");\nMap&lt;String, Integer&gt; map = list.stream()\n    .collect(Collectors.toMap(\n        s -> s,\n        s -> s.length()\n    ));\nSystem.out.println(map);</code></pre>",
+      "options": [
+        "{a=1, b=1, c=1}",
+        "{a=1, b=1}",
+        "IllegalStateException (duplicate key)",
+        "Ne compile pas",
+        "{a=2, b=1, c=1}"
+      ],
+      "answer": 2,
+      "explanation": "toMap() lance IllegalStateException si des clés dupliquées existent. \"a\" apparaît deux fois. Pour gérer les doublons, il faut fournir une merge function comme troisième argument."
+    },
+    {
+      "topic": "Interface Static Methods",
+      "question": "Quel code compile ?<br><pre><code class='language-java'>interface Calculator {\n    static int add(int a, int b) { return a + b; }\n}\n\nclass MathUtils implements Calculator {\n    //INSERT CODE HERE\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        System.out.println(MathUtils.add(2, 3));\n    }\n}</code></pre>",
+      "options": [
+        "static int add(int a, int b) { return a + b; }",
+        "public static int add(int a, int b) { return Calculator.add(a, b); }",
+        "Rien (hérite automatiquement)",
+        "Ne peut pas compiler car main() appelle incorrectement",
+        "B et D"
+      ],
+      "answer": 3,
+      "explanation": "Les méthodes static d'interface ne sont PAS héritées. main() doit appeler Calculator.add(), pas MathUtils.add(). L'appel dans main() est incorrect, donc ne compile pas."
+    },
+    {
+      "topic": "Parallel Streams Order",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List&lt;Integer&gt; list = List.of(1, 2, 3, 4, 5);\nlist.stream()\n    .parallel()\n    .forEachOrdered(System.out::print);</code></pre>",
+      "options": [
+        "12345 (toujours dans cet ordre)",
+        "Ordre imprévisible",
+        "54321",
+        "Ne compile pas",
+        "123451234512345 (répétitions)"
+      ],
+      "answer": 0,
+      "explanation": "forEachOrdered() maintient l'ordre d'origine même avec parallel streams. forEach() donnerait un ordre imprévisible, mais forEachOrdered() garantit l'ordre de la source : 12345."
+    },
+    {
+      "topic": "Nested Try-Catch",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>try {\n    try {\n        throw new RuntimeException(\"inner\");\n    } catch(Exception e) {\n        throw new Exception(\"outer\");\n    }\n} catch(RuntimeException e) {\n    System.out.println(\"Runtime\");\n} catch(Exception e) {\n    System.out.println(\"Exception\");\n}</code></pre>",
+      "options": [
+        "Runtime",
+        "Exception",
+        "Runtime Exception",
+        "Ne compile pas",
+        "Aucune sortie"
+      ],
+      "answer": 1,
+      "explanation": "RuntimeException lancée → catchée par catch(Exception) interne → nouvelle Exception lancée → catchée par catch(Exception) externe. Le catch(RuntimeException) externe n'est pas atteint."
+    },
+    {
+      "topic": "StringBuilder Capacity",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>StringBuilder sb1 = new StringBuilder();\nStringBuilder sb2 = new StringBuilder(\"test\");\nStringBuilder sb3 = new StringBuilder(10);\nSystem.out.println(sb1.capacity() + \" \" + \n                   sb2.capacity() + \" \" + \n                   sb3.capacity());</code></pre>",
+      "options": [
+        "16 4 10",
+        "0 4 10",
+        "16 20 10",
+        "16 16 10",
+        "0 0 0"
+      ],
+      "answer": 2,
+      "explanation": "sb1 : capacité par défaut = 16. sb2 : String.length() + 16 = 4 + 16 = 20. sb3 : capacité spécifiée = 10. Piège : beaucoup pensent que sb2.capacity() = 4."
+    },
+    {
+      "topic": "enum Switch Exhaustiveness",
+      "question": "Le code compile-t-il ?<br><pre><code class='language-java'>enum Color { RED, GREEN, BLUE }\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Color c = Color.RED;\n        String result = switch(c) {\n            case RED -> \"Rouge\";\n            case GREEN -> \"Vert\";\n            case BLUE -> \"Bleu\";\n        };\n        System.out.println(result);\n    }\n}</code></pre>",
+      "options": [
+        "Oui, affiche Rouge",
+        "Non, manque default",
+        "Non, doit utiliser : au lieu de ->",
+        "Non, switch expression pas valide avec enum",
+        "Oui mais affiche null"
+      ],
+      "answer": 0,
+      "explanation": "Switch expression avec enum couvrant toutes les constantes est exhaustif, pas besoin de default. Le compilateur vérifie que tous les cas sont couverts. Code valide, affiche \"Rouge\"."
+    },
+    {
+      "topic": "Method Hiding vs Overriding",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Parent {\n    static void print() { System.out.println(\"Parent\"); }\n}\n\nclass Child extends Parent {\n    static void print() { System.out.println(\"Child\"); }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Parent p = new Child();\n        p.print();\n    }\n}</code></pre>",
+      "options": [
+        "Parent",
+        "Child",
+        "Ne compile pas",
+        "Exception à l'exécution",
+        "Résultat imprévisible"
+      ],
+      "answer": 0,
+      "explanation": "Les méthodes static ne sont pas overridden, elles sont hidden. L'appel est résolu au compile-time basé sur le type de la référence (Parent), pas le type réel de l'objet. Affiche \"Parent\"."
+    },
+    {
+      "topic": "List subList View",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List&lt;String&gt; list = new ArrayList&lt;&gt;(List.of(\"A\", \"B\", \"C\", \"D\"));\nList&lt;String&gt; sub = list.subList(1, 3);\nsub.set(0, \"X\");\nSystem.out.println(list);</code></pre>",
+      "options": [
+        "[A, B, C, D]",
+        "[A, X, C, D]",
+        "[X, C]",
+        "Exception à l'exécution",
+        "Ne compile pas"
+      ],
+      "answer": 1,
+      "explanation": "subList() retourne une vue (backed by original list). Modifier sub modifie list. sub.set(0, \"X\") change l'élément à l'index 1 de list (\"B\" → \"X\"). Résultat : [A, X, C, D]."
+    },
+    {
+      "topic": "Spliterator Characteristics",
+      "question": "Quel Stream a la caractéristique SIZED ?<br><pre><code class='language-java'>//A\nStream.of(1, 2, 3).filter(x -> x > 1)\n\n//B\nList.of(1, 2, 3).stream()\n\n//C\nStream.generate(() -> 1).limit(10)\n\n//D\nStream.iterate(0, x -> x + 1).limit(5)</code></pre>",
+      "options": [
+        "B uniquement",
+        "B et C et D",
+        "Tous",
+        "B et C uniquement",
+        "Aucun"
+      ],
+      "answer": 1,
+      "explanation": "SIZED signifie que la taille est connue à l'avance. A perd SIZED après filter. B conserve SIZED (liste). C et D ont SIZED après limit. Seul A n'a pas SIZED."
+    },
+    {
+      "topic": "Path Normalization",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Path p1 = Path.of(\"/home/user/../admin/file.txt\");\nPath p2 = p1.normalize();\nSystem.out.println(p1);\nSystem.out.println(p2);</code></pre>",
+      "options": [
+        "/home/user/../admin/file.txt\n/home/admin/file.txt",
+        "/home/admin/file.txt\n/home/admin/file.txt",
+        "/home/user/../admin/file.txt\n/home/user/../admin/file.txt",
+        "Exception à l'exécution",
+        "/home/user/admin/file.txt\n/home/admin/file.txt"
+      ],
+      "answer": 0,
+      "explanation": "Path est immutable. normalize() retourne un nouveau Path avec les .. résolus, mais p1 reste inchangé. p1 conserve le chemin original, p2 a le chemin normalisé."
+    },
+    {
+      "topic": "Double Brace Initialization",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List&lt;String&gt; list = new ArrayList&lt;&gt;() {{\n    add(\"A\");\n    add(\"B\");\n}};\nSystem.out.println(list.getClass().getSuperclass());</code></pre>",
+      "options": [
+        "class java.util.ArrayList",
+        "class java.util.AbstractList",
+        "class java.lang.Object",
+        "Ne compile pas",
+        "null"
+      ],
+      "answer": 0,
+      "explanation": "Double brace initialization crée une classe anonyme qui étend ArrayList. getSuperclass() retourne ArrayList. C'est une anti-pattern car crée une nouvelle classe et peut causer des fuites mémoires."
+    },
+    {
+      "topic": "Unary Operators Order",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 5;\nint y = ++x + x++ + x;\nSystem.out.println(x + \" \" + y);</code></pre>",
+      "options": [
+        "7 18",
+        "8 18",
+        "7 19",
+        "8 19",
+        "Ne compile pas"
+      ],
+      "answer": 0,
+      "explanation": "++x → x=6, évalue 6. x++ → évalue 6, puis x=7. x → évalue 7. y = 6 + 6 + 6 = 18. x final = 7. Post-increment retourne la valeur avant increment."
+    },
+    {
+      "topic": "Functional Interface Inheritance",
+      "question": "Quel code compile ?<br><pre><code class='language-java'>//A\n@FunctionalInterface\ninterface A {\n    void m1();\n    default void m2() { }\n}\n\n//B\n@FunctionalInterface\ninterface B extends A {\n    void m3();\n}\n\n//C\n@FunctionalInterface\ninterface C extends A {\n    default void m1() { }\n}</code></pre>",
+      "options": [
+        "A uniquement",
+        "A et B",
+        "A et C",
+        "Toutes",
+        "Aucune"
+      ],
+      "answer": 2,
+      "explanation": "A : OK (1 méthode abstraite). B : échoue (2 méthodes abstraites : m1 héritée et m3). C : OK (m1 devient default, 0 méthode abstraite mais hérite de A donc considéré functional)."
+    },
+    {
+      "topic": "Array Covariance",
+      "question": "Que va se passer ?<br><pre><code class='language-java'>Number[] nums = new Integer[5];\nnums[0] = 10;\nnums[1] = 10.5;\nSystem.out.println(nums[1]);</code></pre>",
+      "options": [
+        "10.5",
+        "Ne compile pas à la ligne Number[] nums",
+        "Ne compile pas à la ligne nums[1] = 10.5",
+        "ArrayStoreException à l'exécution",
+        "10"
+      ],
+      "answer": 3,
+      "explanation": "Arrays sont covariant : Integer[] IS-A Number[]. Compile. Mais à l'exécution, nums[1]=10.5 (Double) essaie d'insérer Double dans Integer[], lance ArrayStoreException. Piège : compile mais échoue au runtime."
+    },
+    {
+      "topic": "Sealed Class Permits Visibility",
+      "question": "Quel code compile ?<br><pre><code class='language-java'>//Dans Shape.java\npackage shapes;\npublic sealed class Shape permits Circle { }\n\n//Dans Circle.java\npackage shapes;\nclass Circle extends Shape { }</code></pre>",
+      "options": [
+        "Oui, Circle peut être package-private",
+        "Non, Circle doit être public",
+        "Non, Circle doit être final, sealed ou non-sealed",
+        "Non, Shape ne peut pas être public si Circle ne l'est pas",
+        "B et C"
+      ],
+      "answer": 2,
+      "explanation": "Circle n'a aucun des modifiers requis (final, sealed, non-sealed). Le modifier d'accès (public/package-private) n'est pas le problème. Circle doit avoir l'un des trois modifiers de sealing."
+    },
+    {
+      "topic": "Stream Terminal Short-Circuit",
+      "question": "Combien de fois \"test\" sera affiché ?<br><pre><code class='language-java'>List&lt;Integer&gt; list = List.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);\nboolean result = list.stream()\n    .peek(x -> System.out.println(\"test\"))\n    .anyMatch(x -> x > 5);</code></pre>",
+      "options": [
+        "10 fois",
+        "6 fois",
+        "5 fois",
+        "1 fois",
+        "0 fois"
+      ],
+      "answer": 1,
+      "explanation": "anyMatch() est short-circuiting. Traite les éléments jusqu'à trouver un match. Liste : 1,2,3,4,5,6. x>5 est true pour 6. Peek s'exécute pour chaque élément traité avant le match : 6 fois."
+    },
+    {
+      "topic": "LocalDateTime vs ZonedDateTime",
+      "question": "Quel code compile ?<br><pre><code class='language-java'>//A\nLocalDateTime dt = LocalDateTime.now();\nString formatted = dt.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);\n\n//B\nZonedDateTime zdt = ZonedDateTime.now();\nString formatted = zdt.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);\n\n//C\nLocalDateTime dt = LocalDateTime.now();\nString formatted = dt.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);</code></pre>",
+      "options": [
+        "A uniquement",
+        "B uniquement",
+        "C uniquement",
+        "B et C",
+        "Toutes"
+      ],
+      "answer": 3,
+      "explanation": "A échoue : LocalDateTime n'a pas d'offset, ISO_OFFSET_DATE_TIME nécessite un offset (DateTimeException). B et C OK : ZonedDateTime et LocalDateTime supportent tous deux ISO_LOCAL_DATE_TIME."
+    }
+,    {
+      "topic": "Stream Collectors partitioningBy",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List&lt;Integer&gt; nums = List.of(1, 2, 3, 4, 5, 6);\nMap&lt;Boolean, List&lt;Integer&gt;&gt; map = nums.stream()\n    .collect(Collectors.partitioningBy(n -> n > 3));\nSystem.out.println(map.get(false).size() + \" \" + map.get(true).size());</code></pre>",
+      "options": [
+        "3 3",
+        "2 4",
+        "4 2",
+        "Exception car la clé false n'existe pas",
+        "Ne compile pas"
+      ],
+      "answer": 0,
+      "explanation": "partitioningBy crée toujours DEUX entrées (true et false), même si l'une est vide. false → [1,2,3] (3 éléments), true → [4,5,6] (3 éléments). Différent de groupingBy qui ne crée que les clés présentes."
+    },
+    {
+      "topic": "Switch Pattern Matching Dominance",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Object obj = \"test\";\nString result = switch(obj) {\n    case String s -> \"String: \" + s.length();\n    case CharSequence cs -> \"CharSequence\";\n    default -> \"Other\";\n};\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "String: 4",
+        "CharSequence",
+        "Other",
+        "Ne compile pas car String et CharSequence se chevauchent",
+        "Ne compile pas car manque case null"
+      ],
+      "answer": 3,
+      "explanation": "String implémente CharSequence. Le case CharSequence est dominé par case String (tout String matcherait String avant). Le compilateur détecte ce pattern dominant et refuse de compiler. Il faut réordonner."
+    },
+    {
+      "topic": "Collector downstream",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List&lt;String&gt; words = List.of(\"apple\", \"ant\", \"banana\", \"berry\");\nMap&lt;Character, Long&gt; map = words.stream()\n    .collect(Collectors.groupingBy(\n        s -> s.charAt(0),\n        Collectors.counting()\n    ));\nSystem.out.println(map.get('b'));</code></pre>",
+      "options": [
+        "1",
+        "2",
+        "null",
+        "0",
+        "Exception"
+      ],
+      "answer": 1,
+      "explanation": "groupingBy avec counting() comme downstream collector compte les éléments par groupe. 'b' → [banana, berry] = 2 éléments. counting() retourne un Long."
+    },
+    {
+      "topic": "Wrapper Class Comparison",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Integer i1 = 1000;\nInteger i2 = 1000;\nInteger i3 = i1;\nSystem.out.println(i1 == i2);\nSystem.out.println(i1 == i3);\nSystem.out.println(i1.equals(i2));</code></pre>",
+      "options": [
+        "true true true",
+        "false true true",
+        "false false true",
+        "true true false",
+        "false true false"
+      ],
+      "answer": 1,
+      "explanation": "1000 est hors du cache Integer (-128 à 127). i1==i2 compare deux objets différents (false). i3=i1 copie la référence (true). equals() compare les valeurs (true)."
+    },
+    {
+      "topic": "Record Canonical Constructor",
+      "question": "Quel code compile ?<br><pre><code class='language-java'>//A\nrecord Person(String name) {\n    public Person(String name) {\n        this.name = name.toUpperCase();\n    }\n}\n\n//B\nrecord Person(String name) {\n    public Person {\n        this.name = name.toUpperCase();\n    }\n}\n\n//C\nrecord Person(String name) {\n    public Person {\n        name = name.toUpperCase();\n    }\n}</code></pre>",
+      "options": [
+        "A uniquement",
+        "A et C",
+        "B et C",
+        "C uniquement",
+        "Toutes"
+      ],
+      "answer": 1,
+      "explanation": "A : canonical constructor explicite OK (peut assigner this.x). B : compact constructor ne peut PAS assigner this.x directement. C : compact constructor peut modifier les paramètres avant assignation automatique. A et C compilent."
+    },
+    {
+      "topic": "Try-with-resources Order",
+      "question": "Dans quel ordre les close() seront appelées ?<br><pre><code class='language-java'>class R1 implements AutoCloseable {\n    public void close() { System.out.print(\"1\"); }\n}\nclass R2 implements AutoCloseable {\n    public void close() { System.out.print(\"2\"); }\n}\nclass R3 implements AutoCloseable {\n    public void close() { System.out.print(\"3\"); }\n}\n\ntry(R1 r1 = new R1(); R2 r2 = new R2(); R3 r3 = new R3()) {\n    System.out.print(\"T\");\n}</code></pre>",
+      "options": [
+        "T123",
+        "T321",
+        "123T",
+        "321T",
+        "T213"
+      ],
+      "answer": 1,
+      "explanation": "Try-with-resources ferme les ressources en ordre INVERSE de leur déclaration (LIFO - Last In First Out). Exécution du try (T), puis close de r3, r2, r1 : T321."
+    },
+    {
+      "topic": "Stream distinct & Stateful",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List&lt;Integer&gt; list = List.of(1, 2, 2, 3, 3, 3, 4);\nlist.stream()\n    .parallel()\n    .distinct()\n    .forEach(System.out::print);</code></pre>",
+      "options": [
+        "1234 (toujours dans cet ordre)",
+        "Ordre imprévisible mais contient 1,2,3,4",
+        "12334",
+        "1223334",
+        "Exception"
+      ],
+      "answer": 1,
+      "explanation": "distinct() avec parallel() : l'ordre n'est pas garanti car le stream est parallèle. forEach() sur parallel stream ne maintient pas l'ordre. Le résultat contient 1,2,3,4 mais dans un ordre imprévisible."
+    },
+    {
+      "topic": "Optional flatMap",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Optional&lt;String&gt; opt = Optional.of(\"test\");\nOptional&lt;Integer&gt; result = opt.flatMap(s -> Optional.of(s.length()));\nSystem.out.println(result.get());</code></pre>",
+      "options": [
+        "4",
+        "test",
+        "Optional[4]",
+        "Ne compile pas",
+        "Exception"
+      ],
+      "answer": 0,
+      "explanation": "flatMap transforme Optional<String> en Optional<Integer>. La fonction retourne Optional.of(4). flatMap aplatit, donc result est Optional<Integer> contenant 4. get() retourne 4."
+    },
+    {
+      "topic": "Arrays sort vs Collections sort",
+      "question": "Quel code provoque une exception ?<br><pre><code class='language-java'>//A\nInteger[] arr = {3, 1, 2};\nArrays.sort(arr);\n\n//B\nList&lt;Integer&gt; list = Arrays.asList(3, 1, 2);\nCollections.sort(list);\n\n//C\nList&lt;Integer&gt; list = List.of(3, 1, 2);\nCollections.sort(list);</code></pre>",
+      "options": [
+        "A uniquement",
+        "C uniquement",
+        "A et C",
+        "B et C",
+        "Aucune exception"
+      ],
+      "answer": 1,
+      "explanation": "A : Arrays.sort() sur array OK. B : Arrays.asList() retourne une liste mutable pour le sort (OK). C : List.of() retourne une liste immutable, sort() lance UnsupportedOperationException."
+    },
+    {
+      "topic": "Inheritance & Constructor Chain",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class A {\n    A() { print(); }\n    void print() { System.out.print(\"A\"); }\n}\n\nclass B extends A {\n    int x = 10;\n    void print() { System.out.print(x); }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        new B();\n    }\n}</code></pre>",
+      "options": [
+        "10",
+        "A",
+        "0",
+        "A10",
+        "Exception"
+      ],
+      "answer": 2,
+      "explanation": "Piège subtil : constructeur A appelle print() qui est overridden dans B. Mais x n'est pas encore initialisé (initialization après super()). x a sa valeur par défaut 0. Affiche 0, pas 10."
+    },
+    {
+      "topic": "Lambda Variable Capture",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List&lt;Runnable&gt; runnables = new ArrayList&lt;&gt;();\nfor(int i = 0; i < 3; i++) {\n    final int j = i;\n    runnables.add(() -> System.out.print(j));\n}\nrunnables.forEach(Runnable::run);</code></pre>",
+      "options": [
+        "012",
+        "222",
+        "333",
+        "Ne compile pas",
+        "000"
+      ],
+      "answer": 0,
+      "explanation": "final int j = i crée une nouvelle variable finale pour chaque itération. Chaque lambda capture sa propre copie de j. Affiche 012. Sans final j, toutes les lambdas partageraient la même variable."
+    },
+    {
+      "topic": "Method Reference Ambiguity",
+      "question": "Quel code compile ?<br><pre><code class='language-java'>interface Converter {\n    String convert(int x);\n}\n\nclass Utils {\n    static String convert(int x) { return String.valueOf(x); }\n    static String convert(Integer x) { return String.valueOf(x); }\n}\n\nConverter c = Utils::convert;</code></pre>",
+      "options": [
+        "Compile et utilise convert(int)",
+        "Compile et utilise convert(Integer)",
+        "Ne compile pas (ambiguïté)",
+        "Compile mais lance une exception à l'exécution",
+        "Dépend de la JVM"
+      ],
+      "answer": 0,
+      "explanation": "Le compilateur choisit la méthode la plus spécifique basée sur le type du functional interface (int). convert(int) est préféré car c'est un match exact sans autoboxing. Pas d'ambiguïté."
+    },
+    {
+      "topic": "DateTimeFormatter Locale",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>LocalDate date = LocalDate.of(2024, 1, 15);\nDateTimeFormatter fmt = DateTimeFormatter.ofPattern(\"MMMM\");\nSystem.out.println(date.format(fmt));</code></pre>",
+      "options": [
+        "January (toujours)",
+        "Janvier (si locale FR)",
+        "Dépend du Locale par défaut du système",
+        "01",
+        "Exception"
+      ],
+      "answer": 2,
+      "explanation": "ofPattern() sans Locale utilise le Locale par défaut du système. MMMM affiche le nom complet du mois dans la langue du Locale système. Le résultat dépend de la configuration système."
+    },
+    {
+      "topic": "Concurrent Modification During Stream",
+      "question": "Que va se passer ?<br><pre><code class='language-java'>List&lt;String&gt; list = new ArrayList&lt;&gt;(List.of(\"A\", \"B\", \"C\"));\nlist.stream()\n    .peek(s -> { if(s.equals(\"B\")) list.add(\"D\"); })\n    .forEach(System.out::println);</code></pre>",
+      "options": [
+        "Affiche A B C D",
+        "Affiche A B C",
+        "ConcurrentModificationException",
+        "Ne compile pas",
+        "Affiche A B C puis exception"
+      ],
+      "answer": 2,
+      "explanation": "Modifier la source d'un stream pendant son traitement lance ConcurrentModificationException. Même si c'est dans un peek(), la modification de la collection source est détectée."
+    },
+    {
+      "topic": "Enum with Abstract Method",
+      "question": "Quel code compile ?<br><pre><code class='language-java'>enum Operation {\n    PLUS {\n        public int apply(int a, int b) { return a + b; }\n    },\n    MINUS {\n        public int apply(int a, int b) { return a - b; }\n    };\n    public abstract int apply(int a, int b);\n}</code></pre>",
+      "options": [
+        "Compile correctement",
+        "Ne compile pas car enum ne peut avoir de méthode abstraite",
+        "Ne compile pas car les constantes doivent être après les méthodes",
+        "Ne compile pas car le point-virgule après MINUS est incorrect",
+        "Compile mais ne peut être utilisé"
+      ],
+      "answer": 0,
+      "explanation": "Les enums peuvent avoir des méthodes abstraites. Chaque constante doit fournir l'implémentation (constant-specific body). Le point-virgule après les constantes est obligatoire si des méthodes suivent. Code valide."
+    },
+    {
+      "topic": "Nested Records",
+      "question": "Quel code compile ?<br><pre><code class='language-java'>//A\nrecord Outer(record Inner(int x) { }) { }\n\n//B\nrecord Outer(int x) {\n    record Inner(int y) { }\n}\n\n//C\nclass Container {\n    record Data(int value) { }\n}</code></pre>",
+      "options": [
+        "A uniquement",
+        "B uniquement",
+        "C uniquement",
+        "B et C",
+        "Toutes"
+      ],
+      "answer": 3,
+      "explanation": "A est invalide (syntaxe incorrecte pour record comme paramètre). B est valide (record peut contenir un nested record). C est valide (classe peut contenir un record). Les records imbriqués sont implicitement static."
+    },
+    {
+      "topic": "String format vs formatted",
+      "question": "Quelle différence entre ces deux codes ?<br><pre><code class='language-java'>//A\nString s1 = String.format(\"Hello %s\", \"World\");\n\n//B\nString s2 = \"Hello %s\".formatted(\"World\");</code></pre>",
+      "options": [
+        "Aucune différence fonctionnelle",
+        "A est static, B est instance method",
+        "B ne compile pas",
+        "A supporte plus de formats que B",
+        "A et B"
+      ],
+      "answer": 4,
+      "explanation": "Les deux produisent le même résultat. A : méthode static String.format(). B : méthode instance formatted() (ajoutée Java 15). Différence syntaxique mais pas fonctionnelle. Les deux réponses A et B sont vraies."
+    },
+    {
+      "topic": "Files.walk Depth",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>// Structure: /temp/a.txt, /temp/dir1/b.txt, /temp/dir1/dir2/c.txt\ntry(Stream&lt;Path&gt; paths = Files.walk(Path.of(\"/temp\"), 1)) {\n    long count = paths.filter(p -> Files.isRegularFile(p)).count();\n    System.out.println(count);\n}</code></pre>",
+      "options": [
+        "3",
+        "2",
+        "1",
+        "0",
+        "Exception"
+      ],
+      "answer": 2,
+      "explanation": "maxDepth=1 signifie : répertoire racine (depth 0) + 1 niveau. Donc /temp et son contenu direct. Fichiers trouvés : a.txt uniquement. dir1/b.txt et dir1/dir2/c.txt sont à depth > 1. Count = 1."
+    },
+    {
+      "topic": "Pattern Variable Scope",
+      "question": "Quel code compile ?<br><pre><code class='language-java'>//A\nif(obj instanceof String s) {\n    System.out.println(s);\n}\nSystem.out.println(s);\n\n//B\nif(obj instanceof String s || s.length() > 5) {\n    System.out.println(s);\n}\n\n//C\nif(!(obj instanceof String s)) {\n    return;\n}\nSystem.out.println(s);</code></pre>",
+      "options": [
+        "A uniquement",
+        "C uniquement",
+        "B et C",
+        "A et C",
+        "Aucun"
+      ],
+      "answer": 1,
+      "explanation": "A : s out of scope après if (erreur). B : s pas définitivement assigné dans la partie droite de || (erreur). C : après return, s est in scope car on sait que obj instanceof String est true (OK - flow scoping)."
+    },
+    {
+      "topic": "Collector teeing",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List&lt;Integer&gt; nums = List.of(1, 2, 3, 4, 5);\nString result = nums.stream()\n    .collect(Collectors.teeing(\n        Collectors.summingInt(Integer::intValue),\n        Collectors.counting(),\n        (sum, count) -> sum + \":\" + count\n    ));\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "15:5",
+        "5:15",
+        "15",
+        "5",
+        "Ne compile pas"
+      ],
+      "answer": 0,
+      "explanation": "teeing() applique deux collectors et combine leurs résultats. Premier collector : somme = 15. Deuxième collector : count = 5. La BiFunction combine : \"15:5\"."
+    },
+    {
+      "topic": "Module Transitive Dependencies",
+      "question": "Quel est l'effet de 'requires transitive' ?<br><pre><code class='language-java'>//module A\nmodule A {\n    exports com.a;\n}\n\n//module B  \nmodule B {\n    requires transitive A;\n    exports com.b;\n}\n\n//module C\nmodule C {\n    requires B;\n}</code></pre>",
+      "options": [
+        "C peut accéder à com.a sans requires A",
+        "C doit ajouter requires A pour accéder à com.a",
+        "C ne peut jamais accéder à com.a",
+        "requires transitive est invalide",
+        "A doit exporter vers C explicitement"
+      ],
+      "answer": 0,
+      "explanation": "requires transitive crée une dépendance transitive. Module C qui requires B obtient automatiquement accès aux modules que B requires transitive. C peut accéder à com.a sans requires A explicite."
+    },
+    {
+      "topic": "BiConsumer vs Consumer",
+      "question": "Quel functional interface correspond ?<br><pre><code class='language-java'>Map&lt;String, Integer&gt; map = new HashMap&lt;&gt;();\nmap.put(\"A\", 1);\nmap.put(\"B\", 2);\nmap.forEach((k, v) -> System.out.println(k + \":\" + v));</code></pre>",
+      "options": [
+        "Consumer<Entry<String, Integer>>",
+        "BiConsumer<String, Integer>",
+        "Function<String, Integer>",
+        "BiFunction<String, Integer, Void>",
+        "Consumer<String>"
+      ],
+      "answer": 1,
+      "explanation": "Map.forEach() prend un BiConsumer<K, V>. La lambda (k, v) -> void correspond à BiConsumer qui accepte deux paramètres et ne retourne rien."
+    },
+    {
+      "topic": "Primitive Streams reduce",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>IntStream stream = IntStream.of(1, 2, 3, 4, 5);\nOptionalInt result = stream.reduce((a, b) -> a * b);\nSystem.out.println(result.getAsInt());</code></pre>",
+      "options": [
+        "15",
+        "120",
+        "5",
+        "Exception car stream vide",
+        "Ne compile pas"
+      ],
+      "answer": 1,
+      "explanation": "reduce sans identity value retourne OptionalInt. Multiplication : 1*2=2, 2*3=6, 6*4=24, 24*5=120. Résultat : 120 (factorielle de 5)."
+    },
+    {
+      "topic": "Record with Generics",
+      "question": "Quel code compile ?<br><pre><code class='language-java'>//A\nrecord Box&lt;T&gt;(T value) { }\nBox&lt;String&gt; box = new Box&lt;&gt;(\"test\");\n\n//B\nrecord Box(T value) { }\nBox box = new Box(\"test\");\n\n//C\nrecord Box&lt;T extends Number&gt;(T value) { }\nBox&lt;Integer&gt; box = new Box&lt;&gt;(10);</code></pre>",
+      "options": [
+        "A uniquement",
+        "A et C",
+        "B et C",
+        "Toutes",
+        "Aucune"
+      ],
+      "answer": 1,
+      "explanation": "A : record avec type parameter générique (OK). B : T non déclaré comme type parameter (erreur). C : bounded type parameter dans record (OK). A et C compilent."
+    },
+    {
+      "topic": "Synchronized Block Performance",
+      "question": "Quelle version est la plus performante en environnement multi-thread ?<br><pre><code class='language-java'>//A\nsynchronized(this) {\n    list.add(item);\n}\n\n//B\nsynchronized(list) {\n    list.add(item);\n}\n\n//C\nlist.add(item); // list est CopyOnWriteArrayList</code></pre>",
+      "options": [
+        "A (synchronisation sur this)",
+        "B (synchronisation sur list)",
+        "C (CopyOnWriteArrayList)",
+        "A et B équivalents",
+        "Dépend du contexte"
+      ],
+      "answer": 4,
+      "explanation": "A et B ont des performances similaires si bien utilisés. C est optimisé pour beaucoup de lectures, peu d'écritures (copie à chaque modification). Le meilleur choix dépend du ratio lecture/écriture et de la granularité des locks souhaitée."
+    }
+  ]
+}

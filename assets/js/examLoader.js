@@ -28,7 +28,9 @@ class ExamLoader {
             'exam-13-heritage_and_co.json',
             'exam-14_streams_special_parallel.json',
             'exam-15_full_quiz.json',
-            'exam-16_full_quiz.json'
+            'exam-16_full_quiz.json',
+            'exam-17_full_quiz.json',
+            'exam-18_full_quiz.json'
 
         ];
 

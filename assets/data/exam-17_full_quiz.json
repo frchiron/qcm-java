@@ -1,0 +1,666 @@
+{
+  "metadata": {
+    "id": "exam-17_full_quiz.json",
+    "mainTopic": "full",
+    "category": "full",
+    "examNumber": "F3",
+    "examName": "Examen blanc complet N°3",
+    "questionsCount": 50,
+    "description": "50 questions • Tous thèmes"
+  },
+  "title": "OCP-830 Java 21 - Questionnaire Complet 3",
+  "duration": 90,
+  "questions": [
+    {
+      "topic": "Records & Pattern Matching",
+      "question": "Que va afficher ce code lors de la compilation et de l'exécution ?<br><pre><code class='language-java'>record Product(String name, Double... prices) {\n    public Product {\n        if(name == null) throw new IllegalArgumentException();\n        if(prices == null || prices.length == 0) {\n            prices = new Double[]{0.0};\n        }\n    }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Product p = new Product(\"Laptop\", null);\n        switch(p) {\n            case Product(var n, var pr) -> System.out.println(p);\n        }\n    }\n}</code></pre>",
+      "options": [
+        "Product[name=Laptop, prices=null]",
+        "Product[name=Laptop, prices=[Ljava.lang.Double;@...]",
+        "Compilation échoue car le compact constructor est invalide",
+        "Lève une NullPointerException à l'exécution",
+        "Compilation échoue car le switch n'a pas de default"
+      ],
+      "answer": 1,
+      "explanation": "Piège subtil : passer 'null' comme unique argument varargs crée un tableau [null] et non un tableau null. Donc prices.length == 0 est false et prices reste [null]. Le switch compile car il est exhaustif avec le record pattern."
+    },
+    {
+      "topic": "Streams & Operations",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List&lt;Integer&gt; list = Arrays.asList(1, 2, 3, 4, 5);\nlist.stream()\n    .filter(x -> { System.out.print(x + \" \"); return x % 2 == 0; })\n    .map(x -> x * 2);</code></pre>",
+      "options": [
+        "1 2 3 4 5",
+        "2 4",
+        "4 8",
+        "Ne compile pas",
+        "N'affiche rien"
+      ],
+      "answer": 4,
+      "explanation": "Piège classique : aucune opération terminale n'est appelée. Les opérations intermédiaires (filter, map) sont lazy et ne s'exécutent que si une opération terminale est présente. Aucun side-effect ne se produit."
+    },
+    {
+      "topic": "Method Overloading",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>public class TestClass {\n    static void process(int x) { System.out.println(\"int\"); }\n    static void process(Integer x) { System.out.println(\"Integer\"); }\n    static void process(long x) { System.out.println(\"long\"); }\n    static void process(int... x) { System.out.println(\"varargs\"); }\n    \n    public static void main(String[] args) {\n        process(5);\n        Integer i = 5;\n        process(i);\n        process(5L);\n    }\n}</code></pre>",
+      "options": [
+        "int\nInteger\nlong",
+        "int\nint\nlong",
+        "Integer\nInteger\nlong",
+        "varargs\nInteger\nlong",
+        "Ne compile pas"
+      ],
+      "answer": 0,
+      "explanation": "Le compilateur choisit la méthode la plus spécifique : literal 5 → int (exact match), Integer object → Integer (exact match), 5L → long (exact match). L'autoboxing et varargs ont une priorité inférieure."
+    },
+    {
+      "topic": "Exceptions & Try-with-resources",
+      "question": "Quelle exception sera propagée ?<br><pre><code class='language-java'>class MyResource implements AutoCloseable {\n    public void close() { throw new RuntimeException(\"close\"); }\n}\n\npublic class TestClass {\n    public static void main(String[] args) throws Exception {\n        try(MyResource r = new MyResource()) {\n            throw new Exception(\"try\");\n        } catch(RuntimeException e) {\n            throw new Exception(\"catch\");\n        }\n    }\n}</code></pre>",
+      "options": [
+        "Exception: try",
+        "Exception: catch",
+        "RuntimeException: close",
+        "Exception: try avec RuntimeException supprimée",
+        "Exception: catch avec Exception supprimée"
+      ],
+      "answer": 1,
+      "explanation": "Ordre d'exécution : Exception dans try → close() lance RuntimeException → catch attrape le RuntimeException du close() (pas celui du try!) → lance Exception(\"catch\"). L'exception du try est perdue."
+    },
+    {
+      "topic": "Module System",
+      "question": "Quel module-info.java est correct pour un service provider ?<br><pre><code class='language-java'>//Module api.services:\npackage api.services;\npublic interface Logger { void log(String msg); }\n\n//Module com.impl:\npackage com.impl;\npublic class FileLogger implements api.services.Logger {\n    public void log(String msg) { }\n}</code></pre>",
+      "options": [
+        "module com.impl {\n    requires api.services;\n    exports com.impl;\n    provides Logger with FileLogger;\n}",
+        "module com.impl {\n    requires api.services;\n    provides api.services.Logger with com.impl.FileLogger;\n}",
+        "module com.impl {\n    exports com.impl;\n    provides api.services.Logger with com.impl.FileLogger;\n}",
+        "module com.impl {\n    requires api;\n    provides api.services.Logger with com.impl.FileLogger;\n}",
+        "Ne compile pas car FileLogger doit être dans le même module que Logger"
+      ],
+      "answer": 1,
+      "explanation": "Un provider doit 'requires' le module (api.services), utiliser les noms fully qualified dans 'provides...with', et n'a PAS besoin d'exporter l'implémentation. Option A utilise des noms courts invalides."
+    },
+    {
+      "topic": "Generics & Wildcards",
+      "question": "Quelles lignes compilent ?<br><pre><code class='language-java'>class Animal { }\nclass Dog extends Animal { }\nclass Puppy extends Dog { }\n\npublic void test(List&lt;? super Dog&gt; list) {\n    list.add(new Animal()); //1\n    list.add(new Dog());    //2\n    list.add(new Puppy());  //3\n    Dog d = list.get(0);    //4\n    Object o = list.get(0); //5\n}</code></pre>",
+      "options": [
+        "2, 3, 5",
+        "1, 2, 3, 5",
+        "2, 3, 4, 5",
+        "Toutes",
+        "2, 3 uniquement"
+      ],
+      "answer": 0,
+      "explanation": "? super Dog accepte Dog et super-types. On peut ajouter Dog et sous-types (garantis compatibles). Ligne 1 échoue (Animal pas garanti). Ligne 4 échoue (get() retourne ? super Dog, pourrait être Object). Ligne 5 OK (tout est Object)."
+    },
+    {
+      "topic": "Streams & Collectors",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List&lt;String&gt; words = List.of(\"a\", \"bb\", \"ccc\", \"dd\", \"e\");\nMap&lt;Integer, Long&gt; map = words.stream()\n    .collect(Collectors.groupingBy(\n        String::length,\n        Collectors.counting()\n    ));\nSystem.out.println(map.get(2));</code></pre>",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "null",
+        "Exception à l'exécution"
+      ],
+      "answer": 1,
+      "explanation": "groupingBy regroupe par longueur : 1→[a,e], 2→[bb,dd], 3→[ccc]. Collectors.counting() compte les éléments dans chaque groupe. Pour longueur 2, il y a 2 éléments (bb, dd)."
+    },
+    {
+      "topic": "Switch Expressions",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>public class TestClass {\n    public static void main(String[] args) {\n        int value = 2;\n        String result = switch(value) {\n            case 1 -> \"one\";\n            case 2 -> { yield \"two\"; }\n            case 3 -> \"three\";\n            default -> \"other\";\n        };\n        System.out.println(result);\n    }\n}</code></pre>",
+      "options": [
+        "two",
+        "Ne compile pas car yield ne peut être utilisé qu'avec :",
+        "Ne compile pas car le switch mélange -> et yield",
+        "Ne compile pas car default est inutile",
+        "other"
+      ],
+      "answer": 0,
+      "explanation": "Avec switch expression et ->, on peut soit retourner directement une expression, soit utiliser un bloc avec yield. Les deux syntaxes peuvent coexister dans le même switch. Le code compile et affiche 'two'."
+    },
+    {
+      "topic": "Local Variable Type Inference",
+      "question": "Quelles déclarations compilent ?<br><pre><code class='language-java'>public void test() {\n    var a = null;              //1\n    var b = {1, 2, 3};         //2\n    var c = new int[]{1, 2};   //3\n    var d;                     //4\n    d = 10;                    //5\n    var e = (String s) -> s.length(); //6\n}</code></pre>",
+      "options": [
+        "3 uniquement",
+        "3 et 5",
+        "3 et 6",
+        "1, 3, 5",
+        "Aucune"
+      ],
+      "answer": 0,
+      "explanation": "var nécessite un initialiseur (4 échoue). Ne peut pas inférer de null (1 échoue). Ne supporte pas l'initialisation array avec {} (2 échoue). Ne peut inférer le type des lambdas sans contexte (6 échoue). Seule 3 compile."
+    },
+    {
+      "topic": "Sealed Classes",
+      "question": "Quel code est valide ?<br><pre><code class='language-java'>//Option A\nsealed class Shape permits Circle { }\nfinal class Circle extends Shape { }\n\n//Option B\nsealed class Shape { }\nfinal class Circle extends Shape { }\n\n//Option C\nsealed class Shape permits Circle, Square { }\nfinal class Circle extends Shape { }\nnon-sealed class Square extends Shape { }</code></pre>",
+      "options": [
+        "A uniquement",
+        "A et C",
+        "B et C",
+        "A, B et C",
+        "Aucun"
+      ],
+      "answer": 1,
+      "explanation": "A est valide (permits explicite). B échoue car sealed sans permits nécessite que les sous-classes soient dans le même fichier. C est valide (final et non-sealed sont autorisés). B compilerait si Circle était dans le même fichier que Shape."
+    },
+    {
+      "topic": "String & StringBuilder",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>String s = \"test\";\nStringBuilder sb = new StringBuilder(s);\ns.concat(\"123\");\nsb.append(\"456\");\nSystem.out.println(s.length() + \" \" + sb.length());</code></pre>",
+      "options": [
+        "4 7",
+        "7 7",
+        "7 4",
+        "4 4",
+        "Ne compile pas"
+      ],
+      "answer": 0,
+      "explanation": "Piège classique : String est immutable, concat() retourne un nouveau String mais le résultat n'est pas assigné. s reste \"test\" (longueur 4). StringBuilder est mutable, append() modifie l'objet → \"test456\" (longueur 7)."
+    },
+    {
+      "topic": "Threads & Concurrency",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Counter {\n    private int count = 0;\n    public void increment() { count++; }\n    public int getCount() { return count; }\n}\n\npublic class TestClass {\n    public static void main(String[] args) throws Exception {\n        Counter c = new Counter();\n        Thread t1 = new Thread(() -> {\n            for(int i=0; i<1000; i++) c.increment();\n        });\n        Thread t2 = new Thread(() -> {\n            for(int i=0; i<1000; i++) c.increment();\n        });\n        t1.start(); t2.start();\n        t1.join(); t2.join();\n        System.out.println(c.getCount());\n    }\n}</code></pre>",
+      "options": [
+        "Toujours 2000",
+        "Toujours moins de 2000",
+        "Toujours plus de 2000",
+        "Peut être n'importe quelle valeur <= 2000",
+        "Ne compile pas"
+      ],
+      "answer": 3,
+      "explanation": "count++ n'est pas atomique (read-modify-write). Sans synchronization, race condition : deux threads peuvent lire la même valeur, incrémenter, et écrire, perdant des incréments. Le résultat sera probablement < 2000."
+    },
+    {
+      "topic": "Functional Interfaces",
+      "question": "Quel code compile ?<br><pre><code class='language-java'>@FunctionalInterface\ninterface Processor {\n    void process(String s);\n    //INSERT CODE HERE\n}</code></pre>",
+      "options": [
+        "default void print() { }",
+        "static void log(String s) { }",
+        "boolean equals(Object o);",
+        "Toutes les options ci-dessus",
+        "Aucune (l'interface ne peut avoir qu'une méthode)"
+      ],
+      "answer": 3,
+      "explanation": "Une functional interface peut avoir UNE méthode abstraite, mais aussi des méthodes default, static, et les méthodes de Object (equals, toString, hashCode) ne comptent pas dans le SAM (Single Abstract Method)."
+    },
+    {
+      "topic": "Collections & Immutability",
+      "question": "Que va se passer ?<br><pre><code class='language-java'>List&lt;String&gt; list1 = new ArrayList&lt;&gt;();\nlist1.add(\"A\");\nlist1.add(\"B\");\nList&lt;String&gt; list2 = List.of(\"C\", \"D\");\nlist1.addAll(list2); //1\nlist2.add(\"E\");      //2\nlist2.set(0, \"F\");  //3</code></pre>",
+      "options": [
+        "Toutes les lignes compilent et s'exécutent",
+        "Ligne 1 compile, lignes 2 et 3 lancent UnsupportedOperationException",
+        "Ligne 2 lance UnsupportedOperationException, ligne 3 fonctionne",
+        "Lignes 2 et 3 ne compilent pas",
+        "Ligne 1 lance une exception"
+      ],
+      "answer": 1,
+      "explanation": "List.of() crée une liste immutable. Ligne 1 compile et fonctionne (addAll sur list1 mutable). Lignes 2 et 3 compilent mais lancent UnsupportedOperationException à l'exécution (modification d'une liste immutable)."
+    },
+    {
+      "topic": "Optional",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Optional&lt;String&gt; opt = Optional.of(\"test\");\nString result = opt.map(s -> s.toUpperCase())\n                   .filter(s -> s.length() > 5)\n                   .orElse(\"default\");\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "TEST",
+        "test",
+        "default",
+        "null",
+        "Exception à l'exécution"
+      ],
+      "answer": 2,
+      "explanation": "Chaîne: of(\"test\") → map → \"TEST\" → filter(length>5) → false car \"TEST\".length()==4 → Optional.empty() → orElse(\"default\") → \"default\"."
+    },
+    {
+      "topic": "Date & Time API",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>LocalDate d1 = LocalDate.of(2024, 1, 31);\nLocalDate d2 = d1.plusMonths(1);\nSystem.out.println(d2);</code></pre>",
+      "options": [
+        "2024-02-31",
+        "2024-02-29",
+        "2024-03-02",
+        "Exception à l'exécution",
+        "2024-02-28"
+      ],
+      "answer": 1,
+      "explanation": "2024 est une année bissextile. Ajouter 1 mois au 31 janvier donne février. Comme février n'a pas 31 jours (même bissextile = 29 jours), Java ajuste automatiquement au dernier jour valide : 2024-02-29."
+    },
+    {
+      "topic": "Files & I/O",
+      "question": "Quel code lit correctement toutes les lignes d'un fichier ?<br><pre><code class='language-java'>//Option A\nList&lt;String&gt; lines = Files.readAllLines(Path.of(\"file.txt\"));\n\n//Option B\nStream&lt;String&gt; lines = Files.lines(Path.of(\"file.txt\"));\nlines.forEach(System.out::println);\n\n//Option C\ntry(Stream&lt;String&gt; lines = Files.lines(Path.of(\"file.txt\"))) {\n    lines.forEach(System.out::println);\n}</code></pre>",
+      "options": [
+        "A uniquement",
+        "A et B",
+        "A et C",
+        "B et C",
+        "Tous"
+      ],
+      "answer": 2,
+      "explanation": "A compile et fonctionne. B a une fuite de ressources (Stream doit être fermé). C est correct avec try-with-resources. Files.lines() retourne un Stream qui doit être fermé, contrairement à readAllLines()."
+    },
+    {
+      "topic": "Inner Classes",
+      "question": "Quel code compile ?<br><pre><code class='language-java'>public class Outer {\n    private int x = 10;\n    \n    class Inner {\n        void print() { System.out.println(x); }\n    }\n    \n    static class StaticInner {\n        void print() { System.out.println(x); } //1\n    }\n    \n    void method() {\n        class Local {\n            void print() { System.out.println(x); } //2\n        }\n    }\n}</code></pre>",
+      "options": [
+        "Toutes les lignes compilent",
+        "Ligne 1 ne compile pas",
+        "Ligne 2 ne compile pas",
+        "Lignes 1 et 2 ne compilent pas",
+        "Aucune ligne ne compile"
+      ],
+      "answer": 1,
+      "explanation": "Inner class non-static peut accéder aux membres d'instance. Static nested class ne peut accéder qu'aux membres static (ligne 1 échoue). Local class peut accéder aux membres d'instance et aux variables final/effectively final (ligne 2 OK)."
+    },
+    {
+      "topic": "Polymorphism",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Parent {\n    void print() { System.out.println(\"Parent\"); }\n}\n\nclass Child extends Parent {\n    void print() { System.out.println(\"Child\"); }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Parent p = new Child();\n        ((Parent)p).print();\n    }\n}</code></pre>",
+      "options": [
+        "Parent",
+        "Child",
+        "Ne compile pas",
+        "Exception à l'exécution",
+        "Résultat imprévisible"
+      ],
+      "answer": 1,
+      "explanation": "Le cast vers Parent ne change rien : la méthode appelée est déterminée par le type réel de l'objet (Child) à l'exécution, pas par le type de la référence. Polymorphisme : affiche \"Child\"."
+    },
+    {
+      "topic": "Array Operations",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int[] arr1 = {1, 2, 3};\nint[] arr2 = {1, 2, 3};\nSystem.out.println(arr1 == arr2);\nSystem.out.println(Arrays.equals(arr1, arr2));\nSystem.out.println(arr1.equals(arr2));</code></pre>",
+      "options": [
+        "true true true",
+        "false true false",
+        "false true true",
+        "false false false",
+        "true false false"
+      ],
+      "answer": 1,
+      "explanation": "== compare les références (false). Arrays.equals() compare le contenu (true). arr1.equals() utilise Object.equals() qui compare les références (false). Piège : array.equals() != Arrays.equals()."
+    },
+    {
+      "topic": "Exception Hierarchy",
+      "question": "Quel code compile ?<br><pre><code class='language-java'>//Option A\ntry {\n    throw new IOException();\n} catch(Exception e) {\n} catch(IOException e) {\n}\n\n//Option B\ntry {\n    throw new IOException();\n} catch(IOException e) {\n} catch(Exception e) {\n}\n\n//Option C\ntry {\n    throw new IOException();\n} catch(IOException | FileNotFoundException e) {\n}</code></pre>",
+      "options": [
+        "A uniquement",
+        "B uniquement",
+        "A et B",
+        "B et C",
+        "C uniquement"
+      ],
+      "answer": 1,
+      "explanation": "A échoue : catch plus général (Exception) avant plus spécifique (IOException) = unreachable code. B compile : ordre correct. C échoue : IOException est parent de FileNotFoundException, multi-catch ne peut avoir de hiérarchie."
+    },
+    {
+      "topic": "Comparator & Sorting",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List&lt;String&gt; list = Arrays.asList(\"10\", \"2\", \"30\", \"4\");\nlist.sort(Comparator.naturalOrder());\nSystem.out.println(list);</code></pre>",
+      "options": [
+        "[2, 4, 10, 30]",
+        "[10, 2, 30, 4]",
+        "[10, 2, 4, 30]",
+        "[2, 10, 30, 4]",
+        "Ne compile pas"
+      ],
+      "answer": 1,
+      "explanation": "Piège : ce sont des Strings, pas des nombres. naturalOrder() pour String fait un tri lexicographique : \"10\" < \"2\" < \"30\" < \"4\" (ordre alphabétique). Pour tri numérique, il faudrait Comparator.comparingInt(Integer::parseInt)."
+    },
+    {
+      "topic": "Interface Default Methods",
+      "question": "Que va se passer ?<br><pre><code class='language-java'>interface A {\n    default void print() { System.out.println(\"A\"); }\n}\n\ninterface B {\n    default void print() { System.out.println(\"B\"); }\n}\n\nclass C implements A, B {\n    //INSERT CODE HERE\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        new C().print();\n    }\n}</code></pre>",
+      "options": [
+        "Affiche A",
+        "Affiche B",
+        "Ne compile pas à moins d'override print() dans C",
+        "Affiche A puis B",
+        "Compile sans override"
+      ],
+      "answer": 2,
+      "explanation": "Conflit de méthodes default : quand deux interfaces ont la même default method, la classe doit obligatoirement override la méthode pour résoudre l'ambiguïté. Sans override dans C, compilation échoue."
+    },
+    {
+      "topic": "Record Patterns",
+      "question": "Quel code est valide avec les record patterns Java 21 ?<br><pre><code class='language-java'>record Point(int x, int y) { }\n\n//Option A\nif(obj instanceof Point(var x, var y)) {\n    System.out.println(x + y);\n}\n\n//Option B\nif(obj instanceof Point p(var x, var y)) {\n    System.out.println(x + y);\n}\n\n//Option C\nif(obj instanceof Point(int x, int y)) {\n    System.out.println(x + y);\n}</code></pre>",
+      "options": [
+        "A uniquement",
+        "A et C",
+        "B et C",
+        "A, B et C",
+        "C uniquement"
+      ],
+      "answer": 1,
+      "explanation": "A et C sont valides : record pattern peut utiliser var ou le type exact. B est invalide : on ne peut pas combiner le pattern binding (Point p) avec la décomposition (var x, var y) - c'est l'un ou l'autre."
+    },
+    {
+      "topic": "Virtual Threads",
+      "question": "Quel code crée correctement un virtual thread en Java 21 ?<br><pre><code class='language-java'>//Option A\nThread t = Thread.ofVirtual().start(() -> System.out.println(\"Hello\"));\n\n//Option B\nThread t = Thread.startVirtualThread(() -> System.out.println(\"Hello\"));\n\n//Option C\nThread t = new VirtualThread(() -> System.out.println(\"Hello\"));\nt.start();</code></pre>",
+      "options": [
+        "A uniquement",
+        "B uniquement",
+        "A et B",
+        "B et C",
+        "Toutes"
+      ],
+      "answer": 2,
+      "explanation": "A et B sont valides : Thread.ofVirtual().start() ou Thread.startVirtualThread() créent et démarrent un virtual thread. C est invalide : pas de constructeur VirtualThread public, on doit utiliser les factory methods."
+    }
+,
+    {
+      "topic": "Streams & Parallel Processing",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List&lt;Integer&gt; list = Arrays.asList(1, 2, 3, 4);\nlist.stream()\n    .peek(x -> System.out.print(x + \" \"))\n    .filter(x -> x > 2)\n    .count();</code></pre>",
+      "options": [
+        "1 2 3 4",
+        "3 4",
+        "Ne compile pas",
+        "N'affiche rien",
+        "1 2 3 4 suivi de 2"
+      ],
+      "answer": 0,
+      "explanation": "Même si count() ne nécessite pas de traiter les éléments pour les afficher, peek() s'exécute pour chaque élément car le pipeline doit évaluer filter() pour compter. Tous les éléments passent par peek() avant filter()."
+    },
+    {
+      "topic": "Exception Handling & Finally",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>public class TestClass {\n    public static int test() {\n        try {\n            return 10;\n        } finally {\n            return 20;\n        }\n    }\n    public static void main(String[] args) {\n        System.out.println(test());\n    }\n}</code></pre>",
+      "options": [
+        "10",
+        "20",
+        "30",
+        "Ne compile pas",
+        "Exception à l'exécution"
+      ],
+      "answer": 1,
+      "explanation": "Le return dans finally écrase le return du try. Finally s'exécute toujours après try, et si finally contient un return, c'est celui-ci qui est retourné. C'est une mauvaise pratique mais légal."
+    },
+    {
+      "topic": "String Pool & Literals",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>String s1 = \"hello\";\nString s2 = \"hello\";\nString s3 = new String(\"hello\");\nString s4 = s3.intern();\nSystem.out.println(s1 == s2);\nSystem.out.println(s1 == s3);\nSystem.out.println(s1 == s4);</code></pre>",
+      "options": [
+        "true false true",
+        "true false false",
+        "false false true",
+        "true true true",
+        "false false false"
+      ],
+      "answer": 0,
+      "explanation": "s1 et s2 pointent vers la même String du pool (true). s3 crée un nouvel objet en heap (false). s4=s3.intern() retourne la référence du pool, identique à s1 (true). Intern() retourne la référence du String pool."
+    },
+    {
+      "topic": "Method Reference",
+      "question": "Quelles lignes compilent ?<br><pre><code class='language-java'>interface Converter {\n    String convert(Object o);\n}\n\nConverter c1 = Object::toString;        //1\nConverter c2 = String::valueOf;         //2\nConverter c3 = o -> o.toString();       //3\nConverter c4 = String::new;             //4\nConverter c5 = s -> String.valueOf(s);  //5</code></pre>",
+      "options": [
+        "1, 2, 3, 5",
+        "1, 3, 5",
+        "Toutes",
+        "1, 2, 3, 4",
+        "2, 3, 5"
+      ],
+      "answer": 0,
+      "explanation": "1 OK (instance method reference). 2 OK (static method, String.valueOf(Object)). 3 OK (lambda). 4 échoue (String::new cherche String(Object) qui n'existe pas). 5 OK (lambda explicite)."
+    },
+    {
+      "topic": "Initialization Order",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Parent {\n    { System.out.print(\"A\"); }\n    static { System.out.print(\"B\"); }\n    Parent() { System.out.print(\"C\"); }\n}\n\nclass Child extends Parent {\n    { System.out.print(\"D\"); }\n    static { System.out.print(\"E\"); }\n    Child() { System.out.print(\"F\"); }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        new Child();\n    }\n}</code></pre>",
+      "options": [
+        "BEACDF",
+        "BADEFC",
+        "BACDEF",
+        "BEADCF",
+        "ABCDEF"
+      ],
+      "answer": 0,
+      "explanation": "Ordre : static blocks (Parent puis Child) → instance init de Parent → constructeur Parent → instance init de Child → constructeur Child. B(Parent static) E(Child static) A(Parent init) C(Parent ctor) D(Child init) F(Child ctor)."
+    },
+    {
+      "topic": "Autoboxing & Operators",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Integer a = 127;\nInteger b = 127;\nInteger c = 128;\nInteger d = 128;\nSystem.out.println(a == b);\nSystem.out.println(c == d);</code></pre>",
+      "options": [
+        "true true",
+        "true false",
+        "false false",
+        "false true",
+        "Ne compile pas"
+      ],
+      "answer": 1,
+      "explanation": "Integer cache les valeurs de -128 à 127. a et b pointent vers le même objet du cache (true). c et d créent des nouveaux objets (false). Piège classique du Integer cache."
+    },
+    {
+      "topic": "Switch with null",
+      "question": "Que va se passer avec ce code Java 21 ?<br><pre><code class='language-java'>String s = null;\nString result = switch(s) {\n    case \"A\" -> \"Letter A\";\n    case null -> \"Null value\";\n    default -> \"Other\";\n};\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "Affiche Null value",
+        "Affiche Other",
+        "NullPointerException",
+        "Ne compile pas",
+        "Affiche null"
+      ],
+      "answer": 0,
+      "explanation": "Java 21 permet 'case null' dans les switch expressions. Le null est matché explicitement par 'case null' et affiche \"Null value\". Sans case null, cela lancerait NullPointerException."
+    },
+    {
+      "topic": "Collector & Grouping",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List&lt;String&gt; words = List.of(\"apple\", \"banana\", \"apricot\", \"berry\");\nMap&lt;Character, List&lt;String&gt;&gt; map = words.stream()\n    .collect(Collectors.groupingBy(s -> s.charAt(0)));\nSystem.out.println(map.get('a').size());</code></pre>",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "NullPointerException"
+      ],
+      "answer": 1,
+      "explanation": "groupingBy regroupe par première lettre. 'a' → [apple, apricot] = 2 éléments. 'b' → [banana, berry]. La clé 'a' a une liste de taille 2."
+    },
+    {
+      "topic": "Varargs Ambiguity",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>public class TestClass {\n    static void print(int... nums) {\n        System.out.println(\"varargs int\");\n    }\n    static void print(int n1, int n2) {\n        System.out.println(\"two ints\");\n    }\n    public static void main(String[] args) {\n        print(1, 2);\n        print(1);\n    }\n}</code></pre>",
+      "options": [
+        "varargs int\nvarargs int",
+        "two ints\nvarargs int",
+        "two ints\ntwo ints",
+        "Ne compile pas (ambiguïté)",
+        "Exception à l'exécution"
+      ],
+      "answer": 1,
+      "explanation": "Le compilateur préfère les méthodes non-varargs. print(1,2) → two ints (match exact). print(1) → varargs int (seule option). Varargs a la priorité la plus basse dans la résolution de méthodes."
+    },
+    {
+      "topic": "Files & Streams",
+      "question": "Quel code lit un fichier sans fuite de ressources ?<br><pre><code class='language-java'>//A\nList&lt;String&gt; lines = Files.readAllLines(Path.of(\"f.txt\"));\n\n//B\nStream&lt;String&gt; lines = Files.lines(Path.of(\"f.txt\"));\nlong count = lines.count();\n\n//C\ntry(Stream&lt;String&gt; lines = Files.lines(Path.of(\"f.txt\"))) {\n    long count = lines.count();\n}</code></pre>",
+      "options": [
+        "A uniquement",
+        "A et B",
+        "A et C",
+        "C uniquement",
+        "B et C"
+      ],
+      "answer": 2,
+      "explanation": "A charge tout en mémoire et ferme automatiquement (OK). B ouvre un Stream mais ne le ferme pas (fuite). C utilise try-with-resources correctement. Files.lines() nécessite fermeture explicite, readAllLines() non."
+    },
+    {
+      "topic": "Comparable & Comparator",
+      "question": "Quel code compile et trie correctement ?<br><pre><code class='language-java'>class Person implements Comparable&lt;Person&gt; {\n    String name;\n    int age;\n    Person(String n, int a) { name=n; age=a; }\n    //INSERT CODE HERE\n}\n\nList&lt;Person&gt; list = Arrays.asList(new Person(\"Bob\",25), new Person(\"Alice\",30));\nCollections.sort(list);</code></pre>",
+      "options": [
+        "public int compareTo(Person p) { return this.age - p.age; }",
+        "public int compare(Person p1, Person p2) { return p1.age - p2.age; }",
+        "public int compareTo(Object o) { return this.age - ((Person)o).age; }",
+        "public boolean compareTo(Person p) { return this.age < p.age; }",
+        "A et C"
+      ],
+      "answer": 0,
+      "explanation": "Comparable<Person> nécessite 'int compareTo(Person)'. Option A est correcte. B est pour Comparator. C compile mais n'override pas (paramètre Object pas Person avec generics). D mauvais type de retour."
+    },
+    {
+      "topic": "Lambda & Effectively Final",
+      "question": "Quel code compile ?<br><pre><code class='language-java'>public void test() {\n    int x = 10;\n    Runnable r1 = () -> System.out.println(x);     //1\n    x = 20;                                         //2\n    Runnable r2 = () -> System.out.println(x);     //3\n    final int y = 30;\n    Runnable r3 = () -> System.out.println(y);     //4\n}</code></pre>",
+      "options": [
+        "Toutes les lignes",
+        "1 et 4 uniquement",
+        "4 uniquement",
+        "2 et 4",
+        "Ne compile pas"
+      ],
+      "answer": 4,
+      "explanation": "Ligne 1 OK (x effectively final). Ligne 2 rend x non-effectively final. Ligne 1 échoue rétroactivement car x est modifié après. Ligne 3 échoue (x non final). Ligne 4 OK. Tout échoue à cause de la ligne 2."
+    },
+    {
+      "topic": "Collection Modifications",
+      "question": "Que va se passer ?<br><pre><code class='language-java'>List&lt;String&gt; list = new ArrayList&lt;&gt;(List.of(\"A\", \"B\", \"C\"));\nfor(String s : list) {\n    if(s.equals(\"B\")) {\n        list.remove(s);\n    }\n}\nSystem.out.println(list);</code></pre>",
+      "options": [
+        "[A, C]",
+        "[A, B, C]",
+        "ConcurrentModificationException",
+        "Ne compile pas",
+        "[B]"
+      ],
+      "answer": 2,
+      "explanation": "Enhanced for-loop utilise un Iterator. Modifier la collection pendant l'itération (sauf via iterator.remove()) lance ConcurrentModificationException. Il faut utiliser Iterator.remove() ou removeIf()."
+    },
+    {
+      "topic": "DateTimeFormatter",
+      "question": "Quel format affiche \"2024-01-15T10:30\" ?<br><pre><code class='language-java'>LocalDateTime dt = LocalDateTime.of(2024, 1, 15, 10, 30);</code></pre>",
+      "options": [
+        "DateTimeFormatter.ISO_DATE",
+        "DateTimeFormatter.ISO_DATE_TIME",
+        "DateTimeFormatter.ISO_LOCAL_DATE_TIME",
+        "DateTimeFormatter.ofPattern(\"yyyy-MM-dd'T'HH:mm\")",
+        "B et C et D"
+      ],
+      "answer": 4,
+      "explanation": "ISO_DATE est pour LocalDate uniquement. ISO_DATE_TIME et ISO_LOCAL_DATE_TIME fonctionnent tous deux avec LocalDateTime et affichent ce format. Le pattern personnalisé fonctionne aussi."
+    },
+    {
+      "topic": "Record Constructors",
+      "question": "Quel code compile ?<br><pre><code class='language-java'>//A\nrecord Point(int x, int y) {\n    public Point { }\n}\n\n//B\nrecord Point(int x, int y) {\n    public Point(int x, int y) {\n        this.x = x * 2;\n        this.y = y * 2;\n    }\n}\n\n//C\nrecord Point(int x, int y) {\n    public Point {\n        x = x * 2;\n        y = y * 2;\n    }\n}</code></pre>",
+      "options": [
+        "A uniquement",
+        "A et C",
+        "B et C",
+        "A, B et C",
+        "C uniquement"
+      ],
+      "answer": 3,
+      "explanation": "A : compact constructor vide (OK). B : canonical constructor explicite (OK, peut assigner this.x et this.y). C : compact constructor avec modifications (OK, modifie les paramètres avant assignation automatique). Tous compilent."
+    },
+    {
+      "topic": "Sealed Interfaces & Permits",
+      "question": "Quel code est valide ?<br><pre><code class='language-java'>//Dans Vehicle.java\npackage transport;\npublic sealed interface Vehicle permits Car, Truck { }\n\n//Dans Car.java\npackage transport;\npublic final class Car implements Vehicle { }\n\n//Dans Truck.java  \npackage transport;\npublic class Truck implements Vehicle { }</code></pre>",
+      "options": [
+        "Tout est valide",
+        "Truck doit être final, non-sealed ou sealed",
+        "Vehicle doit être une classe, pas une interface",
+        "permits ne peut lister que des classes du même package",
+        "Car ne peut pas être final"
+      ],
+      "answer": 1,
+      "explanation": "Les sous-types d'une classe/interface sealed doivent être final, sealed ou non-sealed. Truck n'a aucun de ces modifiers. Car final est OK. Les permits peuvent être dans d'autres packages si accessibles."
+    },
+    {
+      "topic": "Stream flatMap",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List&lt;List&lt;Integer&gt;&gt; list = List.of(\n    List.of(1, 2),\n    List.of(3, 4, 5),\n    List.of(6)\n);\nlong count = list.stream()\n    .flatMap(l -> l.stream())\n    .filter(n -> n % 2 == 0)\n    .count();\nSystem.out.println(count);</code></pre>",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "6",
+        "Exception"
+      ],
+      "answer": 1,
+      "explanation": "flatMap aplatit les listes : [1,2,3,4,5,6]. filter(n%2==0) garde les pairs : [2,4,6]. count() = 3 éléments."
+    },
+    {
+      "topic": "instanceof Pattern Matching",
+      "question": "Quel code compile en Java 21 ?<br><pre><code class='language-java'>//A\nif(obj instanceof String s && s.length() > 5) {\n    System.out.println(s);\n}\n\n//B\nif(obj instanceof String s || s.length() > 5) {\n    System.out.println(s);\n}\n\n//C\nif(!(obj instanceof String s)) {\n    System.out.println(s);\n}</code></pre>",
+      "options": [
+        "A uniquement",
+        "A et B",
+        "A et C",
+        "Toutes",
+        "Aucune"
+      ],
+      "answer": 0,
+      "explanation": "A : s est in scope dans la partie droite de && (OK). B : s n'est pas in scope après || car pourrait être false (erreur). C : s n'est pas in scope car le test est négatif (erreur). Seul A compile."
+    },
+    {
+      "topic": "ConcurrentHashMap",
+      "question": "Quel code est thread-safe ?<br><pre><code class='language-java'>ConcurrentHashMap&lt;String, Integer&gt; map = new ConcurrentHashMap&lt;&gt;();\n\n//A\nif(!map.containsKey(\"count\")) {\n    map.put(\"count\", 1);\n} else {\n    map.put(\"count\", map.get(\"count\") + 1);\n}\n\n//B\nmap.putIfAbsent(\"count\", 0);\nmap.put(\"count\", map.get(\"count\") + 1);\n\n//C\nmap.merge(\"count\", 1, (old, val) -> old + val);</code></pre>",
+      "options": [
+        "A uniquement",
+        "A et B",
+        "C uniquement",
+        "B et C",
+        "Toutes"
+      ],
+      "answer": 2,
+      "explanation": "A : race condition entre containsKey et put. B : race condition entre putIfAbsent et put/get. C : merge est atomique, thread-safe pour cette opération. Seul C est vraiment thread-safe."
+    },
+    {
+      "topic": "Text Blocks",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>String s = \"\"\"\n    Hello\n    World\n    \"\"\";\nSystem.out.println(s.length());</code></pre>",
+      "options": [
+        "10",
+        "11",
+        "12",
+        "15",
+        "16"
+      ],
+      "answer": 2,
+      "explanation": "Text block : \"Hello\\nWorld\\n\" (espaces de début supprimés automatiquement selon indentation). Hello(5) + \\n(1) + World(5) + \\n(1) = 12 caractères."
+    },
+    {
+      "topic": "Optional orElse vs orElseGet",
+      "question": "Quelle différence de comportement ?<br><pre><code class='language-java'>Optional&lt;String&gt; opt = Optional.of(\"value\");\n\n//A\nString a = opt.orElse(expensiveMethod());\n\n//B  \nString b = opt.orElseGet(() -> expensiveMethod());</code></pre>",
+      "options": [
+        "Aucune différence",
+        "A appelle expensiveMethod(), B non",
+        "B appelle expensiveMethod(), A non",
+        "Les deux appellent expensiveMethod()",
+        "Aucun des deux n'appelle expensiveMethod()"
+      ],
+      "answer": 1,
+      "explanation": "orElse() évalue toujours son argument (eager). orElseGet() prend un Supplier évalué seulement si Optional est empty (lazy). Ici opt a une valeur, mais A appelle quand même expensiveMethod(), B non."
+    },
+    {
+      "topic": "Predicate Composition",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Predicate&lt;Integer&gt; p1 = x -> x > 5;\nPredicate&lt;Integer&gt; p2 = x -> x < 10;\nPredicate&lt;Integer&gt; p3 = p1.and(p2);\nPredicate&lt;Integer&gt; p4 = p1.or(p2);\nSystem.out.println(p3.test(7));\nSystem.out.println(p4.test(3));</code></pre>",
+      "options": [
+        "true false",
+        "false true",
+        "true true",
+        "false false",
+        "Ne compile pas"
+      ],
+      "answer": 2,
+      "explanation": "p3 = and = (x>5 && x<10). p3.test(7) : 7>5 && 7<10 = true. p4 = or = (x>5 || x<10). p4.test(3) : 3>5 || 3<10 = false || true = true."
+    },
+    {
+      "topic": "Array Initialization",
+      "question": "Quelles déclarations compilent ?<br><pre><code class='language-java'>int[] a1 = new int[3]{1, 2, 3};           //1\nint[] a2 = new int[]{1, 2, 3};            //2\nint[] a3 = {1, 2, 3};                     //3\nvar a4 = new int[]{1, 2, 3};              //4\nvar a5 = {1, 2, 3};                       //5</code></pre>",
+      "options": [
+        "2, 3, 4",
+        "2, 3, 4, 5",
+        "1, 2, 3, 4",
+        "2, 4",
+        "Toutes"
+      ],
+      "answer": 0,
+      "explanation": "1 échoue (ne peut spécifier taille ET initializer). 2 OK (array creation avec initializer). 3 OK (declaration avec initializer). 4 OK (var peut inférer int[]). 5 échoue (var nécessite new)."
+    },
+    {
+      "topic": "Module Accessibility",
+      "question": "Dans un module, quelle déclaration exporte un package ?<br><pre><code class='language-java'>//module-info.java\nmodule com.app {\n    //INSERT CODE HERE\n}</code></pre>",
+      "options": [
+        "export com.app.api;",
+        "exports com.app.api",
+        "public com.app.api;",
+        "expose com.app.api;",
+        "opens com.app.api;"
+      ],
+      "answer": 1,
+      "explanation": "La syntaxe correcte est 'exports nom.package;' (pas de point-virgule dans les options mais B est la bonne syntaxe). 'opens' est pour la réflexion, pas l'export normal. Les autres syntaxes n'existent pas."
+    },
+    {
+      "topic": "BiFunction & Method References",
+      "question": "Quelle method reference est valide ?<br><pre><code class='language-java'>BiFunction&lt;String, String, String&gt; func = //INSERT</code></pre>",
+      "options": [
+        "String::concat",
+        "String::valueOf",
+        "String::equals",
+        "String::length",
+        "String::substring"
+      ],
+      "answer": 0,
+      "explanation": "BiFunction<String,String,String> nécessite (String,String)->String. concat(String) sur String instance : premier String = receiver, deuxième = param, retour String (OK). valueOf prend Object. equals retourne boolean. length et substring ont mauvaise signature."
+    }
+  ]
+}
