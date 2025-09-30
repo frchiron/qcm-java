@@ -1,0 +1,815 @@
+{
+  "title": "Certification Java 21 - OCP-830  - 50 Questions",
+  "duration": 90,
+  "metadata": {
+    "id": "exam-15_full_quiz.json",
+    "mainTopic": "full",
+    "category": "full",
+    "examNumber": "F1",
+    "examName": "Examen blanc complet",
+    "questionsCount": 50,
+    "description": "50 questions • Tous thèmes"
+  },
+  "questions": [
+    {
+      "topic": "IO",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Path p1 = Path.of(\"/home/user/file.txt\");\nPath p2 = Path.of(\"/home/data\");\nPath result = p2.relativize(p1);\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "<code>../user/file.txt</code>",
+        "<code>user/file.txt</code>",
+        "<code>/user/file.txt</code>",
+        "<code>../data/user/file.txt</code>",
+        "InvalidPathException",
+        "Compilation error"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "relativize() calcule le chemin relatif de p1 depuis p2. De /home/data vers /home/user/file.txt : remonter d'un niveau (..) puis user/file.txt."
+    },
+    {
+      "topic": "Exception Handling",
+      "type": "multiple",
+      "question": "Quelles affirmations sont vraies concernant ce code ?<br><pre><code class='language-java'>try {\n    throw new IOException();\n} catch (IOException | SQLException e) {\n    e = new IOException();\n    throw e;\n}</code></pre>",
+      "options": [
+        "Le code compile correctement",
+        "Compilation error - cannot assign to e",
+        "e est effectively final",
+        "Multi-catch permet la réassignation",
+        "IOException doit être déclarée dans throws",
+        "SQLException n'est jamais lancée"
+      ],
+      "answer": [1, 2],
+      "difficulty": "expert",
+      "explanation": "Dans un multi-catch, la variable exception est implicitement final. On ne peut pas la réassigner. Compilation error sur e = new IOException()."
+    },
+    {
+      "topic": "Modules",
+      "type": "single",
+      "question": "Dans un module-info.java, quelle directive exporte un package uniquement à des modules spécifiques ?",
+      "options": [
+        "<code>exports com.example to module1, module2;</code>",
+        "<code>exports qualified com.example to module1;</code>",
+        "<code>opens com.example to module1;</code>",
+        "<code>provides com.example to module1;</code>",
+        "<code>exports private com.example;</code>",
+        "<code>requires transitive com.example;</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "La syntaxe 'exports package to module1, module2' crée une exportation qualifiée, limitant l'accès aux modules spécifiés."
+    },
+    {
+      "topic": "Overriding",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Parent {\n    Number getValue() { return 10; }\n}\nclass Child extends Parent {\n    Integer getValue() { return 20; }\n}\nParent p = new Child();\nSystem.out.println(p.getValue());</code></pre>",
+      "options": [
+        "<code>10</code>",
+        "<code>20</code>",
+        "Compilation error in Child",
+        "Runtime error",
+        "<code>null</code>",
+        "ClassCastException"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Le type de retour covariant est valide (Integer extends Number). Le polymorphisme appelle Child.getValue() qui retourne 20."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>List<Integer> list = Arrays.asList(1, 2, 3);\nint result = list.parallelStream()\n    .reduce(10, (a, b) -> a + b);\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "<code>16</code>",
+        "<code>36</code>",
+        "<code>46</code>",
+        "<code>10</code>",
+        "Compilation error",
+        "<code>6</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "En parallèle, l'identity (10) est appliquée à chaque partition. Avec 3 éléments possibles en 3 threads : (10+1)+(10+2)+(10+3) = 11+12+13 = 36."
+    },
+    {
+      "topic": "Interfaces",
+      "type": "multiple",
+      "question": "Quelles méthodes peuvent être déclarées dans une interface ?",
+      "options": [
+        "abstract methods",
+        "default methods",
+        "static methods",
+        "private methods",
+        "private static methods",
+        "protected methods"
+      ],
+      "answer": [0, 1, 2, 3, 4],
+      "difficulty": "expert",
+      "explanation": "Les interfaces peuvent avoir : abstract (implicites), default, static, private (Java 9+), private static. Pas de protected (les méthodes sont public ou private)."
+    },
+    {
+      "topic": "Control Flow",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 0;\nwhile(x < 3) {\n    if(x == 1) { x++; continue; }\n    System.out.print(x);\n    x++;\n}\nSystem.out.print(x);</code></pre>",
+      "options": [
+        "<code>0123</code>",
+        "<code>023</code>",
+        "<code>0233</code>",
+        "<code>013</code>",
+        "Boucle infinie",
+        "<code>02</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "x=0: affiche 0, x++; x=1: continue saute print, x++; x=2: affiche 2, x++; x=3: sort. Puis affiche 3. Résultat: 023."
+    },
+    {
+      "topic": "Localization",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>Locale locale = new Locale(\"fr\", \"FR\");\nResourceBundle rb = ResourceBundle.getBundle(\"messages\", locale);\nSystem.out.println(rb.getString(\"greeting\"));</code></pre><br>Avec les fichiers:<br>messages.properties: greeting=Hello<br>messages_fr.properties: greeting=Bonjour",
+      "options": [
+        "<code>Hello</code>",
+        "<code>Bonjour</code>",
+        "<code>null</code>",
+        "MissingResourceException",
+        "Compilation error",
+        "greeting"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "ResourceBundle cherche messages_fr_FR.properties, puis messages_fr.properties (trouvé), puis messages.properties. Trouve 'Bonjour' dans messages_fr.properties."
+    },
+    {
+      "topic": "Enum",
+      "type": "multiple",
+      "question": "Quelles déclarations d'enum sont valides ?",
+      "options": [
+        "<code>enum Color { RED, GREEN, BLUE; }</code>",
+        "<code>enum Size { S, M, L; private Size() {} }</code>",
+        "<code>public enum Day { MON, TUE; public void print() {} }</code>",
+        "<code>enum Type { A, B; public Type() {} }</code>",
+        "<code>enum Status { ON, OFF; static void toggle() {} }</code>",
+        "<code>abstract enum Mode { READ, WRITE; }</code>"
+      ],
+      "answer": [0, 1, 2, 4],
+      "difficulty": "expert",
+      "explanation": "Les enums peuvent avoir constructeurs private/package-private, méthodes instance/static. Invalides: constructeur public (option 4), abstract enum (option 6)."
+    },
+    {
+      "topic": "Method Declaration",
+      "type": "single",
+      "question": "Quelle déclaration de méthode est INVALIDE ?",
+      "options": [
+        "<code>public static final void method() {}</code>",
+        "<code>private abstract void method();</code>",
+        "<code>protected synchronized void method() {}</code>",
+        "<code>final strictfp void method() {}</code>",
+        "<code>static synchronized void method() {}</code>",
+        "<code>public native void method();</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Une méthode private ne peut pas être abstract (elle ne peut pas être redéfinie). Toutes les autres combinaisons sont valides."
+    },
+    {
+      "topic": "Operator Priority",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int a = 5;\nint b = 10;\nSystem.out.println(a + b + \"\" + a + b);</code></pre>",
+      "options": [
+        "<code>15510</code>",
+        "<code>1551010</code>",
+        "<code>20</code>",
+        "<code>510510</code>",
+        "Compilation error",
+        "<code>30</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "Évaluation gauche à droite: 5+10=15, 15+\"\"=\"15\", \"15\"+5=\"155\", \"155\"+10=\"15510\"."
+    },
+    {
+      "topic": "IO",
+      "type": "multiple",
+      "question": "Quelles méthodes de Files lancent une exception si le fichier n'existe pas ?",
+      "options": [
+        "<code>Files.exists(path)</code>",
+        "<code>Files.size(path)</code>",
+        "<code>Files.readAllLines(path)</code>",
+        "<code>Files.isDirectory(path)</code>",
+        "<code>Files.newBufferedReader(path)</code>",
+        "<code>Files.lines(path)</code>"
+      ],
+      "answer": [1, 2, 4, 5],
+      "difficulty": "expert",
+      "explanation": "exists() et isDirectory() retournent false. size(), readAllLines(), newBufferedReader(), lines() lancent NoSuchFileException si le fichier n'existe pas."
+    },
+    {
+      "topic": "Exception Handling",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>try {\n    System.out.print(\"A\");\n    throw new RuntimeException();\n} catch (Exception e) {\n    System.out.print(\"B\");\n    return;\n} finally {\n    System.out.print(\"C\");\n}\nSystem.out.print(\"D\");</code></pre>",
+      "options": [
+        "<code>ABCD</code>",
+        "<code>ABC</code>",
+        "<code>AB</code>",
+        "<code>ACD</code>",
+        "<code>AC</code>",
+        "<code>BCD</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "A s'affiche, exception catchée, B s'affiche, return prévu mais finally s'exécute d'abord → C. Puis return effectif, D n'est jamais atteint. Résultat: ABC."
+    },
+    {
+      "topic": "Collections",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Map<String, Integer> map = new HashMap<>();\nmap.put(\"a\", 1);\nmap.put(\"b\", 2);\nmap.putIfAbsent(\"a\", 3);\nmap.computeIfPresent(\"b\", (k, v) -> v + 10);\nSystem.out.println(map.get(\"a\") + \",\" + map.get(\"b\"));</code></pre>",
+      "options": [
+        "<code>1,2</code>",
+        "<code>3,12</code>",
+        "<code>1,12</code>",
+        "<code>3,2</code>",
+        "<code>1,10</code>",
+        "Compilation error"
+      ],
+      "answer": 2,
+      "difficulty": "expert",
+      "explanation": "putIfAbsent ne remplace pas la valeur existante (a reste 1). computeIfPresent modifie b: 2+10=12. Résultat: 1,12."
+    },
+    {
+      "topic": "Encapsulation",
+      "type": "multiple",
+      "question": "Depuis une sous-classe dans un package différent, quels membres sont accessibles ?<br><pre><code class='language-java'>package com.example;\npublic class Parent {\n    public int a;\n    protected int b;\n    int c;\n    private int d;\n}</code></pre>",
+      "options": [
+        "<code>a</code>",
+        "<code>b</code>",
+        "<code>c</code>",
+        "<code>d</code>",
+        "Aucun",
+        "Tous"
+      ],
+      "answer": [0, 1],
+      "difficulty": "expert",
+      "explanation": "Depuis une sous-classe d'un autre package: public (a) et protected (b) accessibles. Package-private (c) et private (d) non accessibles."
+    },
+    {
+      "topic": "Lambda",
+      "type": "single",
+      "question": "Quelle expression lambda est INVALIDE ?",
+      "options": [
+        "<code>(int x, int y) -> x + y</code>",
+        "<code>(x, y) -> { return x + y; }</code>",
+        "<code>x -> x * 2</code>",
+        "<code>(int x, y) -> x + y</code>",
+        "<code>() -> 42</code>",
+        "<code>(String s) -> s.length()</code>"
+      ],
+      "answer": 3,
+      "difficulty": "expert",
+      "explanation": "Si on spécifie le type pour un paramètre, il faut le spécifier pour tous. (int x, y) est invalide, doit être (int x, int y) ou (x, y)."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>IntStream.rangeClosed(1, 5)\n    .map(x -> x * x)\n    .filter(x -> x > 10)\n    .findFirst()\n    .ifPresent(System.out::println);</code></pre>",
+      "options": [
+        "<code>1</code>",
+        "<code>4</code>",
+        "<code>9</code>",
+        "<code>16</code>",
+        "<code>25</code>",
+        "Aucune sortie"
+      ],
+      "answer": 3,
+      "difficulty": "expert",
+      "explanation": "rangeClosed(1,5) → [1,2,3,4,5]. map(x*x) → [1,4,9,16,25]. filter(>10) → [16,25]. findFirst() → 16. ifPresent affiche 16."
+    },
+    {
+      "topic": "Control Flow",
+      "type": "multiple",
+      "question": "Quelles instructions peuvent être utilisées dans un switch avec String ?",
+      "options": [
+        "<code>case \"hello\":</code>",
+        "<code>case null:</code>",
+        "<code>case \"a\" + \"b\":</code>",
+        "<code>case str.toUpperCase():</code>",
+        "<code>default:</code>",
+        "<code>case \"\":</code>"
+      ],
+      "answer": [0, 2, 4, 5],
+      "difficulty": "expert",
+      "explanation": "Les case doivent être des constantes compile-time. Valides: littéraux String, expressions constantes (\"a\"+\"b\"), default, chaîne vide. Invalides: null (NullPointerException), expressions non-constantes."
+    },
+    {
+      "topic": "Arrays",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int[] arr = {3, 1, 4, 1, 5};\nArrays.sort(arr, 1, 4);\nSystem.out.println(Arrays.toString(arr));</code></pre>",
+      "options": [
+        "<code>[1, 1, 3, 4, 5]</code>",
+        "<code>[3, 1, 1, 4, 5]</code>",
+        "<code>[1, 3, 4, 1, 5]</code>",
+        "<code>[3, 1, 4, 1, 5]</code>",
+        "ArrayIndexOutOfBoundsException",
+        "Compilation error"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "sort(arr, 1, 4) trie de l'index 1 (inclus) à 4 (exclus): éléments [1,4,1] deviennent [1,1,4]. Résultat: [3,1,1,4,5]."
+    },
+    {
+      "topic": "Interfaces",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>interface A { default int m() { return 1; } }\ninterface B { default int m() { return 2; } }\ninterface C extends A, B { default int m() { return A.super.m() + B.super.m(); } }\nclass D implements C {}\nSystem.out.println(new D().m());</code></pre>",
+      "options": [
+        "<code>1</code>",
+        "<code>2</code>",
+        "<code>3</code>",
+        "Compilation error in C",
+        "Compilation error in D",
+        "<code>0</code>"
+      ],
+      "answer": 2,
+      "difficulty": "expert",
+      "explanation": "C résout le conflit en appelant A.super.m() (1) + B.super.m() (2) = 3. D hérite de cette implémentation."
+    },
+    {
+      "topic": "Modules",
+      "type": "multiple",
+      "question": "Quelles directives sont valides dans module-info.java ?",
+      "options": [
+        "<code>requires java.base;</code>",
+        "<code>exports com.example;</code>",
+        "<code>opens com.example;</code>",
+        "<code>provides Interface with Implementation;</code>",
+        "<code>uses Service;</code>",
+        "<code>imports com.example;</code>"
+      ],
+      "answer": [0, 1, 2, 3, 4],
+      "difficulty": "expert",
+      "explanation": "Directives valides: requires, exports, opens, provides...with, uses. 'imports' n'existe pas dans les modules (utiliser requires)."
+    },
+    {
+      "topic": "Enum",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>enum Size {\n    S(10), M(20), L(30);\n    private int value;\n    Size(int value) { this.value = value; }\n    public int getValue() { return value; }\n}\nSystem.out.println(Size.M.getValue());</code></pre>",
+      "options": [
+        "<code>10</code>",
+        "<code>20</code>",
+        "<code>30</code>",
+        "Compilation error - constructor must be public",
+        "Compilation error - enum cannot have constructor",
+        "<code>0</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Les enums peuvent avoir des constructeurs private/package-private et des champs. Size.M a value=20."
+    },
+    {
+      "topic": "Exception Handling",
+      "type": "single",
+      "question": "Quelle est la hiérarchie correcte ?",
+      "options": [
+        "Throwable → Error → Exception → RuntimeException",
+        "Throwable → Exception → RuntimeException ; Throwable → Error",
+        "Exception → Throwable → Error → RuntimeException",
+        "Error → Throwable → Exception → RuntimeException",
+        "Throwable → RuntimeException → Exception → Error",
+        "Object → Exception → Throwable → Error"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Hiérarchie: Throwable est la racine. Exception et Error étendent Throwable. RuntimeException étend Exception."
+    },
+    {
+      "topic": "Operator Priority",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 10;\nboolean result = x > 5 && x++ < 15;\nSystem.out.println(x + \",\" + result);</code></pre>",
+      "options": [
+        "<code>10,true</code>",
+        "<code>11,true</code>",
+        "<code>10,false</code>",
+        "<code>11,false</code>",
+        "Compilation error",
+        "<code>15,true</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "x>5 est true, donc évalue x++<15. x++ utilise 10 (puis incrémente), 10<15 est true. x devient 11. Résultat: 11,true."
+    },
+    {
+      "topic": "IO",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Path p1 = Path.of(\"a/b/c\");\nPath p2 = Path.of(\"a/b\");\nPath result = p1.relativize(p2);\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "<code>c</code>",
+        "<code>../c</code>",
+        "<code>..</code>",
+        "<code>a/b</code>",
+        "IllegalArgumentException",
+        "Compilation error"
+      ],
+      "answer": 2,
+      "difficulty": "expert",
+      "explanation": "relativize calcule le chemin de p2 depuis p1. De a/b/c vers a/b: remonter d'un niveau (..)."
+    },
+    {
+      "topic": "Localization",
+      "type": "multiple",
+      "question": "Quelles sont les conventions de nommage correctes pour ResourceBundle ?",
+      "options": [
+        "<code>messages.properties</code>",
+        "<code>messages_fr.properties</code>",
+        "<code>messages_fr_FR.properties</code>",
+        "<code>messages_FR_fr.properties</code>",
+        "<code>messages-fr-FR.properties</code>",
+        "<code>messages_french.properties</code>"
+      ],
+      "answer": [0, 1, 2],
+      "difficulty": "expert",
+      "explanation": "Format: basename[_language[_country[_variant]]].properties. Valides: messages.properties, messages_fr.properties, messages_fr_FR.properties."
+    },
+    {
+      "topic": "Collections",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List<String> list = Arrays.asList(\"a\", \"b\", \"c\");\nlist.set(1, \"d\");\nlist.add(\"e\");\nSystem.out.println(list);</code></pre>",
+      "options": [
+        "<code>[a, d, c, e]</code>",
+        "<code>[a, b, c, e]</code>",
+        "<code>[a, d, c]</code>",
+        "UnsupportedOperationException à set",
+        "UnsupportedOperationException à add",
+        "Compilation error"
+      ],
+      "answer": 4,
+      "difficulty": "expert",
+      "explanation": "Arrays.asList() retourne une liste de taille fixe. set() fonctionne, mais add() lance UnsupportedOperationException."
+    },
+    {
+      "topic": "Overriding",
+      "type": "multiple",
+      "question": "Quelles redéfinitions sont valides ?<br><pre><code class='language-java'>class Parent {\n    protected void method() throws IOException {}\n}</code></pre>",
+      "options": [
+        "<code>public void method() throws IOException</code>",
+        "<code>protected void method() throws Exception</code>",
+        "<code>void method() throws FileNotFoundException</code>",
+        "<code>protected void method()</code>",
+        "<code>private void method() throws IOException</code>",
+        "<code>public void method() throws SQLException, IOException</code>"
+      ],
+      "answer": [0, 2, 3],
+      "difficulty": "expert",
+      "explanation": "Valides: élargir visibilité (public), exceptions plus spécifiques (FileNotFoundException), aucune exception. Invalides: réduire visibilité, exceptions plus larges."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>List<Integer> list = List.of(1, 2, 3, 4);\nInteger result = list.stream()\n    .filter(n -> n % 2 == 0)\n    .reduce(0, Integer::sum);\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "<code>6</code>",
+        "<code>10</code>",
+        "<code>4</code>",
+        "<code>2</code>",
+        "<code>0</code>",
+        "Compilation error"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "filter garde [2,4]. reduce(0, sum) additionne: 0+2+4=6."
+    },
+    {
+      "topic": "Control Flow",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>for(int i = 0; i < 3; i++) {\n    for(int j = 0; j < 2; j++) {\n        if(i == j) continue;\n        System.out.print(i + \"\" + j);\n    }\n}\nSystem.out.print(\"!\");</code></pre>",
+      "options": [
+        "<code>011021!</code>",
+        "<code>01102021!</code>",
+        "<code>011221!</code>",
+        "<code>01102021!</code>",
+        "Boucle infinie",
+        "<code>!</code>"
+      ],
+      "answer": 3,
+      "difficulty": "expert",
+      "explanation": "i=0,j=0: skip; i=0,j=1: 01; i=1,j=0: 10; i=1,j=1: skip; i=2,j=0: 20; i=2,j=1: 21; puis !. Résultat: 01102021!"
+    },
+    {
+      "topic": "Method Declaration",
+      "type": "multiple",
+      "question": "Quels modificateurs peuvent être combinés avec abstract pour une méthode ?",
+      "options": [
+        "<code>public</code>",
+        "<code>protected</code>",
+        "<code>private</code>",
+        "<code>static</code>",
+        "<code>final</code>",
+        "<code>synchronized</code>"
+      ],
+      "answer": [0, 1],
+      "difficulty": "expert",
+      "explanation": "abstract peut être combiné avec public ou protected. Invalides: private (pas redéfinable), static (pas redéfinable), final (pas redéfinable), synchronized (pas d'implémentation)."
+    },
+    {
+      "topic": "Lambda",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List<String> list = Arrays.asList(\"a\", \"b\", \"c\");\nlist.forEach(s -> {\n    s = s.toUpperCase();\n    System.out.print(s);\n});\nSystem.out.println(list.get(0));</code></pre>",
+      "options": [
+        "<code>ABCa</code>",
+        "<code>ABCA</code>",
+        "<code>ABCnull</code>",
+        "<code>abca</code>",
+        "Compilation error",
+        "ConcurrentModificationException"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "forEach affiche ABC (variable locale s modifiée). La liste reste inchangée, get(0) retourne 'a'. Résultat: ABCa."
+    },
+    {
+      "topic": "IO",
+      "type": "single",
+      "question": "Quelle méthode de Files crée tous les répertoires parents nécessaires ?",
+      "options": [
+        "<code>Files.createDirectory(path)</code>",
+        "<code>Files.createDirectories(path)</code>",
+        "<code>Files.createFile(path)</code>",
+        "<code>Files.mkdir(path)</code>",
+        "<code>Files.mkdirs(path)</code>",
+        "<code>Files.newDirectory(path)</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "createDirectories() crée le répertoire et tous les parents nécessaires. createDirectory() échoue si les parents n'existent pas."
+    },
+    {
+      "topic": "Exception Handling",
+      "type": "multiple",
+      "question": "Quelles exceptions sont checked ?",
+      "options": [
+        "<code>IOException</code>",
+        "<code>SQLException</code>",
+        "<code>NullPointerException</code>",
+        "<code>FileNotFoundException</code>",
+        "<code>IllegalArgumentException</code>",
+        "<code>InterruptedException</code>"
+      ],
+      "answer": [0, 1, 3, 5],
+      "difficulty": "expert",
+      "explanation": "Checked exceptions (doivent être déclarées ou catchées): IOException, SQLException, FileNotFoundException, InterruptedException. Unchecked: NullPointerException, IllegalArgumentException (RuntimeException)."
+    },
+    {
+      "topic": "Encapsulation",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class Outer {\n    private int x = 10;\n    class Inner {\n        void print() { System.out.println(x); }\n    }\n}\nOuter outer = new Outer();\nOuter.Inner inner = outer.new Inner();\ninner.print();</code></pre>",
+      "options": [
+        "<code>10</code>",
+        "<code>0</code>",
+        "Compilation error - cannot access private x",
+        "Compilation error - invalid syntax",
+        "Runtime error",
+        "<code>null</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "Les classes internes (non-static) ont accès aux membres privés de la classe externe. inner.print() affiche 10."
+    },
+    {
+      "topic": "Collections",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Set<Integer> set = new TreeSet<>();\nset.add(3);\nset.add(1);\nset.add(2);\nset.add(1);\nSystem.out.println(set);</code></pre>",
+      "options": [
+        "<code>[3, 1, 2, 1]</code>",
+        "<code>[1, 2, 3]</code>",
+        "<code>[3, 1, 2]</code>",
+        "<code>[1, 1, 2, 3]</code>",
+        "Ordre imprévisible",
+        "<code>[2, 1, 3]</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "TreeSet élimine les doublons (le second 1 est ignoré) et trie selon l'ordre naturel. Résultat: [1, 2, 3]."
+    },
+    {
+      "topic": "Operator Priority",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 5, y = 10;\nSystem.out.println(x > 3 ? y < 20 ? \"A\" : \"B\" : \"C\");</code></pre>",
+      "options": [
+        "<code>A</code>",
+        "<code>B</code>",
+        "<code>C</code>",
+        "<code>AB</code>",
+        "Compilation error",
+        "<code>true</code>"
+      ],
+      "answer": 0,
+      "difficulty": "expert",
+      "explanation": "x>3 est true, donc évalue y<20?\"A\":\"B\". y<20 est true, retourne \"A\"."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>Stream<String> stream = Stream.of(\"a\", \"b\", \"c\");\nlong count = stream.peek(System.out::print).count();\nSystem.out.println(count);</code></pre>",
+      "options": [
+        "<code>abc3</code>",
+        "<code>3</code>",
+        "<code>abcabc3</code>",
+        "<code>0</code>",
+        "Compilation error",
+        "IllegalStateException"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "count() est optimisé et peut court-circuiter peek(). Il compte directement sans traiter les éléments. Affiche seulement 3 (pas abc)."
+    },
+    {
+      "topic": "Interfaces",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>interface I {\n    static void method() { System.out.print(\"I\"); }\n}\nclass C implements I {\n    static void method() { System.out.print(\"C\"); }\n}\nC.method();</code></pre>",
+      "options": [
+        "<code>I</code>",
+        "<code>C</code>",
+        "Compilation error - cannot override static",
+        "Compilation error - duplicate method",
+        "Runtime error",
+        "<code>IC</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Les méthodes static d'interfaces ne sont pas héritées. C.method() est une nouvelle méthode indépendante. Affiche C."
+    },
+    {
+      "topic": "Modules",
+      "type": "single",
+      "question": "Quelle directive permet à un module d'utiliser des services via ServiceLoader ?",
+      "options": [
+        "<code>requires Service;</code>",
+        "<code>uses Service;</code>",
+        "<code>provides Service;</code>",
+        "<code>opens Service;</code>",
+        "<code>exports Service;</code>",
+        "<code>imports Service;</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "La directive 'uses' déclare qu'un module consomme un service via ServiceLoader. 'provides...with' déclare une implémentation."
+    },
+    {
+      "topic": "Control Flow",
+      "type": "multiple",
+      "question": "Quels types peuvent être utilisés comme expression dans un switch ?",
+      "options": [
+        "<code>int</code>",
+        "<code>String</code>",
+        "<code>enum</code>",
+        "<code>long</code>",
+        "<code>Integer</code>",
+        "<code>boolean</code>"
+      ],
+      "answer": [0, 1, 2, 4],
+      "difficulty": "expert",
+      "explanation": "Switch accepte: byte, short, char, int, String, enum et leurs wrappers (Byte, Short, Character, Integer). Pas long ni boolean."
+    },
+    {
+      "topic": "Arrays",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int[][] arr = {{1, 2}, {3, 4, 5}};\nSystem.out.println(arr.length + \",\" + arr[1].length);</code></pre>",
+      "options": [
+        "<code>2,2</code>",
+        "<code>2,3</code>",
+        "<code>5,3</code>",
+        "<code>3,2</code>",
+        "ArrayIndexOutOfBoundsException",
+        "Compilation error"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "arr.length est le nombre de lignes (2). arr[1].length est la longueur de la deuxième ligne (3). Résultat: 2,3."
+    },
+    {
+      "topic": "Localization",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>Locale loc = new Locale(\"fr\");\nNumberFormat nf = NumberFormat.getCurrencyInstance(loc);\nSystem.out.println(nf.format(1234.56));</code></pre>",
+      "options": [
+        "<code>1234.56</code>",
+        "<code>1 234,56 €</code>",
+        "<code>$1,234.56</code>",
+        "<code>€1,234.56</code>",
+        "<code>1234,56</code>",
+        "Dépend du système"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "NumberFormat avec Locale français formate en utilisant espace comme séparateur de milliers, virgule pour décimales, et € comme symbole."
+    },
+    {
+      "topic": "Enum",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>enum Day { MON, TUE, WED }\nDay d = Day.valueOf(\"TUE\");\nSystem.out.println(d.ordinal());</code></pre>",
+      "options": [
+        "<code>0</code>",
+        "<code>1</code>",
+        "<code>2</code>",
+        "<code>TUE</code>",
+        "IllegalArgumentException",
+        "Compilation error"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "valueOf(\"TUE\") retourne Day.TUE. ordinal() retourne la position (0-based): MON=0, TUE=1, WED=2. Résultat: 1."
+    },
+    {
+      "topic": "Exception Handling",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>try {\n    System.out.print(\"1\");\n    throw new Error();\n} catch (Throwable t) {\n    System.out.print(\"2\");\n} catch (Error e) {\n    System.out.print(\"3\");\n}</code></pre>",
+      "options": [
+        "<code>12</code>",
+        "<code>13</code>",
+        "<code>123</code>",
+        "Compilation error - unreachable catch",
+        "Runtime error",
+        "<code>1</code>"
+      ],
+      "answer": 3,
+      "difficulty": "expert",
+      "explanation": "Error extends Throwable. Le premier catch attrape tout. Le second catch est inatteignable (unreachable). Compilation error."
+    },
+    {
+      "topic": "IO",
+      "type": "multiple",
+      "question": "Quelles méthodes créent un fichier s'il n'existe pas ?",
+      "options": [
+        "<code>Files.createFile(path)</code>",
+        "<code>Files.write(path, bytes)</code>",
+        "<code>Files.newOutputStream(path)</code>",
+        "<code>Files.copy(source, target)</code>",
+        "<code>Files.move(source, target)</code>",
+        "<code>Files.exists(path)</code>"
+      ],
+      "answer": [0, 1],
+      "difficulty": "expert",
+      "explanation": "createFile() crée un fichier. write() crée le fichier s'il n'existe pas. newOutputStream() et copy() échouent si le fichier n'existe pas (sans options). exists() ne crée rien."
+    },
+    {
+      "topic": "Lambda",
+      "type": "single",
+      "question": "Quelle interface fonctionnelle correspond à <code>(String s) -> s.length() > 5</code> ?",
+      "options": [
+        "<code>Function&lt;String, Boolean&gt;</code>",
+        "<code>Predicate&lt;String&gt;</code>",
+        "<code>Consumer&lt;String&gt;</code>",
+        "<code>Supplier&lt;Boolean&gt;</code>",
+        "<code>BiFunction&lt;String, Integer, Boolean&gt;</code>",
+        "<code>UnaryOperator&lt;String&gt;</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "Prend un String et retourne un boolean → Predicate<String>. (Function retournerait Boolean wrapper, mais Predicate est plus spécifique)."
+    },
+    {
+      "topic": "Collections",
+      "type": "single",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>List<String> list = new ArrayList<>();\nlist.add(\"A\");\nlist.add(\"B\");\nIterator<String> it = list.iterator();\nlist.add(\"C\");\nwhile(it.hasNext()) {\n    System.out.print(it.next());\n}</code></pre>",
+      "options": [
+        "<code>AB</code>",
+        "<code>ABC</code>",
+        "ConcurrentModificationException",
+        "<code>A</code>",
+        "Compilation error",
+        "<code>C</code>"
+      ],
+      "answer": 2,
+      "difficulty": "expert",
+      "explanation": "L'ajout de \"C\" après création de l'itérateur modifie la liste. L'itérateur fail-fast détecte la modification et lance ConcurrentModificationException lors de next()."
+    },
+    {
+      "topic": "Streams",
+      "type": "single",
+      "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>Optional<String> opt = Optional.of(\"hello\");\nString result = opt\n    .map(String::toUpperCase)\n    .orElse(\"default\");\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "<code>hello</code>",
+        "<code>HELLO</code>",
+        "<code>default</code>",
+        "<code>null</code>",
+        "NullPointerException",
+        "Compilation error"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "opt contient \"hello\". map(toUpperCase) transforme en \"HELLO\". orElse n'est pas utilisé car l'Optional n'est pas vide. Résultat: HELLO."
+    },
+    {
+      "topic": "Threads et Concurrence",
+      "type": "single",
+      "question": "Que va probablement afficher ce code ?<br><pre><code class='language-java'>class Counter {\n    private int count = 0;\n    public void increment() { count++; }\n    public int getCount() { return count; }\n}\nCounter counter = new Counter();\nThread t1 = new Thread(() -> {\n    for(int i = 0; i < 1000; i++) counter.increment();\n});\nThread t2 = new Thread(() -> {\n    for(int i = 0; i < 1000; i++) counter.increment();\n});\nt1.start(); t2.start();\nt1.join(); t2.join();\nSystem.out.println(counter.getCount());</code></pre>",
+      "options": [
+        "Toujours <code>2000</code>",
+        "Un nombre inférieur à <code>2000</code>",
+        "Un nombre supérieur à <code>2000</code>",
+        "Toujours <code>1000</code>",
+        "Compilation error",
+        "<code>DeadlockException</code>"
+      ],
+      "answer": 1,
+      "difficulty": "expert",
+      "explanation": "count++ n'est pas atomique (read-modify-write). Les deux threads peuvent lire la même valeur, l'incrémenter, et écrire, causant des pertes d'incréments. Le résultat sera probablement < 2000 (race condition)."
+    }
+  ]
+}
