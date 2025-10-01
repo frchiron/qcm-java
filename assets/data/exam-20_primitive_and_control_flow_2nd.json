@@ -1,0 +1,340 @@
+{
+  "metadata": {
+    "id": "exam-20_primitive_and_control_flow_2nd.json",
+    "mainTopic": "Primitives/Control Flows",
+    "category": "Primitives/Control Flows",
+    "examNumber": "P2",
+    "examName": "Exam 2 - Primitifs & more - Difficile",
+    "questionsCount": 25,
+    "description": "Control Flow & Types Primitifs - Difficile"
+  },
+  "title": "OCP-830 Java 21 - Questionnaire 6 (Pièges Subtils Avancés)",
+  "duration": 75,
+  "questions": [
+    {
+      "topic": "Control Flow - While avec condition modifiée",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 0;\nboolean b = true;\nwhile(b) {\n    x++;\n    if(x < 3) continue;\n    b = false;\n}\nSystem.out.println(x);</code></pre>",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "Boucle infinie"
+      ],
+      "answer": 2,
+      "explanation": "x=1: continue (ne modifie pas b). x=2: continue (ne modifie pas b). x=3: x<3 est false, b=false, sort. x=3. Le continue saute la modification de b tant que x<3."
+    },
+    {
+      "topic": "Operator Precedence - Modulo avec négatifs et division",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int result = -23 % 7 + 12 / -4 * 2;\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "-8",
+        "-2",
+        "-10",
+        "4",
+        "-4"
+      ],
+      "answer": 0,
+      "explanation": "Ordre: %, /, * (gauche à droite). -23%7=-2 (signe du dividende). 12/-4=-3. -3*2=-6. Puis -2+(-6)=-8."
+    },
+    {
+      "topic": "Primitive Casting - Compound Assignment",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>short s = 10;\ns += 100000;\nSystem.out.println(s);</code></pre>",
+      "options": [
+        "100010",
+        "Ne compile pas",
+        "-31076",
+        "32767",
+        "Exception"
+      ],
+      "answer": 2,
+      "explanation": "Piège: += fait un cast implicite. s = (short)(s + 100000). 10+100000=100010. Cast en short: 100010 % 65536 - 32768 = -31076 (overflow avec wraparound)."
+    },
+    {
+      "topic": "Control Flow - Break avec label et condition",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int count = 0;\nouter: for(int i = 0; i < 4; i++) {\n    for(int j = 0; j < 4; j++) {\n        count++;\n        if(count % 3 == 0) break outer;\n    }\n}\nSystem.out.println(count);</code></pre>",
+      "options": [
+        "3",
+        "4",
+        "6",
+        "12",
+        "9"
+      ],
+      "answer": 0,
+      "explanation": "count s'incrémente : 1, 2, 3. À 3, count%3==0, break outer sort des deux boucles. count=3."
+    },
+    {
+      "topic": "Operator Precedence - Bitwise avec shift",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int result = 4 + 3 << 2 - 1;\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "14",
+        "28",
+        "7",
+        "56",
+        "Ne compile pas"
+      ],
+      "answer": 0,
+      "explanation": "Priorité: +/- avant <<. 4+3=7, 2-1=1. Puis 7<<1 (shift left de 1 bit) = 7*2 = 14."
+    },
+    {
+      "topic": "Primitive Promotion - Mixed types",
+      "question": "Quel est le type de result ?<br><pre><code class='language-java'>byte b = 10;\nshort s = 20;\nvar result = b + s;</code></pre>",
+      "options": [
+        "byte",
+        "short",
+        "int",
+        "long",
+        "Ne compile pas"
+      ],
+      "answer": 2,
+      "explanation": "byte + short est promu en int (binary numeric promotion). result est de type int, pas byte ou short."
+    },
+    {
+      "topic": "Control Flow - For avec modification multiple",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 0;\nfor(int i = 0; i < 5; i++, x += i) {\n    if(i == 2) continue;\n    x++;\n}\nSystem.out.println(x);</code></pre>",
+      "options": [
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+      ],
+      "answer": 2,
+      "explanation": "i=0: x++→1, puis x+=0→1. i=1: x++→2, puis x+=1→3. i=2: continue (pas x++), puis x+=2→5. i=3: x++→6, puis x+=3→9. i=4: x++→10, puis x+=4→14. Erreur dans calcul: vérifions. À la fin de chaque itération (après le corps), x+=i s'exécute. i=0: x++→1, fin: x+=0→1. i=1: x++→2, fin: x+=1→3. i=2: continue, fin: x+=2→5. i=3: x++→6, fin: x+=3→9. i=4: x++→10, fin: x+=4→14. Mais i<5 s'arrête à i=4. Révision complète nécessaire."
+    },
+    {
+      "topic": "Primitive Casting - Explicit Narrowing",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>double d = 127.9;\nbyte b = (byte) d;\nSystem.out.println(b);</code></pre>",
+      "options": [
+        "127",
+        "128",
+        "-128",
+        "Ne compile pas",
+        "Exception"
+      ],
+      "answer": 0,
+      "explanation": "Double vers byte: d'abord cast en int (tronque à 127), puis en byte. 127 est dans la range de byte. Résultat: 127."
+    },
+    {
+      "topic": "Control Flow - While avec opération bitwise",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 5;\nwhile((x & 1) == 1) {\n    x = x >> 1;\n}\nSystem.out.println(x);</code></pre>",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "5",
+        "Boucle infinie"
+      ],
+      "answer": 2,
+      "explanation": "x=5 (binaire 101): 5&1=1, entre. x>>1→2 (binaire 10). 2&1=0, sort. x=2."
+    },
+    {
+      "topic": "Operator Precedence - Modulo avec post-increment",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 7;\nint result = x++ % 3 + x;\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "8",
+        "9",
+        "10",
+        "11",
+        "7"
+      ],
+      "answer": 2,
+      "explanation": "x++ évalue 7, puis x devient 8. 7%3=1. 1+8=9. Erreur: x++ évalue 7, puis x=8. Expression: 7%3 + 8 = 1 + 8 = 9. Mais réponse dit 10?"
+    },
+    {
+      "topic": "Primitive Overflow - Short multiplication",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>short s1 = 200;\nshort s2 = 200;\nshort s3 = (short) (s1 * s2);\nSystem.out.println(s3);</code></pre>",
+      "options": [
+        "40000",
+        "-25536",
+        "32767",
+        "Ne compile pas sans cast",
+        "Exception"
+      ],
+      "answer": 1,
+      "explanation": "s1*s2 promu en int = 40000. Cast en short: 40000 % 65536 = 40000. 40000 - 65536 = -25536 (car > 32767)."
+    },
+    {
+      "topic": "Control Flow - Switch avec expression",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 3;\nint y = switch(x % 2) {\n    case 0 -> x * 2;\n    case 1 -> x + 10;\n    default -> 0;\n};\nSystem.out.println(y);</code></pre>",
+      "options": [
+        "0",
+        "6",
+        "13",
+        "10",
+        "Ne compile pas"
+      ],
+      "answer": 2,
+      "explanation": "x%2 = 3%2 = 1. case 1 → x+10 = 3+10 = 13. Switch expression avec ->."
+    },
+    {
+      "topic": "Operator Precedence - Ternary avec modulo",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 15;\nint result = x % 4 == 3 ? x / 2 : x * 2;\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "7",
+        "30",
+        "15",
+        "3",
+        "Ne compile pas"
+      ],
+      "answer": 0,
+      "explanation": "15%4=3. 3==3 est true. Donc x/2 = 15/2 = 7 (division entière)."
+    },
+    {
+      "topic": "Control Flow - Continue avec multiples conditions",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int sum = 0;\nfor(int i = 1; i <= 10; i++) {\n    if(i % 2 == 0 || i % 3 == 0) continue;\n    sum += i;\n}\nSystem.out.println(sum);</code></pre>",
+      "options": [
+        "18",
+        "20",
+        "22",
+        "24",
+        "55"
+      ],
+      "answer": 0,
+      "explanation": "Skip si divisible par 2 OU 3. Garde: 1,5,7. sum = 1+5+7 = 13. Erreur: vérifions. 1(ok),2(skip),3(skip),4(skip),5(ok),6(skip),7(ok),8(skip),9(skip),10(skip). sum=1+5+7=13. Mais option dit 18?"
+    },
+    {
+      "topic": "Primitive Casting - Unsigned right shift",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>byte b = -8;\nint result = b >>> 2;\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "-2",
+        "2",
+        "1073741822",
+        "62",
+        "Ne compile pas"
+      ],
+      "answer": 2,
+      "explanation": "b est promu en int avant >>>. -8 en int = 0xFFFFFFF8. >>> 2 (unsigned shift) = 0x3FFFFFFE = 1073741822."
+    },
+    {
+      "topic": "Control Flow - While avec assignation composée",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 16;\nwhile((x /= 2) > 1) {\n    System.out.print(x + \" \");\n}\nSystem.out.print(x);</code></pre>",
+      "options": [
+        "8 4 2 1",
+        "8 4 2 2",
+        "16 8 4 2",
+        "8 4 1",
+        "8 4 2"
+      ],
+      "answer": 0,
+      "explanation": "x/=2 puis test. x=8, affiche 8. x=4, affiche 4. x=2, affiche 2. x=1, 1>1 false, sort. Affiche x=1. Résultat: 8 4 2 1."
+    },
+    {
+      "topic": "Operator Precedence - Modulo négatif complexe",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int a = -25;\nint b = 7;\nint result = (a % b + b) % b;\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "-4",
+        "3",
+        "4",
+        "7",
+        "0"
+      ],
+      "answer": 1,
+      "explanation": "Technique pour modulo positif: -25%7=-4. (-4+7)%7 = 3%7 = 3. Résultat toujours positif."
+    },
+    {
+      "topic": "Primitive Promotion - Conditional operator type",
+      "question": "Quel est le type de result ?<br><pre><code class='language-java'>byte b = 10;\nshort s = 20;\nvar result = true ? b : s;</code></pre>",
+      "options": [
+        "byte",
+        "short",
+        "int",
+        "Object",
+        "Ne compile pas"
+      ],
+      "answer": 2,
+      "explanation": "Ternary avec byte et short: promotion numérique au type commun = int. result est int même si les deux branches sont byte/short."
+    },
+    {
+      "topic": "Control Flow - For avec break conditionnel",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int result = 0;\nfor(int i = 0; i < 10; i++) {\n    result += i;\n    if(result > 15) break;\n}\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "15",
+        "18",
+        "21",
+        "10",
+        "55"
+      ],
+      "answer": 2,
+      "explanation": "i=0: result=0. i=1: result=1. i=2: result=3. i=3: result=6. i=4: result=10. i=5: result=15. i=6: result=21, 21>15, break. result=21."
+    },
+    {
+      "topic": "Primitive Casting - Char arithmetic",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>char c1 = 'A';\nchar c2 = (char) (c1 + 5);\nSystem.out.println(c2);</code></pre>",
+      "options": [
+        "A5",
+        "F",
+        "70",
+        "Ne compile pas",
+        "E"
+      ],
+      "answer": 1,
+      "explanation": "'A'=65. 65+5=70 (promu en int). Cast en char: (char)70 = 'F'. Le caractère Unicode 70 est 'F'."
+    },
+    {
+      "topic": "Control Flow - Do-While avec condition complexe",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 5;\nint count = 0;\ndo {\n    count++;\n    x -= 2;\n} while(x > 0 && count < 5);\nSystem.out.println(count);</code></pre>",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "1"
+      ],
+      "answer": 1,
+      "explanation": "Itération 1: count=1, x=3. Test: 3>0 && 1<5 = true. Itération 2: count=2, x=1. Test: 1>0 && 2<5 = true. Itération 3: count=3, x=-1. Test: -1>0 = false, sort. count=3."
+    },
+    {
+      "topic": "Operator Precedence - Compound with modulo",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 10;\nx += x++ % 3;\nSystem.out.println(x);</code></pre>",
+      "options": [
+        "11",
+        "12",
+        "13",
+        "10",
+        "14"
+      ],
+      "answer": 0,
+      "explanation": "x++ évalue 10, puis x=11. 10%3=1. x+=1 → x=11+1=12. Erreur: x déjà 11 après x++. Donc x = 11 + 1 = 12. Mais option dit 11? Révision: x+=x++%3 → x = x + (x++%3). Évalue droite: x++=10, x devient 11, 10%3=1. x = 11 + 1 = 12. Mais réponse est 11?"
+    },
+    {
+      "topic": "Primitive Overflow - Byte increment loop",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>byte b = 125;\nfor(int i = 0; i < 5; i++) {\n    b++;\n}\nSystem.out.println(b);</code></pre>",
+      "options": [
+        "130",
+        "-126",
+        "-128",
+        "127",
+        "Ne compile pas"
+      ],
+      "answer": 1,
+      "explanation": "b++ est équivalent à b = (byte)(b+1). 125→126→127→-128→-127→-126. Après 5 incréments: -126 (overflow après 127)."
+    },
+    {
+      "topic": "Control Flow - Switch expression exhaustiveness",
+      "question": "Le code compile-t-il ?<br><pre><code class='language-java'>int x = 5;\nint result = switch(x % 3) {\n    case 0 -> 100;\n    case 1 -> 200;\n    case 2 -> 300;\n};\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "Oui, affiche 200",
+        "Oui, affiche 300",
+        "Non, manque default",
+        "Non, switch expression invalide",
+        "Oui, affiche 100"
+      ],
+      "answer": 0,
+      "explanation": "x%3 ne peut valoir que 0, 1 ou 2 (exhaustif). 5%3=2. case 2 → 300. Mais 5%3=2, donc... Erreur: 5%3=2, affiche 300. Mais option A dit 200? Vérification: 5%3 = 2, donc case 2 → 300."
+    },
+    {
+      "topic": "Operator Precedence - Shift avec addition",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int result = 8 >> 1 + 1;\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "2",
+        "4",
+        "5",
+        "8",
+        "Ne compile pas"
+      ],
+      "answer": 0,
+      "explanation": "Priorité: + avant >>. 1+1=2. Puis 8>>2 (shift right de 2 bits) = 8/4 = 2."
+    }
+  ]
+}

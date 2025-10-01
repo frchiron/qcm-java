@@ -32,7 +32,8 @@ class ExamLoader {
             'exam-16_full_quiz.json',
             'exam-17_full_quiz.json',
             'exam-18_full_quiz.json',
-            'exam-19_primitive_and_control_flow.json'
+            'exam-19_primitive_and_control_flow.json',
+            'exam-20_primitive_and_control_flow_2nd.json'
         ];
 
         this.examFiles = [];
