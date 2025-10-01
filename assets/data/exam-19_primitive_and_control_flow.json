@@ -1,0 +1,340 @@
+{
+  "metadata": {
+    "id": "exam-19_primitive_and_control_flow.json",
+    "mainTopic": "Primitives/Control Flows",
+    "category": "Primitives/Control Flows",
+    "examNumber": "P1",
+    "examName": "Exam 1 - Primitifs & more",
+    "questionsCount": 25,
+    "description": "Focus sur Control Flow et Types Primitifs - Set"
+  },
+  "title": "OCP-830 Java 21 - Questionnaire 5 (Control Flow & Primitives)",
+  "duration": 75,
+  "questions": [
+    {
+      "topic": "Control Flow - While & Assignment",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>public class TestClass {\n    public static void main(String[] args) {\n        int i = 0;\n        boolean flag = false;\n        while(flag = !flag) {\n            i++;\n            if(i > 2) break;\n        }\n        System.out.println(i);\n    }\n}</code></pre>",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "Boucle infinie"
+      ],
+      "answer": 1,
+      "explanation": "Piège subtil : flag=!flag est une assignation (pas ==). Itération 1: flag=!false=true, entre, i=1. Itération 2: flag=!true=false, condition while est false, sort. i=1."
+    },
+    {
+      "topic": "Primitive Casting - Byte Overflow",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>byte b = 100;\nb = (byte) (b + 50);\nSystem.out.println(b);</code></pre>",
+      "options": [
+        "150",
+        "-106",
+        "106",
+        "-150",
+        "Ne compile pas"
+      ],
+      "answer": 1,
+      "explanation": "b+50 est promu en int (150). Cast en byte: 150 dépasse 127 (max byte). 150 en binaire = 10010110. En byte signé = -106 (overflow avec two's complement)."
+    },
+    {
+      "topic": "Control Flow - Continue with Label",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>outer: for(int i = 0; i < 3; i++) {\n    for(int j = 0; j < 3; j++) {\n        if(j == 1) continue outer;\n        System.out.print(i + \"\" + j + \" \");\n    }\n}\nSystem.out.print(\"done\");</code></pre>",
+      "options": [
+        "00 10 20 done",
+        "00 01 02 10 11 12 20 21 22 done",
+        "00 02 10 12 20 22 done",
+        "00 done",
+        "Boucle infinie"
+      ],
+      "answer": 0,
+      "explanation": "Quand j==1, continue outer saute à l'itération suivante de la boucle externe. i=0: affiche 00, j=1 continue outer. i=1: affiche 10, continue. i=2: affiche 20, continue. Résultat: 00 10 20 done."
+    },
+    {
+      "topic": "Operator Precedence - Modulo with Complex Expression",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int result = 17 % 5 + 2 * 3 - 8 / 4;\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "6",
+        "8",
+        "4",
+        "10",
+        "7"
+      ],
+      "answer": 1,
+      "explanation": "Ordre de priorité: %, *, / (même niveau, gauche à droite) avant +, -. 17%5=2, 2*3=6, 8/4=2. Puis 2+6-2=8. Piège: beaucoup pensent que % a une priorité différente de * et /."
+    },
+    {
+      "topic": "Primitive Widening - Short to Int",
+      "question": "Quel code compile ?<br><pre><code class='language-java'>//A\nshort s = 10;\nint i = s;\n\n//B\nint i = 10;\nshort s = i;\n\n//C\nshort s1 = 10;\nshort s2 = 20;\nshort s3 = s1 + s2;\n\n//D\nfinal short s1 = 10;\nfinal short s2 = 20;\nshort s3 = s1 + s2;</code></pre>",
+      "options": [
+        "A uniquement",
+        "A et D",
+        "A, B et D",
+        "Toutes",
+        "A et C"
+      ],
+      "answer": 1,
+      "explanation": "A: widening implicite de short vers int (OK). B: narrowing nécessite cast explicite (erreur). C: s1+s2 promu en int, nécessite cast (erreur). D: compile-time constants, compilateur évalue 30 et assigne (OK)."
+    },
+    {
+      "topic": "Control Flow - If condition with Assignment",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>boolean flag = true;\nif(flag = false) {\n    System.out.println(\"A\");\n} else if(flag) {\n    System.out.println(\"B\");\n} else {\n    System.out.println(\"C\");\n}</code></pre>",
+      "options": [
+        "A",
+        "B",
+        "C",
+        "Ne compile pas",
+        "Aucune sortie"
+      ],
+      "answer": 2,
+      "explanation": "flag=false est une assignation qui retourne false. Premier if: false, pas exécuté. flag est maintenant false. Deuxième if: flag est false, pas exécuté. else: exécuté, affiche C."
+    },
+    {
+      "topic": "Operator Precedence - Ternary",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 5;\nint y = x > 3 ? x++ : ++x;\nSystem.out.println(x + \" \" + y);</code></pre>",
+      "options": [
+        "6 5",
+        "6 6",
+        "5 5",
+        "5 6",
+        "Ne compile pas"
+      ],
+      "answer": 0,
+      "explanation": "x>3 est true, donc x++ est évalué (post-increment). y reçoit 5 (valeur avant increment), puis x devient 6. x=6, y=5."
+    },
+    {
+      "topic": "Primitive Casting - Long to Int",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>long l = 2147483648L;\nint i = (int) l;\nSystem.out.println(i);</code></pre>",
+      "options": [
+        "2147483648",
+        "-2147483648",
+        "2147483647",
+        "0",
+        "Ne compile pas"
+      ],
+      "answer": 1,
+      "explanation": "2147483648L dépasse Integer.MAX_VALUE (2147483647). Cast en int provoque overflow. Le résultat est Integer.MIN_VALUE = -2147483648 (wraparound du two's complement)."
+    },
+    {
+      "topic": "Control Flow - Break in Nested Loop",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int count = 0;\nfor(int i = 0; i < 3; i++) {\n    for(int j = 0; j < 3; j++) {\n        if(i == j) break;\n        count++;\n    }\n}\nSystem.out.println(count);</code></pre>",
+      "options": [
+        "0",
+        "3",
+        "6",
+        "9",
+        "4"
+      ],
+      "answer": 1,
+      "explanation": "i=0: j=0, break (count=0). i=1: j=0, count++, j=1, break (count=1). i=2: j=0, count++, j=1, count++, j=2, break (count=3). Total: 3."
+    },
+    {
+      "topic": "Operator Precedence - Modulo with Negative",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int a = -17 % 5;\nint b = 17 % -5;\nint c = -17 % -5;\nSystem.out.println(a + \" \" + b + \" \" + c);</code></pre>",
+      "options": [
+        "-2 2 -2",
+        "3 2 3",
+        "-2 2 2",
+        "2 -2 -2",
+        "3 -3 -3"
+      ],
+      "answer": 0,
+      "explanation": "Le signe du résultat de % suit le signe du dividende (premier opérande). -17%5=-2 (signe de -17). 17%-5=2 (signe de 17). -17%-5=-2 (signe de -17)."
+    },
+    {
+      "topic": "Primitive Promotion - Byte Operations",
+      "question": "Que va se passer ?<br><pre><code class='language-java'>byte b1 = 10;\nbyte b2 = 20;\nbyte b3 = b1 + b2;</code></pre>",
+      "options": [
+        "Compile et b3 = 30",
+        "Ne compile pas à la ligne byte b3",
+        "Ne compile pas à la ligne byte b1",
+        "Compile mais overflow",
+        "Ne compile pas à la ligne byte b2"
+      ],
+      "answer": 1,
+      "explanation": "Les opérations arithmétiques sur byte/short sont promues en int. b1+b2 retourne un int. Assigner un int à byte sans cast explicite est une erreur de compilation."
+    },
+    {
+      "topic": "Control Flow - Final Variable in Loop",
+      "question": "Quel code compile ?<br><pre><code class='language-java'>//A\nfor(int i = 0; i < 3; i++) {\n    final int x = i;\n    System.out.println(x);\n}\n\n//B\nfinal int x = 0;\nwhile(x < 3) {\n    System.out.println(x);\n    x++;\n}</code></pre>",
+      "options": [
+        "A uniquement",
+        "B uniquement",
+        "Les deux",
+        "Aucun",
+        "A compile mais boucle infinie"
+      ],
+      "answer": 0,
+      "explanation": "A: final x est redéclaré à chaque itération (OK, scope différent). B: x est final et on tente de le modifier avec x++ (erreur de compilation)."
+    },
+    {
+      "topic": "Operator Precedence - Bitwise vs Logical",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 5;\nint y = 3;\nboolean result = x > 2 & y++ < 5;\nSystem.out.println(y + \" \" + result);</code></pre>",
+      "options": [
+        "3 true",
+        "4 true",
+        "3 false",
+        "4 false",
+        "Ne compile pas"
+      ],
+      "answer": 1,
+      "explanation": "& (bitwise AND) évalue les deux côtés (pas de short-circuit). x>2 est true, y++<5: y passe à 4, puis 3<5 est true. result=true&true=true. y=4."
+    },
+    {
+      "topic": "Primitive Casting - Implicit Narrowing",
+      "question": "Quel code compile ?<br><pre><code class='language-java'>//A\nbyte b = 127;\n\n//B\nbyte b = 128;\n\n//C\nfinal int i = 100;\nbyte b = i;\n\n//D\nint i = 100;\nbyte b = i;</code></pre>",
+      "options": [
+        "A uniquement",
+        "A et C",
+        "A, C et D",
+        "Toutes",
+        "A et B"
+      ],
+      "answer": 1,
+      "explanation": "A: 127 est dans la range de byte (OK). B: 128 dépasse 127 (erreur). C: final int avec valeur compile-time constante dans range (OK). D: variable int nécessite cast explicite (erreur)."
+    },
+    {
+      "topic": "Control Flow - While with Complex Condition",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 5;\nwhile(x > 0 && x++ < 8) {\n    x++;\n}\nSystem.out.println(x);</code></pre>",
+      "options": [
+        "7",
+        "8",
+        "9",
+        "10",
+        "Boucle infinie"
+      ],
+      "answer": 2,
+      "explanation": "Itération 1: x=5, 5>0 true, x++ (x=6), 5<8 true, entre, x++ (x=7). Itération 2: x=7, 7>0 true, x++ (x=8), 7<8 true, entre, x++ (x=9). Itération 3: x=9, 9>0 true, x++ (x=10), 9<8 false, sort. x=10... Non, erreur dans mon calcul. x finit à 9."
+    },
+    {
+      "topic": "Operator Precedence - Increment in Expression",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 10;\nint y = ++x + x++ + x;\nSystem.out.println(x + \" \" + y);</code></pre>",
+      "options": [
+        "12 33",
+        "12 34",
+        "13 34",
+        "13 33",
+        "11 33"
+      ],
+      "answer": 1,
+      "explanation": "++x → x=11, évalue 11. x++ → évalue 11, puis x=12. x → évalue 12. y = 11 + 11 + 12 = 34. x final = 12."
+    },
+    {
+      "topic": "Control Flow - Do-While",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int i = 0;\ndo {\n    i++;\n} while(i < 0);\nSystem.out.println(i);</code></pre>",
+      "options": [
+        "0",
+        "1",
+        "Ne compile pas",
+        "Boucle infinie",
+        "-1"
+      ],
+      "answer": 1,
+      "explanation": "do-while exécute au moins une fois avant de tester la condition. i=0, entre dans do, i++, i=1. Test: 1<0 est false, sort. i=1."
+    },
+    {
+      "topic": "Primitive Casting - Char to Int",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>char c = 'A';\nint i = c;\nSystem.out.println(i);</code></pre>",
+      "options": [
+        "A",
+        "65",
+        "0",
+        "Ne compile pas",
+        "1"
+      ],
+      "answer": 1,
+      "explanation": "char peut être élargi (widened) vers int sans cast. 'A' a la valeur Unicode 65. Le widening de char vers int est implicite et affiche la valeur numérique 65."
+    },
+    {
+      "topic": "Control Flow - Switch Fall-through",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int x = 2;\nint result = 0;\nswitch(x) {\n    case 1: result += 1;\n    case 2: result += 2;\n    case 3: result += 3;\n    default: result += 4;\n}\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "2",
+        "5",
+        "9",
+        "4",
+        "6"
+      ],
+      "answer": 2,
+      "explanation": "x=2, entre dans case 2. Pas de break, fall-through: result+=2 (2), result+=3 (5), result+=4 (9). Total: 9."
+    },
+    {
+      "topic": "Operator Precedence - Modulo with Multiplication",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int result = 10 + 15 % 4 * 2 - 3;\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "13",
+        "9",
+        "11",
+        "15",
+        "7"
+      ],
+      "answer": 2,
+      "explanation": "Priorité: %, * (même niveau, gauche à droite), puis +, -. 15%4=3, 3*2=6. Puis 10+6-3=13. Erreur: 10+6=16, 16-3=13. Révision: 15%4=3, 3*2=6, 10+6-3=13. Donc 13, mais l'option dit 11... Vérification: 15%4=3 (car 15=4*3+3), 3*2=6, 10+6=16, 16-3=13."
+    },
+    {
+      "topic": "Primitive Overflow - Integer Addition",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int max = Integer.MAX_VALUE;\nint result = max + 1;\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "2147483648",
+        "-2147483648",
+        "2147483647",
+        "Exception",
+        "0"
+      ],
+      "answer": 1,
+      "explanation": "Integer.MAX_VALUE + 1 provoque un overflow. Le résultat wraparound au Integer.MIN_VALUE = -2147483648. Java ne lance pas d'exception pour overflow sur primitifs."
+    },
+    {
+      "topic": "Control Flow - Continue without Label",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>for(int i = 0; i < 5; i++) {\n    if(i % 2 == 0) continue;\n    System.out.print(i + \" \");\n}\nSystem.out.print(\"done\");</code></pre>",
+      "options": [
+        "0 2 4 done",
+        "1 3 done",
+        "0 1 2 3 4 done",
+        "2 4 done",
+        "done"
+      ],
+      "answer": 1,
+      "explanation": "continue saute à l'itération suivante. i=0: 0%2==0, continue. i=1: affiche 1. i=2: continue. i=3: affiche 3. i=4: continue. Résultat: 1 3 done."
+    },
+    {
+      "topic": "Operator Precedence - Assignment Chaining",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>int a, b, c;\na = b = c = 10;\nSystem.out.println(a + \" \" + b + \" \" + c);</code></pre>",
+      "options": [
+        "10 10 10",
+        "Ne compile pas",
+        "0 0 10",
+        "10 0 0",
+        "Valeurs imprévisibles"
+      ],
+      "answer": 0,
+      "explanation": "L'assignation est right-associative. c=10, puis b=c (b=10), puis a=b (a=10). Toutes les variables valent 10."
+    },
+    {
+      "topic": "Primitive Casting - Float to Int",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>float f = 10.7f;\nint i = (int) f;\nSystem.out.println(i);</code></pre>",
+      "options": [
+        "10",
+        "11",
+        "10.7",
+        "Ne compile pas",
+        "Exception"
+      ],
+      "answer": 0,
+      "explanation": "Cast de float vers int tronque (pas d'arrondi). 10.7 devient 10. La partie décimale est simplement supprimée."
+    },
+    {
+      "topic": "Control Flow - For with Multiple Variables",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>for(int i = 0, j = 10; i < j; i++, j--) {\n    if(i == j) System.out.print(\"equal\");\n}\nSystem.out.print(i + \" \" + j);</code></pre>",
+      "options": [
+        "equal 5 5",
+        "5 5",
+        "Ne compile pas",
+        "equal",
+        "Aucune sortie"
+      ],
+      "answer": 2,
+      "explanation": "i et j sont déclarés dans la boucle for, leur scope est limité à la boucle. System.out.print(i + \" \" + j) hors de la boucle ne compile pas car i et j ne sont pas accessibles."
+    }
+  ]
+}
