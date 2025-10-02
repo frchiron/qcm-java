@@ -7,17 +7,27 @@ let userAnswers = []; // Stocker les réponses de l'utilisateur
 let startTime; // Pour calculer le temps passé
 let currentExamId; // ID de l'examen en cours
 
-// Fonction pour échapper les caractères HTML uniquement dans les blocs de code Java
+// Fonction pour échapper les caractères HTML dans tous les blocs de code
 function fixJavaCodeBlocks(text) {
     if (!text) return text;
 
-    return text.replace(/<code class=['"]language-java['"]>(.*?)<\/code>/gs, (match, codeContent) => {
-        // Échapper seulement les caractères < et > dans le contenu du code Java
+    // Échapper d'abord les blocs <code class='language-java'>
+    let result = text.replace(/<code class=['"]language-java['"]>(.*?)<\/code>/gs, (match, codeContent) => {
         const escapedContent = codeContent
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;');
         return `<code class='language-java'>${escapedContent}</code>`;
     });
+
+    // Échapper ensuite les balises < et > dans les balises <code> simples (pour les génériques Java)
+    result = result.replace(/<code>(.*?)<\/code>/gs, (match, codeContent) => {
+        const escapedContent = codeContent
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+        return `<code>${escapedContent}</code>`;
+    });
+
+    return result;
 }
 
 async function loadExam() {
@@ -401,6 +411,7 @@ function showReview() {
             <h2>Révision de l'examen</h2>
             <div id="review-container"></div>
             <div style="margin-top: 20px; text-align: center;">
+                <button id="export-pdf-btn" class="btn btn-outline" style="margin-right: 10px;">📄 Exporter en PDF</button>
                 <a href="index.html" class="btn">Retour à l'accueil</a>
             </div>
         </div>
@@ -478,6 +489,96 @@ function showReview() {
 
     container.innerHTML = reviewHtml;
     Prism.highlightAll();
+
+    // Ajouter l'event listener pour le bouton d'export PDF
+    document.getElementById("export-pdf-btn").addEventListener("click", exportToPDF);
+}
+
+function exportToPDF() {
+    // Afficher un indicateur de chargement
+    const exportBtn = document.getElementById("export-pdf-btn");
+    const originalText = exportBtn.innerHTML;
+    exportBtn.innerHTML = "⏳ Génération...";
+    exportBtn.disabled = true;
+
+    // Obtenir le titre de l'examen pour le nom du fichier
+    const examTitle = examData.title || "Revision-Examen";
+    const fileName = examTitle.replace(/[^a-zA-Z0-9]/g, '_') + '_revision.pdf';
+
+    // Configuration pour html2pdf
+    const opt = {
+        margin: [15, 15, 15, 15], // marges en mm: top, right, bottom, left
+        filename: fileName,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+            scale: 2, // Améliorer la qualité
+            useCORS: true,
+            letterRendering: true
+        },
+        jsPDF: {
+            unit: 'mm',
+            format: 'a4',
+            orientation: 'portrait'
+        }
+    };
+
+    // Créer un élément temporaire avec le contenu à exporter
+    const element = document.createElement('div');
+    element.style.padding = '20px';
+    element.innerHTML = `
+        <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="color: #333; margin-bottom: 10px;">${examData.title}</h1>
+            <h2 style="color: #666; font-size: 18px;">Révision de l'examen</h2>
+            <p style="color: #888; font-size: 14px;">Score obtenu: ${score}/${examData.questions.length} (${Math.round((score / examData.questions.length) * 100)}%)</p>
+            <hr style="margin: 20px 0; border: 1px solid #ddd;">
+        </div>
+        ${document.getElementById("review-container").innerHTML}
+    `;
+
+    // Appliquer des styles pour l'impression PDF
+    const style = document.createElement('style');
+    style.textContent = `
+        .review-question {
+            page-break-inside: avoid;
+            margin-bottom: 25px !important;
+            border: 2px solid #ddd !important;
+            border-radius: 8px !important;
+            padding: 15px !important;
+        }
+        .option-review {
+            margin: 8px 0 !important;
+            padding: 8px !important;
+            border-radius: 4px !important;
+            border: 1px solid #ddd !important;
+        }
+        code {
+            background: #f5f5f5 !important;
+            padding: 2px 4px !important;
+            border-radius: 3px !important;
+            font-family: "Courier New", monospace !important;
+            color: #333 !important;
+        }
+        pre {
+            background: #f8f9fa !important;
+            padding: 15px !important;
+            border-radius: 6px !important;
+            border: 1px solid #e9ecef !important;
+            overflow-x: auto !important;
+        }
+    `;
+    element.appendChild(style);
+
+    // Générer le PDF
+    html2pdf().from(element).set(opt).save().then(() => {
+        // Restaurer le bouton
+        exportBtn.innerHTML = originalText;
+        exportBtn.disabled = false;
+    }).catch((error) => {
+        console.error('Erreur lors de la génération du PDF:', error);
+        alert('Erreur lors de la génération du PDF. Veuillez réessayer.');
+        exportBtn.innerHTML = originalText;
+        exportBtn.disabled = false;
+    });
 }
 
 
