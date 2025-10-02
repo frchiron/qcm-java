@@ -39,9 +39,9 @@
         "Le stream est consommé deux fois",
         "filter retourne un nouveau stream"
       ],
-      "answer": [0, 3, 5],
+      "answer": [0, 1, 5],
       "difficulty": "expert",
-      "explanation": "Le filter n'est pas chaîné avec count, donc count() compte tous les éléments (5). Le stream n'est utilisé qu'une fois. filter retourne un nouveau stream non utilisé."
+      "explanation": "La ligne stream.filter(...) ne consomme pas le flux, mais elle attache une opération au pipeline.\nIci, comme tu ne réassignes pas le résultat, le nouveau Stream est perdu.\n\nEnsuite, stream.count() tente de réutiliser l’ancien flux stream qui est déjà marqué comme “opéré” (car filter a créé un pipeline dessus).\n→ Java considère que ce flux a déjà été utilisé, et déclenche IllegalStateException: stream has already been operated upon or closed."
     },
     {
       "topic": "Lambda",
