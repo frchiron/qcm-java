@@ -311,9 +311,9 @@
         "<code>BANANA:1</code>",
         "<code>Compilation error</code>"
       ],
-      "answer": 1,
+      "answer": 0,
       "difficulty": "expert",
-      "explanation": "count() est optimisé et ne déclenche pas les opérations intermédiaires inutiles comme peek(). Le stream compte directement sans exécuter peek(). Résultat : 2 mots > 5 caractères."
+      "explanation": "filter() garde banana et cherry (longueur > 5). map() les transforme en majuscules. peek() affiche BANANACHERRY. count() retourne 2. Résultat : BANANACHERRY:2."
     },
     {
       "topic": "Collections",
