@@ -183,7 +183,7 @@
         "<code>NoSuchElementException</code>",
         "<code>NullPointerException</code>"
       ],
-      "answer": 3,
+      "answer": 1,
       "difficulty": "expert",
       "explanation": "result.orElse(0) retourne un int, puis on essaie d'ajouter result.orElseGet() qui retourne aussi un int, ce qui donne une addition : 0 + 100 = 100. Mais la question est piège : affiche 100 pas \"0100\"."
     },
