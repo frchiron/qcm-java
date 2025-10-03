@@ -1,0 +1,275 @@
+{
+  "metadata": {
+    "id": "exam-22_modules.json",
+    "mainTopic": "modules",
+    "category": "modules",
+    "examNumber": "M2",
+    "examName": "Modules N°2",
+    "questionsCount": 20,
+    "description": "Focus Modules"
+  },
+  "title": "OCP-830 Java 21 - Questionnaire 9 (Modules Avancé)",
+  "duration": 60,
+  "questions": [
+    {
+      "topic": "Module requires transitive avec exports to",
+      "question": "Considérez ces modules :<br><pre><code class='language-java'>//module base\nmodule base {\n    exports com.base to middle;\n}\n\n//module middle\nmodule middle {\n    requires transitive base;\n    exports com.middle;\n}\n\n//module top\nmodule top {\n    requires middle;\n}\n\n//Dans top\nimport com.base.Utils;</code></pre>Le code de top compile-t-il ?",
+      "options": [
+        "Oui, grâce à requires transitive",
+        "Non, base exporte seulement à middle",
+        "Oui, si top ajoute requires base",
+        "Non, exports to bloque la transitivité",
+        "Oui, mais seulement au runtime"
+      ],
+      "answer": 3,
+      "explanation": "Piège subtil : exports to limite l'accès. Même si middle requires transitive base, base exporte com.base UNIQUEMENT à middle. top ne peut pas accéder à com.base car exports to bloque la transitivité."
+    },
+    {
+      "topic": "Module provides avec classe non exportée",
+      "question": "Est-ce valide ?<br><pre><code class='language-java'>//module provider\nmodule provider {\n    requires api;\n    //com.provider.impl n'est PAS exporté\n    provides com.api.Service with com.provider.impl.ServiceImpl;\n}</code></pre>",
+      "options": [
+        "Oui, l'implémentation n'a pas besoin d'être exportée",
+        "Non, provides nécessite exports",
+        "Oui, mais ServiceImpl doit être public",
+        "Non, le package doit être ouvert avec opens",
+        "Oui, seulement si api est transitive"
+      ],
+      "answer": 0,
+      "explanation": "C'est une bonne pratique : l'implémentation d'un service NE DOIT PAS être exportée. Le module system peut y accéder via reflection pour ServiceLoader. Seule l'interface doit être exportée par le module api."
+    },
+    {
+      "topic": "Module automatic et unnamed",
+      "question": "Quelle affirmation est correcte ?<br><pre><code class='language-java'>//legacy.jar (pas de module-info) est utilisé</code></pre>",
+      "options": [
+        "Sur classpath = unnamed, sur module-path = automatic",
+        "Sur classpath = automatic, sur module-path = unnamed",
+        "Toujours unnamed quel que soit le path",
+        "Toujours automatic quel que soit le path",
+        "Erreur si pas de module-info"
+      ],
+      "answer": 0,
+      "explanation": "Un JAR sans module-info devient : automatic module sur module-path (a un nom, exporte tout), unnamed module sur classpath (pas de nom, accessible par tous mais n'exporte rien formellement)."
+    },
+    {
+      "topic": "Module jlink custom runtime",
+      "question": "Quelle commande crée une custom runtime image ?",
+      "options": [
+        "jlink --module-path $JAVA_HOME/jmods:mods --add-modules app --output myapp",
+        "jmod create --class-path app.jar myapp",
+        "jdeps --gen-module-info app.jar",
+        "jar --create --file app.jar --main-class App",
+        "java --module-path mods --add-modules app --output myapp"
+      ],
+      "answer": 0,
+      "explanation": "jlink crée une custom Java runtime incluant seulement les modules nécessaires. Nécessite --module-path (JDK jmods + app modules), --add-modules (modules racine), --output (répertoire de sortie)."
+    },
+    {
+      "topic": "Module ServiceLoader instantiation",
+      "question": "Comment obtenir toutes les implémentations d'un service ?<br><pre><code class='language-java'>//module consumer uses com.api.Logger</code></pre>",
+      "options": [
+        "ServiceLoader<Logger> loader = ServiceLoader.load(Logger.class);\nloader.forEach(logger -> logger.log(\"test\"));",
+        "Logger logger = ServiceLoader.load(Logger.class);",
+        "List<Logger> loggers = ServiceLoader.loadAll(Logger.class);",
+        "ServiceLoader.load(Logger.class).getInstance();",
+        "ServiceLoader<Logger> loader = new ServiceLoader<>(Logger.class);"
+      ],
+      "answer": 0,
+      "explanation": "ServiceLoader.load() retourne un ServiceLoader<T> (pas T directement). Il faut itérer (forEach, iterator, stream) pour obtenir les implémentations. Chaque appel à iterator() recharge les services."
+    },
+    {
+      "topic": "Module --add-modules",
+      "question": "Quelle est l'utilité de --add-modules ALL-SYSTEM ?",
+      "options": [
+        "Ajoute tous les modules du JDK au module graph",
+        "Ajoute tous les modules de l'application",
+        "Équivalent à requires transitive pour tous",
+        "Active le mode compatibilité avec Java 8",
+        "Ajoute tous les automatic modules"
+      ],
+      "answer": 0,
+      "explanation": "--add-modules ALL-SYSTEM ajoute tous les modules système (java.*, jdk.*) au module graph résolu. Utile pour debugging ou migration, mais augmente la taille de la runtime."
+    },
+    {
+      "topic": "Module opens avec reflection",
+      "question": "Quel code fonctionne pour accéder à un champ privé ?<br><pre><code class='language-java'>//module app\nmodule app {\n    opens com.app.model to framework;\n}\n\n//Dans framework\nClass<?> clazz = Class.forName(\"com.app.model.User\");\nField field = clazz.getDeclaredField(\"password\");</code></pre>",
+      "options": [
+        "field.setAccessible(true); puis field.get(user);",
+        "field.get(user); directement",
+        "Impossible, opens ne permet pas l'accès aux fields",
+        "Nécessite exports au lieu de opens",
+        "Fonctionne seulement avec open module"
+      ],
+      "answer": 0,
+      "explanation": "opens...to permet deep reflection. framework peut utiliser setAccessible(true) pour accéder aux membres privés. Sans opens, setAccessible lance InaccessibleObjectException (Java 9+)."
+    },
+    {
+      "topic": "Module requires static avec runtime",
+      "question": "Que se passe-t-il si un module avec requires static n'a pas le module au runtime ?<br><pre><code class='language-java'>module app {\n    requires static logging;\n}\n\n//logging.jar absent au runtime\nvar logger = LoggerFactory.getLogger();</code></pre>",
+      "options": [
+        "NoClassDefFoundError si LoggerFactory est utilisé",
+        "Module system refuse de démarrer",
+        "Fonctionne normalement, logging est optionnel",
+        "ClassNotFoundException au démarrage",
+        "Avertissement mais pas d'erreur"
+      ],
+      "answer": 0,
+      "explanation": "requires static = dépendance optionnelle. L'application démarre même si logging absent. MAIS si le code utilise réellement les classes de logging, NoClassDefFoundError à ce moment. À éviter si vraiment nécessaire."
+    },
+    {
+      "topic": "Module qualified exports multiple",
+      "question": "Est-ce valide ?<br><pre><code class='language-java'>module api {\n    exports com.api to client1;\n    exports com.api to client2;\n}</code></pre>",
+      "options": [
+        "Non, syntaxe incorrecte",
+        "Oui, deux exports distincts",
+        "Non, utiliser exports com.api to client1, client2;",
+        "Oui, mais seulement pour packages différents",
+        "Non, exports to est limité à un module"
+      ],
+      "answer": 2,
+      "explanation": "On ne peut pas avoir deux exports du même package. La syntaxe correcte pour exporter à plusieurs modules est : exports com.api to client1, client2; avec virgules."
+    },
+    {
+      "topic": "Module --patch-module",
+      "question": "À quoi sert --patch-module ?",
+      "options": [
+        "Ajouter/remplacer des classes dans un module au runtime",
+        "Corriger un module défectueux",
+        "Créer un patch pour mise à jour",
+        "Fusionner deux modules",
+        "Compiler en mode patch"
+      ],
+      "answer": 0,
+      "explanation": "--patch-module permet d'injecter des classes dans un module existant (override ou ajout). Utile pour testing ou migration. Syntaxe : --patch-module <module>=<path>."
+    },
+    {
+      "topic": "Module transitive avec automatic",
+      "question": "Considérez :<br><pre><code class='language-java'>//legacy.jar (automatic module) sur module-path\n\n//module app\nmodule app {\n    requires transitive legacy;\n    exports com.app;\n}\n\n//module client\nmodule client {\n    requires app;\n}</code></pre>client peut-il accéder aux packages de legacy ?",
+      "options": [
+        "Oui, automatic modules exportent tout",
+        "Non, transitive ne fonctionne pas avec automatic",
+        "Oui, mais nécessite --add-modules",
+        "Non, client doit requires legacy explicitement",
+        "Oui, seulement si legacy a un MANIFEST"
+      ],
+      "answer": 0,
+      "explanation": "requires transitive fonctionne avec automatic modules. Automatic modules exportent TOUS leurs packages. client a donc accès à tout legacy via la transitivité."
+    },
+    {
+      "topic": "Module jdeps analyse",
+      "question": "Que fait jdeps -s app.jar ?",
+      "options": [
+        "Affiche un résumé des dépendances (module-level)",
+        "Affiche les dépendances au niveau package",
+        "Génère module-info.java",
+        "Affiche seulement les modules système",
+        "Scanne les vulnérabilités de sécurité"
+      ],
+      "answer": 0,
+      "explanation": "-s ou --summary affiche un résumé au niveau module. Sans -s, jdeps montre les dépendances package-level (détaillé). -s est utile pour vue d'ensemble rapide."
+    },
+    {
+      "topic": "Module provides sans uses",
+      "question": "Un provider doit-il déclarer uses ?<br><pre><code class='language-java'>module provider {\n    requires api;\n    provides com.api.Service with com.impl.ServiceImpl;\n    uses com.api.Service; //nécessaire ?\n}</code></pre>",
+      "options": [
+        "Non, uses est pour les consumers",
+        "Oui, obligatoire pour provides",
+        "Oui, si le provider s'utilise lui-même",
+        "Non, sauf si transitive",
+        "Oui, depuis Java 11"
+      ],
+      "answer": 2,
+      "explanation": "uses est pour les CONSUMERS. Un provider n'a PAS besoin de uses... SAUF s'il consomme aussi le service lui-même (auto-utilisation). Généralement uses et provides sont dans des modules séparés."
+    },
+    {
+      "topic": "Module compilation",
+      "question": "Quelle commande compile un module correctement ?<br><pre><code class='language-java'>//Structure: src/com.app/module-info.java\n//          src/com.app/com/app/Main.java</code></pre>",
+      "options": [
+        "javac -d out --module-source-path src -m com.app",
+        "javac -d out -sourcepath src src/com.app/module-info.java",
+        "javac --module com.app -d out src/**/*.java",
+        "javac -d out src/com.app/*.java",
+        "javac --module-path src -d out -m com.app"
+      ],
+      "answer": 0,
+      "explanation": "Pour compiler un module : javac -d <output> --module-source-path <src_root> -m <module_name>. --module-source-path indique où trouver les sources, -m spécifie quel module compiler."
+    },
+    {
+      "topic": "Module unnamed peut-il requires",
+      "question": "Le code sur classpath peut-il utiliser un module ?<br><pre><code class='language-java'>//mylib.jar (module nommé) sur module-path\n//app.jar (pas de module-info) sur classpath\n\n//Dans app.jar\nimport com.mylib.Utils;</code></pre>",
+      "options": [
+        "Non, unnamed ne peut pas lire de modules nommés",
+        "Oui, avec --add-modules mylib",
+        "Oui, automatiquement",
+        "Non, mylib doit être sur classpath aussi",
+        "Oui, si mylib exporte le package"
+      ],
+      "answer": 1,
+      "explanation": "Unnamed module (classpath) peut accéder aux modules nommés via --add-modules. Sans cette option, les modules ne sont pas résolus pour l'unnamed module. Nécessite exports du module cible."
+    },
+    {
+      "topic": "Module main class",
+      "question": "Comment spécifier la classe main dans un module ?",
+      "options": [
+        "Dans module-info: main-class com.app.Main;",
+        "Avec jar: jar --create --file app.jar --main-class com.app.Main",
+        "Dans MANIFEST.MF seulement",
+        "Avec jlink: --main-class com.app.Main",
+        "B et D"
+      ],
+      "answer": 4,
+      "explanation": "La classe main peut être spécifiée : 1) lors de création du JAR avec --main-class, 2) lors de création d'une custom runtime avec jlink --launcher. Pas dans module-info.java (pas de mot-clé main-class)."
+    },
+    {
+      "topic": "Module opens package inexistant",
+      "question": "Que se passe-t-il ?<br><pre><code class='language-java'>module app {\n    opens com.app.nonexistent;\n    exports com.app;\n}</code></pre>",
+      "options": [
+        "Erreur de compilation",
+        "Avertissement seulement",
+        "Erreur au runtime",
+        "Ignoré silencieusement",
+        "Fonctionne si le package est créé plus tard"
+      ],
+      "answer": 0,
+      "explanation": "Erreur de compilation si un package listé dans exports ou opens n'existe pas dans le module. Le module system vérifie l'existence des packages au moment de la compilation."
+    },
+    {
+      "topic": "Module readability",
+      "question": "Qu'est-ce que le module readability ?<br><pre><code class='language-java'>module A { requires B; }</code></pre>",
+      "options": [
+        "A peut lire les packages exportés de B",
+        "A peut lire tous les packages de B",
+        "A et B peuvent se lire mutuellement",
+        "B peut lire A",
+        "A peut modifier B"
+      ],
+      "answer": 0,
+      "explanation": "requires crée une relation de readability unidirectionnelle : A peut lire (accéder à) les packages EXPORTÉS de B. A ne peut pas accéder aux packages non-exportés. B ne peut pas lire A (unidirectionnel)."
+    },
+    {
+      "topic": "Module aggregator",
+      "question": "Qu'est-ce qu'un aggregator module ?<br><pre><code class='language-java'>module app {\n    requires transitive java.sql;\n    requires transitive java.xml;\n    requires transitive java.logging;\n    //pas d'exports\n}</code></pre>",
+      "options": [
+        "Module qui regroupe plusieurs dépendances transitives",
+        "Module invalide (doit exporter quelque chose)",
+        "Module système uniquement",
+        "Module pour agréger des services",
+        "Erreur de compilation"
+      ],
+      "answer": 0,
+      "explanation": "Un aggregator (ou convenience) module ne contient pas de code, seulement des requires transitive. But : simplifier les dépendances pour les clients. java.se est un aggregator module du JDK."
+    },
+    {
+      "topic": "Module --add-exports",
+      "question": "Quel est l'effet de --add-exports ?<br><pre><code class='language-java'>java --add-exports java.base/sun.misc=ALL-UNNAMED -m app</code></pre>",
+      "options": [
+        "Exporte sun.misc du module java.base aux unnamed modules",
+        "Exporte tous les packages internes",
+        "Ajoute sun.misc au classpath",
+        "Crée un nouveau module exporté",
+        "Remplace la configuration du module"
+      ],
+      "answer": 0,
+      "explanation": "--add-exports force l'export d'un package encapsulé. Syntaxe : --add-exports <module>/<package>=<target>. ALL-UNNAMED cible le code sur classpath. Contourne l'encapsulation (dernier recours)."
+    }
+  ]
+}

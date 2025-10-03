@@ -1,0 +1,275 @@
+{
+  "metadata": {
+    "id": "exam-21_modules.json",
+    "mainTopic": "modules",
+    "category": "modules",
+    "examNumber": "M1",
+    "examName": "Modules N°1",
+    "questionsCount": 20,
+    "description": "Focus Modules"
+  },
+  "title": "OCP-830 Java 21 - Questionnaire 7 (Modules)",
+  "duration": 60,
+  "questions": [
+    {
+      "topic": "Module exports",
+      "question": "Quel module-info.java est valide ?<br><pre><code class='language-java'>//module com.app\npackage com.app;\nmodule com.app {\n    exports com.app.api;\n}</code></pre>",
+      "options": [
+        "Valide",
+        "Invalide : package declaration interdit dans module-info",
+        "Invalide : nom du fichier doit être app-module.java",
+        "Invalide : exports doit venir avant la déclaration module",
+        "Invalide : le nom du module doit matcher le package"
+      ],
+      "answer": 1,
+      "explanation": "module-info.java ne doit PAS contenir de package declaration. Le fichier doit contenir uniquement la déclaration du module avec ses directives (exports, requires, etc.)."
+    },
+    {
+      "topic": "Module requires transitive",
+      "question": "Considérez ces modules :<br><pre><code class='language-java'>//module A\nmodule A {\n    exports com.a;\n}\n\n//module B\nmodule B {\n    requires transitive A;\n    exports com.b;\n}\n\n//module C\nmodule C {\n    requires B;\n}\n\n//Dans le code de C\npackage com.c;\nimport com.a.ClassA;\npublic class TestC {\n    ClassA obj = new ClassA();\n}</code></pre>Le code de C compile-t-il ?",
+      "options": [
+        "Oui, grâce à requires transitive",
+        "Non, C doit ajouter requires A",
+        "Non, A doit exporter vers C explicitement",
+        "Non, requires transitive ne fonctionne qu'avec java.base",
+        "Oui, mais seulement si B exporte aussi com.a"
+      ],
+      "answer": 0,
+      "explanation": "requires transitive crée une dépendance transitive implicite. Quand C requires B, et B requires transitive A, alors C a automatiquement accès aux packages exportés de A sans avoir à déclarer requires A."
+    },
+    {
+      "topic": "Module provides/uses",
+      "question": "Quel module-info est correct pour un service provider ?<br><pre><code class='language-java'>//module api définit:\npackage com.api;\npublic interface Logger { void log(String msg); }\n\n//module impl fournit:\npackage com.impl;\nimport com.api.Logger;\npublic class FileLogger implements Logger {\n    public void log(String msg) { }\n}</code></pre>",
+      "options": [
+        "module impl {\n    requires api;\n    exports com.impl;\n    provides Logger with FileLogger;\n}",
+        "module impl {\n    requires api;\n    provides com.api.Logger with com.impl.FileLogger;\n}",
+        "module impl {\n    uses api;\n    provides com.api.Logger with com.impl.FileLogger;\n}",
+        "module impl {\n    requires api;\n    exports com.impl;\n    provides com.api.Logger with com.impl.FileLogger;\n}",
+        "module impl {\n    provides com.api.Logger with com.impl.FileLogger;\n}"
+      ],
+      "answer": 1,
+      "explanation": "Un provider doit : 1) requires le module de l'interface, 2) utiliser noms fully qualified dans provides...with, 3) N'a PAS besoin d'exporter l'implémentation. Option B est correcte."
+    },
+    {
+      "topic": "Module opens vs exports",
+      "question": "Quelle différence entre exports et opens ?<br><pre><code class='language-java'>//Option A\nmodule app {\n    exports com.app.api;\n}\n\n//Option B\nmodule app {\n    opens com.app.api;\n}</code></pre>",
+      "options": [
+        "exports permet l'accès au code, opens permet la réflexion",
+        "Aucune différence fonctionnelle",
+        "opens est plus restrictif que exports",
+        "exports permet public access, opens permet package-private access",
+        "opens est déprécié depuis Java 9"
+      ],
+      "answer": 0,
+      "explanation": "exports permet l'accès compile-time et runtime aux types publics. opens permet l'accès par réflexion (y compris membres privés) mais PAS l'accès direct au code. Pour les deux, utiliser 'opens exports'."
+    },
+    {
+      "topic": "Module unnamed",
+      "question": "Un module peut-il accéder à du code du classpath (unnamed module) ?<br><pre><code class='language-java'>//module app\nmodule app {\n    requires OldLibrary; //OldLibrary.jar est sur le classpath\n    exports com.app;\n}</code></pre>",
+      "options": [
+        "Oui, avec requires OldLibrary",
+        "Non, les modules ne peuvent pas accéder au classpath",
+        "Oui, automatiquement sans requires",
+        "Oui, avec requires unnamed",
+        "Non, OldLibrary doit être migré en module"
+      ],
+      "answer": 1,
+      "explanation": "Un module nommé NE PEUT PAS dépendre de l'unnamed module (classpath). Les JARs non modulaires doivent être mis sur module-path comme automatic modules, ou le code modulaire doit être sur classpath."
+    },
+    {
+      "topic": "Module automatic",
+      "question": "Un JAR non-modulaire oldlib.jar est placé sur le module-path. Quel est son nom de module ?",
+      "options": [
+        "oldlib",
+        "oldlib.jar",
+        "unnamed",
+        "Dépend du contenu du MANIFEST.MF",
+        "automatic.module"
+      ],
+      "answer": 3,
+      "explanation": "Le nom d'un automatic module est déterminé par : 1) Automatic-Module-Name dans MANIFEST.MF (priorité), 2) sinon déduit du nom du JAR. Si MANIFEST.MF contient Automatic-Module-Name: com.old, le nom sera com.old, sinon oldlib."
+    },
+    {
+      "topic": "Module requires static",
+      "question": "Quel est l'effet de requires static ?<br><pre><code class='language-java'>module app {\n    requires static logging;\n    exports com.app;\n}</code></pre>",
+      "options": [
+        "logging est requis au compile-time mais optionnel au runtime",
+        "logging doit être un module static",
+        "Les classes de logging deviennent static",
+        "Erreur de syntaxe, static n'est pas valide",
+        "logging est chargé statiquement"
+      ],
+      "answer": 0,
+      "explanation": "requires static (ou requires transitive static) signifie dépendance optionnelle : requis pour compiler mais optionnel à l'exécution. Utile pour les dépendances conditionnelles."
+    },
+    {
+      "topic": "Module exports to",
+      "question": "Considérez :<br><pre><code class='language-java'>//module api\nmodule api {\n    exports com.api to client1, client2;\n}\n\n//module client3\nmodule client3 {\n    requires api;\n}\n\n//Dans client3\nimport com.api.Service;</code></pre>Que se passe-t-il ?",
+      "options": [
+        "Compile, client3 peut accéder à com.api",
+        "Ne compile pas, client3 n'est pas dans exports to",
+        "Compile mais erreur au runtime",
+        "Ne compile pas, exports to n'est pas valide",
+        "Compile si client3 ajoute uses"
+      ],
+      "answer": 1,
+      "explanation": "exports to (qualified export) restreint l'accès aux modules listés uniquement. client3 n'est pas dans la liste (client1, client2), donc ne peut pas accéder à com.api. Erreur de compilation."
+    },
+    {
+      "topic": "Module service consumer",
+      "question": "Comment un module consomme-t-il un service ?<br><pre><code class='language-java'>//module api définit Logger interface\n//module consumer veut utiliser les implémentations</code></pre>",
+      "options": [
+        "module consumer {\n    requires api;\n    uses com.api.Logger;\n}",
+        "module consumer {\n    requires api;\n    consumes com.api.Logger;\n}",
+        "module consumer {\n    uses api;\n    requires com.api.Logger;\n}",
+        "module consumer {\n    requires api;\n    provides com.api.Logger;\n}",
+        "module consumer {\n    requires api;\n}"
+      ],
+      "answer": 0,
+      "explanation": "Un consumer déclare 'uses' pour l'interface de service. Il faut aussi 'requires' pour le module contenant l'interface. Puis utiliser ServiceLoader.load() dans le code."
+    },
+    {
+      "topic": "Module open",
+      "question": "Quelle est la différence ?<br><pre><code class='language-java'>//A\nmodule app {\n    opens com.app;\n}\n\n//B\nopen module app {\n    exports com.app;\n}</code></pre>",
+      "options": [
+        "A ouvre un package, B ouvre tout le module",
+        "Aucune différence",
+        "B n'est pas valide",
+        "A permet réflexion, B permet accès direct",
+        "B est déprécié"
+      ],
+      "answer": 0,
+      "explanation": "opens com.app ouvre un package spécifique à la réflexion. open module ouvre TOUS les packages du module à la réflexion (mais n'exporte rien automatiquement)."
+    },
+    {
+      "topic": "Module circular dependency",
+      "question": "Est-ce valide ?<br><pre><code class='language-java'>//module A\nmodule A {\n    requires B;\n    exports com.a;\n}\n\n//module B\nmodule B {\n    requires A;\n    exports com.b;\n}</code></pre>",
+      "options": [
+        "Oui, les dépendances circulaires sont autorisées",
+        "Non, erreur de compilation",
+        "Oui, mais seulement avec requires transitive",
+        "Oui, mais provoque une erreur au runtime",
+        "Non, sauf si un des requires est static"
+      ],
+      "answer": 1,
+      "explanation": "Les dépendances circulaires entre modules sont INTERDITES et provoquent une erreur de compilation. Le module system détecte et rejette les cycles."
+    },
+    {
+      "topic": "Module package visibility",
+      "question": "Un package non exporté peut-il être utilisé ?<br><pre><code class='language-java'>//module app\nmodule app {\n    exports com.app.api;\n    //com.app.internal n'est pas exporté\n}\n\n//Dans un autre module\nimport com.app.internal.Helper;</code></pre>",
+      "options": [
+        "Oui, avec requires app",
+        "Oui, avec reflection",
+        "Non, jamais accessible",
+        "Oui, si opens est utilisé",
+        "Oui, si le package est public"
+      ],
+      "answer": 3,
+      "explanation": "Un package non exporté est encapsulé. Impossible d'y accéder avec requires seul. Possible avec 'opens' pour réflexion uniquement. Sans opens, totalement inaccessible."
+    },
+    {
+      "topic": "Module split package",
+      "question": "Est-ce autorisé ?<br><pre><code class='language-java'>//module A\nmodule A {\n    exports com.shared;\n}\n//contient com.shared.ClassA\n\n//module B\nmodule B {\n    exports com.shared;\n}\n//contient com.shared.ClassB</code></pre>",
+      "options": [
+        "Oui, les modules peuvent partager un package",
+        "Non, split packages sont interdits",
+        "Oui, si un requires l'autre",
+        "Oui, mais pas pour les exports",
+        "Non, sauf avec requires transitive"
+      ],
+      "answer": 1,
+      "explanation": "Split packages (même package dans plusieurs modules) sont INTERDITS dans le module system. Chaque package doit appartenir à UN SEUL module. Erreur au démarrage de l'application."
+    },
+    {
+      "topic": "Module requires java.base",
+      "question": "Doit-on déclarer requires java.base ?<br><pre><code class='language-java'>module app {\n    exports com.app;\n}</code></pre>",
+      "options": [
+        "Oui, obligatoire pour tous les modules",
+        "Non, java.base est implicite",
+        "Oui, seulement si on utilise java.lang",
+        "Non, sauf pour les automatic modules",
+        "Oui, mais seulement avec requires transitive"
+      ],
+      "answer": 1,
+      "explanation": "java.base est TOUJOURS implicitement requis par tous les modules. Le déclarer explicitement est redondant (mais pas une erreur). Inutile de l'écrire."
+    },
+    {
+      "topic": "Module command line",
+      "question": "Quelle commande exécute correctement une classe modulaire ?<br><pre><code class='language-java'>//module com.app dans app.jar\n//classe principale: com.app.Main</code></pre>",
+      "options": [
+        "java -p app.jar -m com.app/com.app.Main",
+        "java -classpath app.jar com.app.Main",
+        "java --module app.jar com.app.Main",
+        "java -m com.app/com.app.Main -p app.jar",
+        "java --module-path app.jar --class com.app.Main"
+      ],
+      "answer": 0,
+      "explanation": "Syntaxe correcte : java -p|--module-path <path> -m|--module <module>/<mainclass>. -p spécifie module-path, -m spécifie module/classe."
+    },
+    {
+      "topic": "Module provides multiple",
+      "question": "Un module peut-il fournir plusieurs implémentations ?<br><pre><code class='language-java'>module provider {\n    requires api;\n    provides com.api.Service with com.impl.ServiceA, com.impl.ServiceB;\n}</code></pre>",
+      "options": [
+        "Oui, séparées par virgule",
+        "Non, une seule provides par interface",
+        "Oui, mais nécessite plusieurs provides",
+        "Non, syntaxe invalide",
+        "Oui, mais une seule sera chargée"
+      ],
+      "answer": 0,
+      "explanation": "Un module peut fournir plusieurs implémentations d'un service dans une seule clause provides, séparées par virgules. ServiceLoader.load() les retournera toutes."
+    },
+    {
+      "topic": "Module jdeps",
+      "question": "Que fait la commande jdeps --list-deps app.jar ?",
+      "options": [
+        "Liste les modules dont app.jar dépend",
+        "Liste les JDK modules dont app.jar dépend",
+        "Liste tous les packages dans app.jar",
+        "Crée un module-info.java",
+        "Liste les classes dans app.jar"
+      ],
+      "answer": 1,
+      "explanation": "jdeps --list-deps liste uniquement les modules JDK (java.*, jdk.*) requis. Pour voir toutes les dépendances (incluant non-JDK), utiliser jdeps sans --list-deps."
+    },
+    {
+      "topic": "Module migration",
+      "question": "Un JAR non-modulaire sur module-path devient :<br><pre><code class='language-java'>//legacy.jar sans module-info sur module-path</code></pre>",
+      "options": [
+        "Automatic module",
+        "Unnamed module",
+        "Erreur - doit être modulaire",
+        "Explicit module",
+        "Default module"
+      ],
+      "answer": 0,
+      "explanation": "Un JAR sans module-info placé sur module-path devient automatic module (nom déduit du JAR). Sur classpath, il serait unnamed module. Automatic module exporte tous ses packages."
+    },
+    {
+      "topic": "Module opens to",
+      "question": "Quel est l'effet de opens...to ?<br><pre><code class='language-java'>module app {\n    opens com.app.internal to framework;\n}</code></pre>",
+      "options": [
+        "framework peut utiliser réflexion sur com.app.internal",
+        "framework peut importer com.app.internal",
+        "Tous les modules peuvent accéder à com.app.internal",
+        "Erreur de syntaxe",
+        "framework peut exporter com.app.internal"
+      ],
+      "answer": 0,
+      "explanation": "opens...to (qualified opens) permet réflexion profonde uniquement aux modules listés. framework peut accéder aux membres privés via réflexion, mais ne peut PAS importer/utiliser directement les classes."
+    },
+    {
+      "topic": "Module transitive chain",
+      "question": "Considérez :<br><pre><code class='language-java'>//module A exports com.a\nmodule A { exports com.a; }\n\n//module B\nmodule B {\n    requires transitive A;\n    exports com.b;\n}\n\n//module C\nmodule C {\n    requires transitive B;\n    exports com.c;\n}\n\n//module D\nmodule D { requires C; }</code></pre>D peut-il accéder à com.a ?",
+      "options": [
+        "Oui, la transitivité est chaînée",
+        "Non, requires transitive n'est pas transitif",
+        "Oui, mais seulement si A est automatic module",
+        "Non, D doit requires A explicitement",
+        "Oui, mais nécessite requires transitive transitive"
+      ],
+      "answer": 0,
+      "explanation": "requires transitive est bien transitif en chaîne : D requires C, C requires transitive B, B requires transitive A, donc D a accès à com.a, com.b, et com.c."
+    }
+  ]
+}

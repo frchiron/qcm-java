@@ -8,8 +8,9 @@ class ExamLoader {
             'heritage': { order: 2, icon: '🏗️', title: 'Héritage/Polymorphisme/Encapsulation/Overriding' },
             'collections': { order: 3, icon: '📊', title: 'Collections & Streams' },
             'Primitives/Control Flows': { order: 4, icon: '📊', title: 'Primitives/Control Flows' },
+            'modules': { order: 5, icon: '📊', title: 'Modules' },
             'full': { order: 1, icon: '📊', title: 'Complet' },
-            'dev': { order: 5, icon: '🛠️', title: 'Développement & Test' }
+            'dev': { order: 6, icon: '🛠️', title: 'Développement & Test' }
             };
     }
 
@@ -33,7 +34,9 @@ class ExamLoader {
             'exam-17_full_quiz.json',
             'exam-18_full_quiz.json',
             'exam-19_primitive_and_control_flow.json',
-            'exam-20_primitive_and_control_flow_2nd.json'
+            'exam-20_primitive_and_control_flow_2nd.json',
+            'exam-21_modules.json',
+            'exam-22_modules.json'
         ];
 
         this.examFiles = [];
