@@ -1,0 +1,275 @@
+{
+  "metadata": {
+    "id": "exam-23_threads.json",
+    "mainTopic": "threads",
+    "category": "threads",
+    "examNumber": "T1",
+    "examName": "Examen Threads N°1",
+    "questionsCount": 20,
+    "description": "Focus Threads & Concurrence"
+  },
+  "title": "OCP-830 Java 21 - Questionnaire 9 (Threads & Concurrence)",
+  "duration": 60,
+  "questions": [
+    {
+      "topic": "Thread States",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class MyThread extends Thread {\n    public void run() {\n        System.out.println(\"Running: \" + getState());\n    }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        MyThread t = new MyThread();\n        System.out.println(\"Before: \" + t.getState());\n        t.start();\n        System.out.println(\"After: \" + t.getState());\n    }\n}</code></pre>",
+      "options": [
+        "Before: NEW\nAfter: RUNNABLE\nRunning: RUNNABLE",
+        "Before: NEW\nAfter: RUNNING\nRunning: RUNNING",
+        "Before: NEW\nAfter: RUNNABLE ou TERMINATED\nRunning: RUNNABLE",
+        "Ne compile pas",
+        "Before: READY\nAfter: RUNNING\nRunning: RUNNING"
+      ],
+      "answer": 2,
+      "explanation": "Piège : après start(), le thread peut être RUNNABLE ou déjà TERMINATED (si exécution très rapide). L'ordre d'affichage n'est pas garanti. \"After\" peut s'afficher avant ou après \"Running\". L'état peut être RUNNABLE ou TERMINATED."
+    },
+    {
+      "topic": "Synchronized Method",
+      "question": "Que peut-on dire de ce code ?<br><pre><code class='language-java'>class Counter {\n    private int count = 0;\n    \n    public synchronized void increment() {\n        count++;\n    }\n    \n    public int getCount() {\n        return count;\n    }\n}</code></pre>",
+      "options": [
+        "Thread-safe complètement",
+        "Thread-safe pour increment() mais pas pour getCount()",
+        "Thread-safe seulement si un seul thread incrémente",
+        "Pas thread-safe du tout",
+        "Thread-safe si getCount() est appelé depuis un bloc synchronized"
+      ],
+      "answer": 1,
+      "explanation": "getCount() n'est PAS synchronized. Race condition possible : un thread lit count pendant qu'un autre l'incrémente. Pour être complètement thread-safe, getCount() doit aussi être synchronized."
+    },
+    {
+      "topic": "Wait/Notify",
+      "question": "Que va se passer ?<br><pre><code class='language-java'>class SharedResource {\n    public void doWait() throws InterruptedException {\n        wait();\n    }\n}\n\npublic class TestClass {\n    public static void main(String[] args) throws Exception {\n        SharedResource sr = new SharedResource();\n        sr.doWait();\n    }\n}</code></pre>",
+      "options": [
+        "Bloque indéfiniment",
+        "IllegalMonitorStateException",
+        "InterruptedException",
+        "Ne compile pas",
+        "Retourne immédiatement"
+      ],
+      "answer": 1,
+      "explanation": "wait() doit être appelé depuis un bloc synchronized sur l'objet. Sans synchronized, lance IllegalMonitorStateException. Même règle pour notify() et notifyAll()."
+    },
+    {
+      "topic": "Thread Join",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>public class TestClass {\n    public static void main(String[] args) throws Exception {\n        Thread t = new Thread(() -> {\n            for(int i = 0; i < 3; i++) {\n                System.out.print(i + \" \");\n            }\n        });\n        t.start();\n        t.join();\n        System.out.print(\"done\");\n    }\n}</code></pre>",
+      "options": [
+        "0 1 2 done (toujours dans cet ordre)",
+        "done 0 1 2",
+        "Ordre imprévisible",
+        "0 1 2 ou done en premier",
+        "Ne compile pas"
+      ],
+      "answer": 0,
+      "explanation": "join() bloque le thread appelant jusqu'à ce que le thread t se termine. Le main thread attend la fin de t. Donc 0 1 2 s'affichent avant done. L'ordre 0 1 2 done est garanti."
+    },
+    {
+      "topic": "Volatile Variable",
+      "question": "Quel est l'effet de volatile ?<br><pre><code class='language-java'>class Flag {\n    private volatile boolean running = true;\n    \n    public void stop() {\n        running = false;\n    }\n    \n    public void run() {\n        while(running) {\n            //do work\n        }\n    }\n}</code></pre>",
+      "options": [
+        "Garantit la visibilité des changements entre threads",
+        "Garantit l'atomicité de running",
+        "Synchronise l'accès à running",
+        "Empêche la réorganisation du code",
+        "Toutes ces réponses"
+      ],
+      "answer": 0,
+      "explanation": "volatile garantit la VISIBILITÉ (les changements sont immédiatement visibles par tous les threads) mais PAS l'atomicité des opérations composées. Ici, c'est suffisant car simple assignation boolean. Ne synchronise pas l'accès."
+    },
+    {
+      "topic": "ExecutorService Shutdown",
+      "question": "Que va se passer ?<br><pre><code class='language-java'>ExecutorService executor = Executors.newFixedThreadPool(2);\nexecutor.submit(() -> System.out.println(\"Task 1\"));\nexecutor.submit(() -> System.out.println(\"Task 2\"));\nexecutor.shutdown();\nexecutor.submit(() -> System.out.println(\"Task 3\"));</code></pre>",
+      "options": [
+        "Affiche Task 1, Task 2, Task 3",
+        "Affiche Task 1, Task 2, puis RejectedExecutionException",
+        "Affiche seulement Task 1, Task 2",
+        "Ne compile pas",
+        "Bloque indéfiniment"
+      ],
+      "answer": 1,
+      "explanation": "shutdown() empêche les nouvelles soumissions mais termine les tâches en cours. Le 3ème submit() lance RejectedExecutionException. Task 1 et 2 s'exécutent normalement."
+    },
+    {
+      "topic": "AtomicInteger",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>AtomicInteger counter = new AtomicInteger(0);\nThread t1 = new Thread(() -> {\n    for(int i=0; i<1000; i++) counter.incrementAndGet();\n});\nThread t2 = new Thread(() -> {\n    for(int i=0; i<1000; i++) counter.incrementAndGet();\n});\nt1.start(); t2.start();\nt1.join(); t2.join();\nSystem.out.println(counter.get());</code></pre>",
+      "options": [
+        "2000 (toujours)",
+        "Moins de 2000",
+        "Plus de 2000",
+        "Valeur imprévisible",
+        "Exception"
+      ],
+      "answer": 0,
+      "explanation": "AtomicInteger garantit l'atomicité des opérations. incrementAndGet() est atomique, donc pas de race condition. Résultat garanti : 2000."
+    },
+    {
+      "topic": "ReentrantLock",
+      "question": "Quel code est correct ?<br><pre><code class='language-java'>ReentrantLock lock = new ReentrantLock();\n\n//Option A\nlock.lock();\ntry {\n    //critical section\n} finally {\n    lock.unlock();\n}\n\n//Option B\ntry {\n    lock.lock();\n    //critical section\n} finally {\n    lock.unlock();\n}</code></pre>",
+      "options": [
+        "A uniquement",
+        "B uniquement",
+        "Les deux",
+        "Aucun",
+        "A est meilleur mais B fonctionne"
+      ],
+      "answer": 0,
+      "explanation": "lock() doit être AVANT le try. Si lock() lance une exception, finally appellerait unlock() sans avoir acquis le lock (IllegalMonitorStateException). Pattern correct : lock(); try{...}finally{unlock();}"
+    },
+    {
+      "topic": "ConcurrentHashMap",
+      "question": "Quel code est thread-safe ?<br><pre><code class='language-java'>ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();\n\n//A\nif(!map.containsKey(\"count\")) {\n    map.put(\"count\", 1);\n} else {\n    map.put(\"count\", map.get(\"count\") + 1);\n}\n\n//B\nmap.compute(\"count\", (k, v) -> v == null ? 1 : v + 1);</code></pre>",
+      "options": [
+        "A uniquement",
+        "B uniquement",
+        "Les deux",
+        "Aucun",
+        "Les deux avec synchronized"
+      ],
+      "answer": 1,
+      "explanation": "A a une race condition (check-then-act). Entre containsKey et put, un autre thread peut modifier. B utilise compute() qui est atomique. Seul B est thread-safe."
+    },
+    {
+      "topic": "Thread Interrupt",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Thread t = new Thread(() -> {\n    try {\n        Thread.sleep(5000);\n        System.out.println(\"Finished\");\n    } catch(InterruptedException e) {\n        System.out.println(\"Interrupted\");\n    }\n});\nt.start();\nThread.sleep(100);\nt.interrupt();</code></pre>",
+      "options": [
+        "Finished",
+        "Interrupted",
+        "Rien",
+        "Exception non catchée",
+        "Interrupted puis Finished"
+      ],
+      "answer": 1,
+      "explanation": "interrupt() sur un thread en sleep() lance InterruptedException. Le catch s'exécute, affiche \"Interrupted\". \"Finished\" n'est jamais atteint."
+    },
+    {
+      "topic": "Deadlock",
+      "question": "Ce code peut-il causer un deadlock ?<br><pre><code class='language-java'>Object lock1 = new Object();\nObject lock2 = new Object();\n\nThread t1 = new Thread(() -> {\n    synchronized(lock1) {\n        synchronized(lock2) {\n            System.out.println(\"T1\");\n        }\n    }\n});\n\nThread t2 = new Thread(() -> {\n    synchronized(lock2) {\n        synchronized(lock1) {\n            System.out.println(\"T2\");\n        }\n    }\n});\n\nt1.start(); t2.start();</code></pre>",
+      "options": [
+        "Oui, deadlock possible",
+        "Non, pas de deadlock",
+        "Deadlock seulement si t2 démarre en premier",
+        "Deadlock garanti",
+        "Impossible à déterminer"
+      ],
+      "answer": 0,
+      "explanation": "Deadlock classique : t1 acquiert lock1 et attend lock2, t2 acquiert lock2 et attend lock1. Ordre d'acquisition inverse = deadlock possible (pas garanti mais très probable)."
+    },
+    {
+      "topic": "CountDownLatch",
+      "question": "Que va se passer ?<br><pre><code class='language-java'>CountDownLatch latch = new CountDownLatch(3);\n\nfor(int i=0; i<2; i++) {\n    new Thread(() -> {\n        System.out.print(\"Task \");\n        latch.countDown();\n    }).start();\n}\n\nlatch.await();\nSystem.out.println(\"Done\");</code></pre>",
+      "options": [
+        "Affiche Task Task Done",
+        "Bloque indéfiniment",
+        "Exception",
+        "Affiche Task Task",
+        "Affiche Done Task Task"
+      ],
+      "answer": 1,
+      "explanation": "latch compte 3 mais seulement 2 threads countDown(). await() bloque jusqu'à ce que le count atteigne 0. Comme un 3ème countDown() ne se produit jamais, bloque indéfiniment."
+    },
+    {
+      "topic": "CyclicBarrier",
+      "question": "Quelle est la différence entre CountDownLatch et CyclicBarrier ?",
+      "options": [
+        "CyclicBarrier peut être réutilisé, CountDownLatch non",
+        "CountDownLatch peut être réutilisé, CyclicBarrier non",
+        "Aucune différence fonctionnelle",
+        "CyclicBarrier nécessite que tous les threads appellent await()",
+        "A et D"
+      ],
+      "answer": 4,
+      "explanation": "CyclicBarrier est réutilisable (après que tous les threads l'atteignent, il se réinitialise). CountDownLatch est one-shot. CyclicBarrier nécessite que TOUS les threads participants appellent await(). Les deux différences A et D sont vraies."
+    },
+    {
+      "topic": "Future Cancel",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>ExecutorService executor = Executors.newSingleThreadExecutor();\nFuture<String> future = executor.submit(() -> {\n    Thread.sleep(2000);\n    return \"Result\";\n});\n\nThread.sleep(100);\nfuture.cancel(false);\nSystem.out.println(future.isCancelled());\nSystem.out.println(future.get());</code></pre>",
+      "options": [
+        "true puis CancellationException",
+        "false puis Result",
+        "true puis Result",
+        "false puis CancellationException",
+        "Exception lors du cancel"
+      ],
+      "answer": 0,
+      "explanation": "cancel(false) essaie d'annuler sans interrompre. isCancelled() retourne true. get() sur un Future cancelled lance CancellationException."
+    },
+    {
+      "topic": "ReadWriteLock",
+      "question": "Combien de threads peuvent tenir le read lock simultanément ?<br><pre><code class='language-java'>ReadWriteLock rwLock = new ReentrantReadWriteLock();\nLock readLock = rwLock.readLock();\nLock writeLock = rwLock.writeLock();</code></pre>",
+      "options": [
+        "Un seul",
+        "Deux",
+        "Nombre illimité",
+        "Dépend de la configuration",
+        "Aucun si write lock est tenu"
+      ],
+      "answer": 2,
+      "explanation": "Plusieurs threads peuvent tenir le read lock simultanément (lecture concurrente OK). Mais si un thread tient le write lock, aucun autre thread (read ou write) ne peut acquérir un lock. Réponse : nombre illimité de readers (mais E est aussi vraie - piège : C est la meilleure réponse directe)."
+    },
+    {
+      "topic": "Virtual Threads",
+      "question": "Quelle affirmation est correcte sur les virtual threads (Java 21) ?<br><pre><code class='language-java'>Thread vt = Thread.startVirtualThread(() -> {\n    System.out.println(\"Virtual\");\n});</code></pre>",
+      "options": [
+        "Virtual threads sont mappés 1:1 avec OS threads",
+        "Virtual threads peuvent bloquer sans bloquer l'OS thread",
+        "Virtual threads sont toujours plus rapides",
+        "Virtual threads ne peuvent pas utiliser synchronized",
+        "Virtual threads nécessitent ExecutorService"
+      ],
+      "answer": 1,
+      "explanation": "Virtual threads sont légers et gérés par la JVM (Project Loom). Multiples virtual threads partagent un carrier thread. Quand un virtual thread bloque (I/O, sleep), il libère le carrier thread. Pas de mapping 1:1."
+    },
+    {
+      "topic": "Semaphore",
+      "question": "Que va se passer ?<br><pre><code class='language-java'>Semaphore semaphore = new Semaphore(2);\n\nfor(int i=0; i<3; i++) {\n    new Thread(() -> {\n        try {\n            semaphore.acquire();\n            System.out.print(\"Task \");\n            Thread.sleep(1000);\n        } catch(InterruptedException e) { }\n    }).start();\n}</code></pre>",
+      "options": [
+        "Affiche Task Task Task immédiatement",
+        "Affiche Task Task, attend 1s, puis Task",
+        "Bloque indéfiniment",
+        "Exception",
+        "Affiche Task trois fois avec délai imprévisible"
+      ],
+      "answer": 1,
+      "explanation": "Semaphore(2) permet 2 permits. 2 premiers threads acquièrent et affichent Task. Le 3ème attend qu'un permit soit libéré. Mais ici, release() n'est jamais appelé ! Les 2 premiers s'exécutent, le 3ème bloque indéfiniment. Erreur dans le code : manque finally{semaphore.release()}."
+    },
+    {
+      "topic": "Thread Priority",
+      "question": "Que garantit setPriority() ?<br><pre><code class='language-java'>Thread t1 = new Thread(() -> System.out.println(\"T1\"));\nThread t2 = new Thread(() -> System.out.println(\"T2\"));\nt1.setPriority(Thread.MAX_PRIORITY);\nt2.setPriority(Thread.MIN_PRIORITY);\nt1.start();\nt2.start();</code></pre>",
+      "options": [
+        "t1 s'exécute toujours avant t2",
+        "t1 a plus de chances de s'exécuter en premier",
+        "Aucune garantie d'ordre",
+        "t2 s'exécute en premier",
+        "Exception si priorités différentes"
+      ],
+      "answer": 2,
+      "explanation": "setPriority() est un HINT au scheduler, pas une garantie. L'OS peut ignorer les priorités. L'ordre d'exécution n'est jamais garanti en Java threads. Ne pas compter sur les priorités pour la logique."
+    },
+    {
+      "topic": "CopyOnWriteArrayList",
+      "question": "Quand utiliser CopyOnWriteArrayList ?<br><pre><code class='language-java'>CopyOnWriteArrayList<String> list = new CopyOnWriteArrayList<>();</code></pre>",
+      "options": [
+        "Quand beaucoup d'écritures, peu de lectures",
+        "Quand beaucoup de lectures, peu d'écritures",
+        "Toujours meilleur que ArrayList",
+        "Pour éviter ConcurrentModificationException",
+        "B et D"
+      ],
+      "answer": 4,
+      "explanation": "CopyOnWriteArrayList copie le array à chaque modification (coûteux). Optimal pour beaucoup de lectures, peu d'écritures. Les itérateurs ne lancent jamais ConcurrentModificationException (snapshot). Réponses B et D correctes."
+    },
+    {
+      "topic": "Thread Safe Singleton",
+      "question": "Quelle implémentation de singleton est thread-safe et efficace ?<br><pre><code class='language-java'>//A - Double-checked locking\nclass Singleton {\n    private static volatile Singleton instance;\n    public static Singleton getInstance() {\n        if(instance == null) {\n            synchronized(Singleton.class) {\n                if(instance == null) {\n                    instance = new Singleton();\n                }\n            }\n        }\n        return instance;\n    }\n}\n\n//B - Eager initialization\nclass Singleton {\n    private static final Singleton instance = new Singleton();\n    public static Singleton getInstance() {\n        return instance;\n    }\n}\n\n//C - Sans volatile\nclass Singleton {\n    private static Singleton instance;\n    public static Singleton getInstance() {\n        if(instance == null) {\n            synchronized(Singleton.class) {\n                if(instance == null) {\n                    instance = new Singleton();\n                }\n            }\n        }\n        return instance;\n    }\n}</code></pre>",
+      "options": [
+        "A uniquement",
+        "B uniquement",
+        "A et B",
+        "C fonctionne aussi",
+        "Toutes"
+      ],
+      "answer": 2,
+      "explanation": "A (double-checked locking avec volatile) est lazy et thread-safe. B (eager init) est thread-safe (static init est thread-safe par JVM). C échoue sans volatile : réorganisation possible, un thread peut voir instance non-null mais partiellement construite."
+    }
+  ]
+}

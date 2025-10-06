@@ -1,0 +1,275 @@
+{
+  "metadata": {
+    "id": "exam-24_threads.json",
+    "mainTopic": "threads",
+    "category": "threads",
+    "examNumber": "T2",
+    "examName": "Examen Threads N°2",
+    "questionsCount": 20,
+    "description": "Focus Threads & Concurrence"
+  },
+  "title": "OCP-830 Java 21 - Questionnaire 10 (Threads Expert)",
+  "duration": 60,
+  "questions": [
+    {
+      "topic": "Memory Visibility & Happens-Before",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>class SharedData {\n    int x = 0;\n    boolean ready = false;\n}\n\npublic class TestClass {\n    static SharedData data = new SharedData();\n    \n    public static void main(String[] args) {\n        new Thread(() -> {\n            while(!data.ready) { }\n            System.out.println(data.x);\n        }).start();\n        \n        data.x = 42;\n        data.ready = true;\n    }\n}</code></pre>",
+      "options": [
+        "Affiche toujours 42",
+        "Peut afficher 0 ou 42",
+        "Peut boucler indéfiniment",
+        "Peut afficher 0, 42, ou boucler indéfiniment",
+        "Ne compile pas"
+      ],
+      "answer": 3,
+      "explanation": "Piège extrême de visibilité mémoire : sans volatile/synchronized, pas de happens-before. Le thread lecteur peut : 1) voir ready=false éternellement (cache), 2) voir ready=true mais x=0 (réorganisation), 3) voir les deux correctement. Tous les scénarios sont possibles."
+    },
+    {
+      "topic": "ReentrantLock Fairness",
+      "question": "Quelle différence entre ces deux locks ?<br><pre><code class='language-java'>ReentrantLock unfairLock = new ReentrantLock();\nReentrantLock fairLock = new ReentrantLock(true);</code></pre>",
+      "options": [
+        "fairLock garantit FIFO strict, unfairLock non",
+        "fairLock est plus rapide",
+        "unfairLock peut causer starvation, fairLock non",
+        "A et C",
+        "Aucune différence de performance"
+      ],
+      "answer": 3,
+      "explanation": "ReentrantLock(true) crée un fair lock (FIFO). ReentrantLock() est unfair (meilleure performance mais peut causer starvation si un thread attend longtemps). Fair lock sacrifie performance pour équité. A et C sont vrais."
+    },
+    {
+      "topic": "ThreadLocal Memory Leak",
+      "question": "Ce code peut-il causer une fuite mémoire ?<br><pre><code class='language-java'>class Cache {\n    private static ThreadLocal<Map<String, byte[]>> cache = \n        ThreadLocal.withInitial(() -> new HashMap<>());\n    \n    public void store(String key, byte[] data) {\n        cache.get().put(key, data);\n    }\n}\n\n//Utilisé dans un ExecutorService avec thread pool</code></pre>",
+      "options": [
+        "Non, ThreadLocal est garbage collecté",
+        "Oui, si les threads du pool ne sont jamais terminés",
+        "Non, HashMap est automatiquement nettoyé",
+        "Oui, toujours",
+        "Seulement si ExecutorService n'est pas shutdown"
+      ],
+      "answer": 1,
+      "explanation": "Fuite mémoire classique avec ThreadLocal : dans un thread pool, les threads survivent longtemps. ThreadLocal retient les Map qui grossissent sans limite. Il faut appeler cache.remove() après usage. Si threads ne meurent jamais, fuite garantie."
+    },
+    {
+      "topic": "StampedLock Optimistic Read",
+      "question": "Que fait ce code ?<br><pre><code class='language-java'>StampedLock lock = new StampedLock();\nint x = 0;\n\nlong stamp = lock.tryOptimisticRead();\nint value = x;\nif(!lock.validate(stamp)) {\n    stamp = lock.readLock();\n    try {\n        value = x;\n    } finally {\n        lock.unlockRead(stamp);\n    }\n}</code></pre>",
+      "options": [
+        "Lecture optimiste puis fallback sur read lock si invalidé",
+        "Erreur : tryOptimisticRead ne retourne pas de stamp",
+        "Deadlock possible",
+        "Ne compile pas",
+        "Lecture atomique sans lock"
+      ],
+      "answer": 0,
+      "explanation": "StampedLock.tryOptimisticRead() permet lecture sans bloquer. validate() vérifie si un write lock a été acquis entre temps. Si invalidé, fallback sur read lock classique. Pattern d'optimisation avancé."
+    },
+    {
+      "topic": "Phaser Advanced",
+      "question": "Que va se passer ?<br><pre><code class='language-java'>Phaser phaser = new Phaser(1); //main thread registré\n\nfor(int i=0; i<3; i++) {\n    phaser.register();\n    new Thread(() -> {\n        System.out.print(\"Task \");\n        phaser.arriveAndDeregister();\n    }).start();\n}\n\nphaser.arriveAndAwaitAdvance(); //main attend phase 0\nSystem.out.println(\"Done\");</code></pre>",
+      "options": [
+        "Affiche Task Task Task Done",
+        "Bloque indéfiniment",
+        "Affiche Done immédiatement",
+        "Exception",
+        "Affiche Task Done Task Task"
+      ],
+      "answer": 0,
+      "explanation": "Phaser(1) enregistre le main. 3 register() + 3 threads = 4 parties. Les 3 threads arriveAndDeregister(). Main arriveAndAwaitAdvance() attend que tous arrivent à la phase. Quand les 4 sont arrivés, avance à phase 1, affiche Done."
+    },
+    {
+      "topic": "CompletableFuture Exception Handling",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>CompletableFuture.supplyAsync(() -> {\n    if(true) throw new RuntimeException(\"Error\");\n    return \"Success\";\n})\n.thenApply(s -> s + \"!\")\n.exceptionally(ex -> \"Recovered\")\n.thenAccept(System.out::println);</code></pre>",
+      "options": [
+        "Success!",
+        "Recovered",
+        "Exception non catchée",
+        "Ne compile pas",
+        "Rien"
+      ],
+      "answer": 1,
+      "explanation": "supplyAsync lance exception. thenApply est skippé. exceptionally catch et retourne \"Recovered\". thenAccept reçoit \"Recovered\" et l'affiche. exceptionally permet recovery dans la chaîne."
+    },
+    {
+      "topic": "ForkJoinPool Work Stealing",
+      "question": "Quelle affirmation est correcte sur ForkJoinPool ?",
+      "options": [
+        "Chaque thread a sa propre queue de tâches",
+        "Les threads peuvent voler des tâches d'autres threads (work stealing)",
+        "Optimal pour tâches récursives divisibles",
+        "Toutes ces réponses",
+        "A et B uniquement"
+      ],
+      "answer": 3,
+      "explanation": "ForkJoinPool implémente work-stealing : chaque thread a sa deque, peut voler des tâches du bas de deques d'autres threads occupés. Conçu pour fork/join pattern (récursion divisible). Toutes vraies."
+    },
+    {
+      "topic": "Atomic Field Updater",
+      "question": "Pourquoi utiliser AtomicIntegerFieldUpdater ?<br><pre><code class='language-java'>class Counter {\n    volatile int count;\n    private static final AtomicIntegerFieldUpdater<Counter> updater =\n        AtomicIntegerFieldUpdater.newUpdater(Counter.class, \"count\");\n    \n    void increment() {\n        updater.incrementAndGet(this);\n    }\n}</code></pre>",
+      "options": [
+        "Plus rapide qu'AtomicInteger",
+        "Économie de mémoire (pas d'objet wrapper)",
+        "Permet atomic updates sur fields existants",
+        "B et C",
+        "Aucun avantage"
+      ],
+      "answer": 3,
+      "explanation": "AtomicFieldUpdater évite overhead mémoire d'AtomicInteger (pas d'objet wrapper par instance). Permet updates atomiques sur volatile fields existants. Utile quand beaucoup d'instances avec peu d'updates. B et C vrais."
+    },
+    {
+      "topic": "Exchanger Timeout",
+      "question": "Que va se passer ?<br><pre><code class='language-java'>Exchanger<String> exchanger = new Exchanger<>();\n\nThread t1 = new Thread(() -> {\n    try {\n        String received = exchanger.exchange(\"Data1\", 1, TimeUnit.SECONDS);\n        System.out.println(\"T1: \" + received);\n    } catch(Exception e) {\n        System.out.println(\"T1 timeout\");\n    }\n});\n\nt1.start();\nThread.sleep(2000);\n//Pas de second thread</code></pre>",
+      "options": [
+        "T1 bloque indéfiniment",
+        "T1 timeout après 1 seconde",
+        "Exception immédiate",
+        "T1: null",
+        "Ne compile pas"
+      ],
+      "answer": 1,
+      "explanation": "Exchanger.exchange() avec timeout attend un autre thread. Si timeout expire sans échange, lance TimeoutException. Ici, t1 attend 1s, personne ne vient, catch attrape, affiche \"T1 timeout\"."
+    },
+    {
+      "topic": "LongAdder vs AtomicLong",
+      "question": "Quand préférer LongAdder à AtomicLong ?",
+      "options": [
+        "Toujours, LongAdder est plus rapide",
+        "Haute contention avec multiples threads écrivant",
+        "Besoin de valeur exacte à tout moment",
+        "B seulement si lectures rares",
+        "Jamais, AtomicLong suffit"
+      ],
+      "answer": 3,
+      "explanation": "LongAdder est optimisé pour haute contention (split counter en cellules). Excellente performance pour increments fréquents. MAIS sum() est coûteux (agrège cellules). Si lectures fréquentes de valeur exacte, AtomicLong mieux. B et condition lectures rares."
+    },
+    {
+      "topic": "Thread Interrupted Status",
+      "question": "Que va afficher ce code ?<br><pre><code class='language-java'>Thread t = new Thread(() -> {\n    Thread.currentThread().interrupt();\n    System.out.println(Thread.interrupted());\n    System.out.println(Thread.interrupted());\n});\nt.start();\nt.join();</code></pre>",
+      "options": [
+        "true true",
+        "true false",
+        "false false",
+        "false true",
+        "Exception"
+      ],
+      "answer": 1,
+      "explanation": "Piège subtil : Thread.interrupted() vérifie ET CLEAR le flag. Premier appel : true et clear. Deuxième appel : false (flag déjà cleared). Thread.currentThread().isInterrupted() ne clear pas."
+    },
+    {
+      "topic": "Parallel Stream Thread Pool",
+      "question": "Quel thread pool utilise parallelStream() par défaut ?",
+      "options": [
+        "Crée un nouveau ForkJoinPool",
+        "Utilise ForkJoinPool.commonPool()",
+        "Utilise Executors.newCachedThreadPool()",
+        "Dépend de la taille de la collection",
+        "Thread pool configurable"
+      ],
+      "answer": 1,
+      "explanation": "parallelStream() utilise ForkJoinPool.commonPool() (partagé JVM-wide). Taille = Runtime.getRuntime().availableProcessors() - 1. Peut être changé avec System.setProperty ou en exécutant dans un custom ForkJoinPool."
+    },
+    {
+      "topic": "Double-Checked Locking Final Field",
+      "question": "Ce code est-il thread-safe ?<br><pre><code class='language-java'>class Singleton {\n    private static Singleton instance;\n    private final int value;\n    \n    private Singleton() {\n        value = 42;\n    }\n    \n    public static Singleton getInstance() {\n        if(instance == null) {\n            synchronized(Singleton.class) {\n                if(instance == null) {\n                    instance = new Singleton();\n                }\n            }\n        }\n        return instance;\n    }\n}</code></pre>",
+      "options": [
+        "Oui, final garantit la visibilité",
+        "Non, manque volatile sur instance",
+        "Oui, synchronized suffit",
+        "Non, final ne change rien ici",
+        "Oui mais seulement pour value"
+      ],
+      "answer": 1,
+      "explanation": "Piège expert : sans volatile sur instance, un thread peut voir instance != null mais value pas encore initialisé (réorganisation). final garantit la visibilité APRÈS construction complète, mais instance peut être publiée avant. volatile nécessaire."
+    },
+    {
+      "topic": "AQS Custom Synchronizer",
+      "question": "AbstractQueuedSynchronizer est utilisé pour :",
+      "options": [
+        "Créer des synchronizers customs",
+        "Base de ReentrantLock, Semaphore, CountDownLatch",
+        "Gère la queue de threads en attente",
+        "Toutes ces réponses",
+        "A et B uniquement"
+      ],
+      "answer": 3,
+      "explanation": "AQS (AbstractQueuedSynchronizer) est le framework pour construire synchronizers. Utilisé par ReentrantLock, Semaphore, CountDownLatch, etc. Gère queue FIFO de threads, états, acquire/release. Base de la concurrence Java. Toutes vraies."
+    },
+    {
+      "topic": "VarHandle Atomic Operations",
+      "question": "Quel avantage de VarHandle (Java 9+) ?<br><pre><code class='language-java'>class Data {\n    int value;\n    private static final VarHandle VALUE;\n    static {\n        try {\n            VALUE = MethodHandles.lookup()\n                .findVarHandle(Data.class, \"value\", int.class);\n        } catch(Exception e) { throw new Error(e); }\n    }\n    \n    void atomicUpdate(int newValue) {\n        VALUE.compareAndSet(this, 0, newValue);\n    }\n}</code></pre>",
+      "options": [
+        "Operations atomiques sans volatile keyword",
+        "Plus flexible que Atomic classes",
+        "Accès mémoire avec contrôle fin (acquire/release)",
+        "Toutes ces réponses",
+        "A et C uniquement"
+      ],
+      "answer": 3,
+      "explanation": "VarHandle permet operations atomiques sur fields ordinaires sans volatile. Plus flexible (différents modes mémoire : volatile, acquire/release, opaque). Remplace unsafe et field updaters. Plus puissant et sûr. Toutes vraies."
+    },
+    {
+      "topic": "Striped Lock Pattern",
+      "question": "Qu'est-ce que le Striped Lock pattern ?<br><pre><code class='language-java'>class StripedMap<K, V> {\n    private final int stripes = 16;\n    private final Object[] locks = new Object[stripes];\n    private final Map<K, V>[] maps = new HashMap[stripes];\n    \n    public V get(K key) {\n        int stripe = key.hashCode() % stripes;\n        synchronized(locks[stripe]) {\n            return maps[stripe].get(key);\n        }\n    }\n}</code></pre>",
+      "options": [
+        "Partition des données avec locks séparés pour réduire contention",
+        "Synchronisation fine-grained",
+        "Trade-off entre complexité et concurrence",
+        "Toutes ces réponses",
+        "Mauvaise pratique"
+      ],
+      "answer": 3,
+      "explanation": "Striped locking divise les données en segments avec lock séparé par segment. Réduit contention vs lock global. Utilisé par ConcurrentHashMap (segments). Trade-off : plus complexe mais meilleure scalabilité. Toutes vraies."
+    },
+    {
+      "topic": "False Sharing Cache Line",
+      "question": "Que cause ce code sur performance multi-thread ?<br><pre><code class='language-java'>class Counters {\n    volatile long counter1 = 0;\n    volatile long counter2 = 0;\n    \n    //Thread 1 incrémente counter1\n    //Thread 2 incrémente counter2\n}</code></pre>",
+      "options": [
+        "Pas de problème, variables séparées",
+        "False sharing si sur même cache line",
+        "Contention sur volatile",
+        "B cause invalidation cache mutuelle",
+        "B et D"
+      ],
+      "answer": 4,
+      "explanation": "False sharing expert : counter1 et counter2 proches en mémoire, probablement même cache line (64 bytes). Thread 1 écrit counter1 → invalide cache line du thread 2. Performance dégradée. Solution : @Contended ou padding. B et D vrais."
+    },
+    {
+      "topic": "Happens-Before Transitivity",
+      "question": "Ce code garantit-il que le thread B voit x=42 ?<br><pre><code class='language-java'>volatile boolean flag = false;\nint x = 0;\n\n//Thread A\nx = 42;\nflag = true;\n\n//Thread B\nif(flag) {\n    System.out.println(x);\n}</code></pre>",
+      "options": [
+        "Oui, grâce à volatile happens-before",
+        "Non, x n'est pas volatile",
+        "Dépend du timing",
+        "Oui mais seulement si synchronized",
+        "Non, pas de garantie"
+      ],
+      "answer": 0,
+      "explanation": "Happens-before transitivité : write x happens-before write flag (program order). Write volatile flag happens-before read flag (volatile rule). Read flag happens-before read x. Donc x=42 visible si flag=true. Volatile crée happens-before chain."
+    },
+    {
+      "topic": "Concurrent Modification Iterator",
+      "question": "Pourquoi ce code peut lancer ConcurrentModificationException ?<br><pre><code class='language-java'>List<String> list = new ArrayList<>(Arrays.asList(\"A\", \"B\", \"C\"));\nfor(String s : list) {\n    if(s.equals(\"B\")) {\n        list.remove(s);\n    }\n}</code></pre>",
+      "options": [
+        "Enhanced for utilise Iterator qui détecte modifications",
+        "modCount != expectedModCount",
+        "Fail-fast behavior",
+        "Toutes ces réponses",
+        "A et B uniquement"
+      ],
+      "answer": 3,
+      "explanation": "Enhanced for crée Iterator. Iterator track modCount. list.remove() change modCount. Iterator.next() check expectedModCount != modCount → ConcurrentModificationException (fail-fast). Solution : iterator.remove() ou removeIf(). Toutes vraies."
+    },
+    {
+      "topic": "Lock Coarsening JIT Optimization",
+      "question": "Que fait la JVM avec ce code ?<br><pre><code class='language-java'>synchronized(lock) { operation1(); }\nsynchronized(lock) { operation2(); }\nsynchronized(lock) { operation3(); }</code></pre>",
+      "options": [
+        "Exécute tel quel (3 lock/unlock)",
+        "Lock coarsening : fusionne en un seul synchronized",
+        "Lock elimination complète",
+        "Dépend du JIT",
+        "B avec JIT C2"
+      ],
+      "answer": 4,
+      "explanation": "JIT peut faire lock coarsening : fusionner acquisitions consécutives du même lock en un seul bloc synchronized plus large. Optimisation automatique. C2 compiler (server) le fait. Réduit overhead lock/unlock."
+    }
+  ]
+}

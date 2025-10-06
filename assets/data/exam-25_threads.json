@@ -1,0 +1,297 @@
+{
+  "metadata": {
+    "id": "exam-25_threads.json",
+    "mainTopic": "threads",
+    "category": "threads",
+    "examNumber": "T3",
+    "examName": "Examen Threads N°3",
+    "questionsCount": 20,
+    "description": "Focus Threads & Concurrence"
+  },
+  "title": "OCP-830 Java 21 - Questionnaire 11 (Threads - Réponses Multiples)",
+  "duration": 60,
+  "questions": [
+    {
+      "topic": "Thread Creation",
+      "question": "Quelles façons de créer un thread sont valides ?",
+      "options": [
+        "class MyThread extends Thread { public void run() {...} }",
+        "class MyTask implements Runnable { public void run() {...} }",
+        "Thread t = new Thread(() -> {...});",
+        "Thread t = Thread.ofVirtual().start(() -> {...});",
+        "ExecutorService.submit(() -> {...});"
+      ],
+      "answer": [0, 1, 2, 3, 4],
+      "type": "multiple",
+      "explanation": "Toutes sont valides ! Extend Thread, implement Runnable, lambda avec Thread, virtual threads (Java 21), et ExecutorService. Le piège : beaucoup oublient les virtual threads et ExecutorService comme méthodes de création."
+    },
+    {
+      "topic": "Synchronized Behavior",
+      "question": "Quelles affirmations sont vraies sur synchronized ?<br><pre><code class='language-java'>class Counter {\n    private int count = 0;\n    public synchronized void increment() { count++; }\n    public int getCount() { return count; }\n}</code></pre>",
+      "options": [
+        "increment() acquiert le lock sur l'instance Counter",
+        "Deux threads ne peuvent pas exécuter increment() simultanément sur la même instance",
+        "getCount() est thread-safe",
+        "synchronized garantit la visibilité mémoire",
+        "Deux threads peuvent exécuter increment() simultanément sur des instances différentes"
+      ],
+      "answer": [0, 1, 3, 4],
+      "type": "multiple",
+      "explanation": "synchronized acquiert lock sur instance, empêche accès concurrent, garantit visibilité. Instances différentes = locks différents (4 vrai). MAIS getCount() n'est PAS synchronized donc pas thread-safe (race condition possible)."
+    },
+    {
+      "topic": "wait/notify Requirements",
+      "question": "Quelles conditions doivent être vraies pour appeler wait() ?<br><pre><code class='language-java'>synchronized(obj) {\n    obj.wait();\n}</code></pre>",
+      "options": [
+        "Le thread doit tenir le lock de l'objet",
+        "wait() doit être dans un bloc synchronized",
+        "wait() peut lancer InterruptedException",
+        "wait() libère le lock temporairement",
+        "notify() doit être appelé avant wait()"
+      ],
+      "answer": [0, 1, 2, 3],
+      "type": "multiple",
+      "explanation": "wait() nécessite lock (synchronized), peut lancer InterruptedException, libère le lock en attendant. notify() n'a PAS besoin d'être appelé avant (thread attend jusqu'à notification future)."
+    },
+    {
+      "topic": "Volatile Guarantees",
+      "question": "Que garantit volatile ?<br><pre><code class='language-java'>private volatile boolean flag = true;</code></pre>",
+      "options": [
+        "Visibilité des changements entre threads",
+        "Atomicité de toutes les opérations",
+        "Lecture depuis main memory (pas cache)",
+        "Empêche réorganisation des instructions autour",
+        "Synchronisation automatique"
+      ],
+      "answer": [0, 2, 3],
+      "type": "multiple",
+      "explanation": "volatile garantit visibilité (lecture/écriture en main memory), empêche réorganisation. NE garantit PAS atomicité pour opérations composées (count++ pas atomique). Ne synchronise pas (pas de mutual exclusion)."
+    },
+    {
+      "topic": "Thread Interruption",
+      "question": "Quelles méthodes peuvent lancer InterruptedException ?",
+      "options": [
+        "Thread.sleep(1000)",
+        "thread.join()",
+        "Object.wait()",
+        "lock.lock()",
+        "CountDownLatch.await()"
+      ],
+      "answer": [0, 1, 2, 4],
+      "type": "multiple",
+      "explanation": "sleep(), join(), wait(), await() peuvent lancer InterruptedException (opérations bloquantes interruptibles). lock.lock() NE lance PAS InterruptedException (utiliser lockInterruptibly() pour ça)."
+    },
+    {
+      "topic": "ExecutorService Shutdown",
+      "question": "Quelles affirmations sont vraies sur shutdown() ?<br><pre><code class='language-java'>ExecutorService executor = Executors.newFixedThreadPool(5);\nexecutor.shutdown();</code></pre>",
+      "options": [
+        "Empêche les nouvelles soumissions de tâches",
+        "Attend que toutes les tâches en cours se terminent",
+        "Interrompt immédiatement toutes les tâches",
+        "Retourne une liste des tâches non exécutées",
+        "L'executor peut être réutilisé après shutdown()"
+      ],
+      "answer": [0],
+      "type": "multiple",
+      "explanation": "shutdown() empêche nouvelles soumissions MAIS ne bloque pas (continue sans attendre). shutdownNow() interrompt les tâches et retourne la liste. awaitTermination() attend. Executor ne peut PAS être réutilisé après shutdown."
+    },
+    {
+      "topic": "ReentrantLock Features",
+      "question": "Quels avantages ReentrantLock a-t-il sur synchronized ?",
+      "options": [
+        "Possibilité de tryLock() avec timeout",
+        "Possibilité d'interrompre l'attente du lock",
+        "Support de conditions multiples (Condition)",
+        "Fairness optionnelle (FIFO)",
+        "Meilleure performance toujours"
+      ],
+      "answer": [0, 1, 2, 3],
+      "type": "multiple",
+      "explanation": "ReentrantLock offre tryLock(), lockInterruptibly(), multiple Conditions, fairness option. Performance n'est PAS toujours meilleure (synchronized optimisé par JVM avec biased locking)."
+    },
+    {
+      "topic": "Atomic Classes",
+      "question": "Quelles opérations sur AtomicInteger sont atomiques ?",
+      "options": [
+        "get()",
+        "set(int newValue)",
+        "incrementAndGet()",
+        "compareAndSet(int expect, int update)",
+        "getAndIncrement() suivi de getAndDecrement()"
+      ],
+      "answer": [0, 1, 2, 3],
+      "type": "multiple",
+      "explanation": "get(), set(), incrementAndGet(), compareAndSet() sont INDIVIDUELLEMENT atomiques. Deux opérations successives (option 5) ne sont PAS atomiques ensemble (pas de transaction multi-opération)."
+    },
+    {
+      "topic": "ConcurrentHashMap Operations",
+      "question": "Quelles méthodes de ConcurrentHashMap sont atomiques ?",
+      "options": [
+        "putIfAbsent(key, value)",
+        "get(key) puis put(key, value)",
+        "compute(key, remappingFunction)",
+        "merge(key, value, remappingFunction)",
+        "containsKey(key) puis put(key, value)"
+      ],
+      "answer": [0, 2, 3],
+      "type": "multiple",
+      "explanation": "putIfAbsent(), compute(), merge() sont atomiques. Options 2 et 5 sont check-then-act (deux opérations séparées = race condition possible). Piège classique de concurrence."
+    },
+    {
+      "topic": "Thread Pool Types",
+      "question": "Quels types d'ExecutorService existent ?",
+      "options": [
+        "newFixedThreadPool(n)",
+        "newCachedThreadPool()",
+        "newSingleThreadExecutor()",
+        "newScheduledThreadPool(n)",
+        "newVirtualThreadPerTaskExecutor()"
+      ],
+      "answer": [0, 1, 2, 3, 4],
+      "type": "multiple",
+      "explanation": "Tous existent ! Fixed, cached, single, scheduled sont classiques. newVirtualThreadPerTaskExecutor() est nouveau en Java 21 (Project Loom). Le piège : beaucoup ignorent l'existence du dernier."
+    },
+    {
+      "topic": "ReadWriteLock Behavior",
+      "question": "Quelles affirmations sont vraies sur ReadWriteLock ?<br><pre><code class='language-java'>ReadWriteLock rwLock = new ReentrantReadWriteLock();</code></pre>",
+      "options": [
+        "Plusieurs threads peuvent tenir le read lock simultanément",
+        "Un seul thread peut tenir le write lock",
+        "Write lock exclut tous les read locks",
+        "Read lock exclut le write lock",
+        "On peut upgrade un read lock en write lock directement"
+      ],
+      "answer": [0, 1, 2, 3],
+      "type": "multiple",
+      "explanation": "Multiple readers OK, un seul writer, writer exclut readers et vice-versa. On NE PEUT PAS upgrade directement read→write (deadlock risk). Il faut release read puis acquire write."
+    },
+    {
+      "topic": "CountDownLatch vs CyclicBarrier",
+      "question": "Quelles affirmations distinguent CountDownLatch de CyclicBarrier ?",
+      "options": [
+        "CountDownLatch est one-shot (non réutilisable)",
+        "CyclicBarrier peut être réinitialisé",
+        "CountDownLatch utilise countDown() et await()",
+        "CyclicBarrier nécessite que tous les threads appellent await()",
+        "Les deux peuvent exécuter une action lors de la completion"
+      ],
+      "answer": [0, 1, 2, 3],
+      "type": "multiple",
+      "explanation": "CountDownLatch one-shot, CyclicBarrier réutilisable. Latch : countDown()/await(), Barrier : await() par tous. Seul CyclicBarrier peut exécuter une action (barrierAction dans constructeur). CountDownLatch ne le peut pas."
+    },
+    {
+      "topic": "Semaphore Usage",
+      "question": "Quelles utilisations de Semaphore sont correctes ?<br><pre><code class='language-java'>Semaphore sem = new Semaphore(3);</code></pre>",
+      "options": [
+        "Limiter le nombre de threads accédant à une ressource",
+        "sem.acquire() puis try-finally avec sem.release()",
+        "sem.tryAcquire() sans release() si false",
+        "sem.acquire(2) pour acquérir 2 permits d'un coup",
+        "Remplacer synchronized complètement"
+      ],
+      "answer": [0, 1, 2, 3],
+      "type": "multiple",
+      "explanation": "Semaphore limite accès concurrent, acquire()/release() dans try-finally, tryAcquire() retourne false sans acquérir (pas besoin release), acquire(n) OK. NE remplace PAS synchronized (pas de mutual exclusion garantie sur code)."
+    },
+    {
+      "topic": "Future Methods",
+      "question": "Quelles méthodes existent sur Future ?",
+      "options": [
+        "get()",
+        "get(long timeout, TimeUnit unit)",
+        "cancel(boolean mayInterruptIfRunning)",
+        "isDone()",
+        "isCancelled()",
+        "isSuccess()"
+      ],
+      "answer": [0, 1, 2, 3, 4],
+      "type": "multiple",
+      "explanation": "Future a get(), get(timeout), cancel(), isDone(), isCancelled(). isSuccess() n'existe PAS (pour vérifier succès, appeler get() et catch ExecutionException)."
+    },
+    {
+      "topic": "CompletableFuture Composition",
+      "question": "Quelles méthodes de CompletableFuture composent des opérations asynchrones ?",
+      "options": [
+        "thenApply(Function)",
+        "thenCompose(Function<T, CompletableFuture<U>>)",
+        "thenCombine(CompletableFuture, BiFunction)",
+        "thenAccept(Consumer)",
+        "join()"
+      ],
+      "answer": [0, 1, 2, 3],
+      "type": "multiple",
+      "explanation": "thenApply/thenCompose/thenCombine/thenAccept composent des opérations asynchrones. join() BLOQUE et attend le résultat (comme get() mais unchecked exception), ne compose pas."
+    },
+    {
+      "topic": "Lock Types",
+      "question": "Quels types de locks existent en Java ?",
+      "options": [
+        "ReentrantLock",
+        "ReadWriteLock",
+        "StampedLock",
+        "Mutex",
+        "SpinLock"
+      ],
+      "answer": [0, 1, 2],
+      "type": "multiple",
+      "explanation": "ReentrantLock, ReadWriteLock (interface/ReentrantReadWriteLock), StampedLock (Java 8+) sont dans java.util.concurrent.locks. Mutex et SpinLock ne sont PAS des classes Java standard (concepts généraux de concurrence)."
+    },
+    {
+      "topic": "Thread Safety Techniques",
+      "question": "Quelles techniques assurent thread-safety ?",
+      "options": [
+        "Immutabilité des objets",
+        "synchronized methods/blocks",
+        "volatile variables pour visibilité",
+        "ThreadLocal pour isolation",
+        "Atomic classes"
+      ],
+      "answer": [0, 1, 2, 3, 4],
+      "type": "multiple",
+      "explanation": "Toutes sont des techniques valides de thread-safety ! Immutabilité (pas de shared mutable state), synchronized (mutual exclusion), volatile (visibilité), ThreadLocal (copie par thread), Atomics (operations atomiques)."
+    },
+    {
+      "topic": "Parallel Streams",
+      "question": "Quelles affirmations sont vraies sur parallel streams ?",
+      "options": [
+        "Utilisent ForkJoinPool.commonPool() par défaut",
+        "Garantissent l'ordre des éléments",
+        "Peuvent améliorer les performances pour grandes collections",
+        "forEach() maintient l'ordre",
+        "Adaptés pour CPU-intensive operations"
+      ],
+      "answer": [0, 2, 4],
+      "type": "multiple",
+      "explanation": "Parallel streams utilisent commonPool(), peuvent améliorer performance (grandes collections), bons pour CPU-intensive. NE garantissent PAS l'ordre (sauf forEachOrdered()). forEach() sur parallel = ordre non garanti."
+    },
+    {
+      "topic": "Thread State Transitions",
+      "question": "Quelles transitions d'état sont possibles ?",
+      "options": [
+        "NEW → RUNNABLE (via start())",
+        "RUNNABLE → BLOCKED (attend lock)",
+        "RUNNABLE → WAITING (via wait(), join())",
+        "WAITING → RUNNABLE (via notify(), fin de join())",
+        "RUNNABLE → TERMINATED directement",
+        "TERMINATED → RUNNABLE (restart)"
+      ],
+      "answer": [0, 1, 2, 3, 4],
+      "type": "multiple",
+      "explanation": "Transitions NEW→RUNNABLE, RUNNABLE→BLOCKED, RUNNABLE→WAITING, WAITING→RUNNABLE, RUNNABLE→TERMINATED sont valides. Un thread TERMINATED ne peut JAMAIS redémarrer (option 6 impossible)."
+    },
+    {
+      "topic": "CopyOnWrite Collections",
+      "question": "Quelles affirmations sont vraies sur CopyOnWriteArrayList ?",
+      "options": [
+        "Thread-safe sans synchronisation explicite",
+        "Optimal pour beaucoup de lectures, peu d'écritures",
+        "Chaque modification copie le array entier",
+        "Les itérateurs ne lancent jamais ConcurrentModificationException",
+        "Plus rapide que ArrayList toujours"
+      ],
+      "answer": [0, 1, 2, 3],
+      "type": "multiple",
+      "explanation": "CopyOnWriteArrayList thread-safe, copie à chaque modif (coûteux), itérateurs safe (snapshot), optimal pour lectures nombreuses. PAS plus rapide toujours (écritures très coûteuses, gros overhead mémoire)."
+    }
+  ]
+}

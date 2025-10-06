@@ -10,7 +10,8 @@ class ExamLoader {
             'Primitives/Control Flows': { order: 4, icon: '📊', title: 'Primitives/Control Flows' },
             'modules': { order: 5, icon: '📊', title: 'Modules' },
             'full': { order: 1, icon: '📊', title: 'Complet' },
-            'dev': { order: 6, icon: '🛠️', title: 'Développement & Test' }
+            'threads': { order: 6, icon: '📊', title: 'Threads & Concurrence' },
+            'dev': { order: 7, icon: '🛠️', title: 'Développement & Test' }
             };
     }
 
@@ -36,7 +37,10 @@ class ExamLoader {
             'exam-19_primitive_and_control_flow.json',
             'exam-20_primitive_and_control_flow_2nd.json',
             'exam-21_modules.json',
-            'exam-22_modules.json'
+            'exam-22_modules.json',
+            'exam-23_threads.json',
+            'exam-24_threads.json',
+            'exam-25_threads.json'
         ];
 
         this.examFiles = [];
