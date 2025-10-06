@@ -5,13 +5,13 @@ class ExamLoader {
         this.examFiles = [];
         this.examsData = {};
         this.categoryOrder = {
-            'heritage': { order: 2, icon: '🏗️', title: 'Héritage/Polymorphisme/Encapsulation/Overriding' },
+            'heritage': { order: 2, icon: '🏗️', title: 'Héritage & Polymorphisme' },
             'collections': { order: 3, icon: '📊', title: 'Collections & Streams' },
-            'Primitives/Control Flows': { order: 4, icon: '📊', title: 'Primitives/Control Flows' },
+            'Primitives/Control Flows': { order: 4, icon: '📊', title: 'Primitives & Control Flows' },
             'modules': { order: 5, icon: '📊', title: 'Modules' },
             'full': { order: 1, icon: '📊', title: 'Complet' },
             'threads': { order: 6, icon: '📊', title: 'Threads & Concurrence' },
-            'dev': { order: 7, icon: '🛠️', title: 'Développement & Test' }
+            'dev': { order: 7, icon: '🛠️', title: 'Dev & Test' }
             };
     }
 
