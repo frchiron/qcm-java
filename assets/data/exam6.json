@@ -28,14 +28,14 @@
       "topic": "Héritage",
       "question": "Quel est le résultat de ce code ?<br><pre><code class='language-java'>class Parent {\n    static { System.out.print(\"1\"); }\n    { System.out.print(\"2\"); }\n    Parent() { method(); }\n    void method() { System.out.print(\"3\"); }\n}\nclass Child extends Parent {\n    int x = 4;\n    { System.out.print(x); }\n    void method() { System.out.print(x); }\n}\nnew Child();</code></pre>",
       "options": [
-        "<code>1234</code>",
+        "<code>1204</code>",
         "<code>1024</code>",
         "<code>1304</code>",
         "<code>1234</code>"
       ],
-      "answer": 1,
+      "answer": 0,
       "difficulty": "expert",
-      "explanation": "Init static Parent (1), bloc instance Parent (2), constructeur Parent appelle method() de Child mais x pas encore initialisé (0), bloc instance Child (4)."
+      "explanation": "Init static Parent (1), bloc instance Parent (2), constructeur Parent appelle method() de Child mais x pas encore initialisé (0), bloc instance Child (4).=> 1204"
     },
     {
       "topic": "Interfaces",
@@ -72,9 +72,9 @@
         "<code>Compilation error - ambiguous</code>",
         "<code>Runtime error</code>"
       ],
-      "answer": 2,
+      "answer": 0,
       "difficulty": "expert",
-      "explanation": "Les deux signatures (int,long) et (long,int) correspondent avec élargissement. Le compilateur ne peut pas décider, erreur d'ambiguïté."
+      "explanation": "Le code affiche \"Base\", car la méthode appelée correspond à la signature (int, long) définie dans la classe Base.\nLa méthode de Derived a une signature différente (long, int), donc elle n’est pas utilisée."
     },
     {
       "topic": "Polymorphisme",

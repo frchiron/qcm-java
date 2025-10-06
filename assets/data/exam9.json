@@ -183,9 +183,9 @@
         "<code>2516</code>",
         "<code>Compilation error</code>"
       ],
-      "answer": 0,
+      "answer": 2,
       "difficulty": "expert",
-      "explanation": "range(1,5) génère [1,2,3,4]. map(n*n) → [1,4,9,16]. filter(>10) → [16]. Mais attendez : 9 n'est pas > 10. Seul 16 passe. ERREUR dans ma logique : map donne [1,4,9,16], filter(>10) garde [16]. Résultat : 16. MAIS la réponse A dit 916... Je me suis trompé. Recalculons : 3*3=9 (pas >10), 4*4=16 (>10). Donc seulement 16. La bonne réponse devrait être C. Erreur dans mon code."
+      "explanation": "range(1,5) génère [1,2,3,4]. map(n*n) → [1,4,9,16]. filter(>10) → [16]. Mais attendez : 9 n'est pas > 10. Seul 16 passe. ERREUR dans ma logique : map donne [1,4,9,16], filter(>10) garde [16]. Résultat : 16. MAIS la réponse A dit 916... Je me suis trompé. Recalculons : 3*3=9 (pas >10), 4*4=16 (>10). Donc seulement 16"
     },
     {
       "topic": "Lambda",
