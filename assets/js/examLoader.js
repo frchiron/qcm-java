@@ -142,11 +142,39 @@ class ExamLoader {
             .join('');
 
         return `
-            <div class="category-section">
+            <div class="category-section" id="theme-${categoryKey}">
                 <h2 class="category-title">${categoryData.icon} ${categoryData.title}</h2>
                 <div class="exam-grid">
                     ${examCardsHTML}
                 </div>
+            </div>
+        `;
+    }
+
+    // Generate themes summary with links
+    generateThemesSummaryHTML() {
+        const categories = this.getExamsByCategory();
+
+        const sortedCategories = Object.entries(categories)
+            .filter(([, data]) => data.exams.length > 0)
+            .sort(([, a], [, b]) => a.order - b.order);
+
+        const themesHTML = sortedCategories
+            .map(([key, data]) => `
+                <a href="#theme-${key}" class="theme-link">
+                    <span class="theme-icon">${data.icon}</span>
+                    <span class="theme-name">${data.title}</span>
+                    <span class="theme-count">${data.exams.length} quiz</span>
+                </a>
+            `)
+            .join('');
+
+        return `
+            <div class="themes-header">
+                <h3>📚 Thèmes disponibles</h3>
+            </div>
+            <div class="themes-grid">
+                ${themesHTML}
             </div>
         `;
     }

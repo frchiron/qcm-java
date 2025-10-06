@@ -47,6 +47,14 @@ document.addEventListener('DOMContentLoaded', async function() {
             updateExamBadges();
             displayGlobalStats();
 
+            // Generate themes summary after stats
+            const themesSummaryHTML = examLoader.generateThemesSummaryHTML();
+            const themesSummaryDiv = document.createElement('div');
+            themesSummaryDiv.className = 'themes-summary';
+            themesSummaryDiv.innerHTML = themesSummaryHTML;
+            const globalStats = document.querySelector('.global-stats');
+            globalStats.parentNode.insertBefore(themesSummaryDiv, globalStats.nextSibling);
+
             console.log('🎯 Dynamic exam loading completed successfully');
         } else {
             examCategoriesContainer.innerHTML = `
