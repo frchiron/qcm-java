@@ -60,8 +60,8 @@
         "10",
         "7"
       ],
-      "answer": 1,
-      "explanation": "Ordre de priorité: %, *, / (même niveau, gauche à droite) avant +, -. 17%5=2, 2*3=6, 8/4=2. Puis 2+6-2=8. Piège: beaucoup pensent que % a une priorité différente de * et /."
+      "answer": 0,
+      "explanation": "Ordre de priorité: %, *, / (même niveau, gauche à droite) avant +, -. 17%5=2, 2*3=6, 8/4=2. Puis 2+6-2=6. Piège: beaucoup pensent que % a une priorité différente de * et /."
     },
     {
       "topic": "Primitive Widening - Short to Int",
@@ -203,8 +203,8 @@
         "10",
         "Boucle infinie"
       ],
-      "answer": 2,
-      "explanation": "Itération 1: x=5, 5>0 true, x++ (x=6), 5<8 true, entre, x++ (x=7). Itération 2: x=7, 7>0 true, x++ (x=8), 7<8 true, entre, x++ (x=9). Itération 3: x=9, 9>0 true, x++ (x=10), 9<8 false, sort. x=10... Non, erreur dans mon calcul. x finit à 9."
+      "answer": 3,
+      "explanation": "Itération 1: x=5, 5>0 true, x++ (x=6), 5<8 true, entre, x++ (x=7). Itération 2: x=7, 7>0 true, x++ (x=8), 7<8 true, entre, x++ (x=9). Itération 3: x=9, 9>0 true, x++ (x=10), 9<8 false, sort. x=10."
     },
     {
       "topic": "Operator Precedence - Increment in Expression",
@@ -268,7 +268,7 @@
         "15",
         "7"
       ],
-      "answer": 2,
+      "answer": 0,
       "explanation": "Priorité: %, * (même niveau, gauche à droite), puis +, -. 15%4=3, 3*2=6. Puis 10+6-3=13. Erreur: 10+6=16, 16-3=13. Révision: 15%4=3, 3*2=6, 10+6-3=13. Donc 13, mais l'option dit 11... Vérification: 15%4=3 (car 15=4*3+3), 3*2=6, 10+6=16, 16-3=13."
     },
     {

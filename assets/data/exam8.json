@@ -167,7 +167,7 @@
         "Toutes les opérations réussissent",
         "B lance UnsupportedOperationException"
       ],
-      "answer": [0, 1, 2],
+      "answer": [0, 1, 2, 3],
       "difficulty": "expert",
       "explanation": "Arrays.asList() retourne une liste de taille fixe. add() et remove() lancent UnsupportedOperationException. set() et sort() fonctionnent car ils ne changent pas la taille."
     },
