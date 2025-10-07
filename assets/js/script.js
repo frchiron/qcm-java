@@ -197,8 +197,8 @@ function showQuestion() {
     let container = document.getElementById("question-container");
     const isMultiple = q.type === "multiple" || Array.isArray(q.answer);
 
-    document.getElementById("progress").textContent =
-        `Question ${currentQuestion + 1} / ${examData.questions.length}`;
+    document.getElementById("progress").innerHTML =
+        `<span style="color: #3b82f6; font-weight: 700;">Question ${currentQuestion + 1}</span> <span style="color: #94a3b8;">/</span> <span style="color: #64748b;">${examData.questions.length}</span>`;
 
     container.innerHTML = `
     <p class="topic">Topic : <strong>${q.topic}</strong></p>
