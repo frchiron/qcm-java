@@ -1,0 +1,677 @@
+{
+  "metadata": {
+    "id": "exam-28_full_quiz.json",
+    "mainTopic": "full",
+    "category": "full",
+    "examNumber": "F7",
+    "examName": "Examen blanc OCP-830 - Série Multi-55",
+    "questionsCount": 55,
+    "description": "Generated with ChatGPT"
+  },
+  "title": "OCP-830 Java 21 - Examen Blanc",
+  "duration": 120,
+  "questions": [
+    {
+      "topic": "Primitives & Wrappers",
+      "question": "Considérez :<br><pre><code class=\"language-java\">Integer a = 127, b = 127;\nInteger c = 128, d = 128;\nboolean x = (a==b);\nboolean y = (c==d);\nboolean z = a.equals(b) && c.equals(d);\n</code></pre>Quelles affirmations sont correctes ?",
+      "options": ["x est true", "y est true", "z est true", "Le code ne compile pas"],
+      "answer": [0, 2],
+      "type": "multiple",
+      "explanation": "Le cache d'Integer couvre [-128..127] ⇒ a et b référencent la même instance (x=true). 128 est hors cache ⇒ (c==d) false. equals compare la valeur ⇒ z=true."
+    },
+    {
+      "topic": "Strings & Text Blocks",
+      "question": "Quelle longueur imprime ce code ?<br><pre><code class=\"language-java\">String s = \"\"\"\nfoo\nbar\n\"\"\";\nSystem.out.print(s.length());</code></pre>",
+      "options": ["7", "8", "9", "10"],
+      "answer": 2,
+      "type": "single",
+      "explanation": "Le text block contient \"foo\\nbar\\n\" (3+1+3+1+1=9) à cause du saut de ligne final implicite."
+    },
+    {
+      "topic": "Date/Time API",
+      "question": "Europe/Paris passe à l'heure d'été le 31/03/2024 à 02:00→03:00. Que produit :<br><pre><code class=\"language-java\">var z = ZoneId.of(\"Europe/Paris\");\nvar ldt = LocalDateTime.of(2024,3,31,2,15);\nvar zdt = ZonedDateTime.of(ldt, z);\nSystem.out.print(zdt.getHour()+\":\"+zdt.getMinute());</code></pre>",
+      "options": ["2:15", "3:15", "1:15", "Lève DateTimeException"],
+      "answer": 1,
+      "type": "single",
+      "explanation": "02:15 n'existe pas ce jour-là ; la date est normalisée à 03:15."
+    },
+    {
+      "topic": "Flow Control / switch (patterns)",
+      "question": "Que va afficher ?<br><pre><code class=\"language-java\">String t = null;\nString s = switch (t) {\n  case null -> \"N\";\n  case String v when v.isBlank() -> \"B\";\n  default -> \"D\";\n};\nSystem.out.print(s);</code></pre>",
+      "options": ["N", "B", "D", "NullPointerException"],
+      "answer": 0,
+      "type": "single",
+      "explanation": "Les switch modernes peuvent matcher null explicitement ; on obtient \"N\"."
+    },
+    {
+      "topic": "Sealed Classes",
+      "question": "À propos du code :<br><pre><code class=\"language-java\">sealed interface Msg permits Sms, Mail {}\nfinal class Sms implements Msg {}\nnon-sealed class Mail implements Msg {}</code></pre>Quelles affirmations sont correctes ?",
+      "options": [
+        "Sms peut être étendue par d'autres classes du même module",
+        "Mail peut être étendue librement",
+        "Toutes les classes de permits doivent être présentes et accessibles à la compilation",
+        "Msg ne peut pas être sealed car Mail est non-sealed"
+      ],
+      "answer": [1, 2],
+      "type": "multiple",
+      "explanation": "Sms est final ⇒ non extensible. non-sealed retire la restriction de scellage sur Mail. Les types listés dans permits doivent être disponibles à la compilation."
+    },
+    {
+      "topic": "Records",
+      "question": "Quel(s) énoncé(s) est/sont vrai(s) pour :<br><pre><code class=\"language-java\">public record Range(int start, int end){\n  public Range{\n    if(start>end) throw new IllegalArgumentException();\n  }\n}</code></pre>",
+      "options": [
+        "Les composants sont mutables",
+        "Le constructeur compact permet la validation",
+        "equals/hashCode/toString sont générés",
+        "On doit écrire manuellement les accesseurs"
+      ],
+      "answer": [1, 2],
+      "type": "multiple",
+      "explanation": "Les composants d’un record sont finals, les accesseurs/equals/hashCode/toString sont générés. Le constructeur compact valide l’invariant."
+    },
+    {
+      "topic": "Collections (immutables)",
+      "question": "Qu'affiche ce code ?<br><pre><code class=\"language-java\">var cfg = java.util.Map.of(\"k\",\"v\");\ncfg.put(\"k\",\"v2\");</code></pre>",
+      "options": ["Remplace la valeur par v2", "UnsupportedOperationException à l'exécution", "Ne compile pas", "ClassCastException"],
+      "answer": 1,
+      "type": "single",
+      "explanation": "Map.of retourne une Map immuable ; toute mutation lève UnsupportedOperationException."
+    },
+    {
+      "topic": "Streams / findAny & findFirst",
+      "question": "Quelles affirmations sont vraies ?<br><pre><code class=\"language-java\">var data = java.util.List.of(\"x\",\"y\",\"z\");\nvar a = data.parallelStream().findAny().orElse(\"?\");\nvar b = data.stream().findFirst().orElse(\"?\");</code></pre>",
+      "options": [
+        "a peut être x, y ou z",
+        "b vaut toujours x",
+        "unordered() est requis pour que findAny fonctionne en parallèle",
+        "findAny est déterministe en parallèle"
+      ],
+      "answer": [0, 1],
+      "type": "multiple",
+      "explanation": "findAny en parallèle est non déterministe ; findFirst sur flux séquentiel préserve l’ordre."
+    },
+    {
+      "topic": "Exceptions & TWR (suppressed)",
+      "question": "Sortie ?<br><pre><code class=\"language-java\">class R implements AutoCloseable{ public void close(){throw new RuntimeException(\"C\");}}\ntry(R r = new R()){ throw new RuntimeException(\"B\"); }\ncatch(RuntimeException e){\n  System.out.print(e.getMessage());\n  for(var t: e.getSuppressed()) System.out.print(\":\"+t.getMessage());\n}</code></pre>",
+      "options": ["C", "B", "B:C", "C:B"],
+      "answer": 2,
+      "type": "single",
+      "explanation": "L'exception primaire vient du try (\"B\"); la fermeture ajoute \"C\" en suppressed."
+    },
+    {
+      "topic": "Overloading & Varargs",
+      "question": "Résultat ?<br><pre><code class=\"language-java\">void f(int... x){ System.out.print(\"varargs\"); }\nvoid f(Integer x){ System.out.print(\"box\"); }\nnew Test().f(5);</code></pre>",
+      "options": ["varargs", "box", "Ambiguïté", "Ne compile pas"],
+      "answer": 1,
+      "type": "single",
+      "explanation": "Le boxing est plus spécifique que la capture varargs pour un littéral int."
+    },
+    {
+      "topic": "Type inference (var)",
+      "question": "Lesquelles sont valides dans une méthode ?",
+      "options": [
+        "var a = 10, b = 20;",
+        "var a = 10; a = 20;",
+        "var a; a = 10;",
+        "final var s = \"hi\";"
+      ],
+      "answer": [1, 3],
+      "type": "multiple",
+      "explanation": "Déclaration multiple avec var interdite ; var exige une initialisation ; peut être final."
+    },
+    {
+      "topic": "Modules",
+      "question": "Quel module-info expose un package ?",
+      "options": [
+        "module accounting { export com.abc.report; }",
+        "module accounting { exports com.abc.report; }",
+        "module com.abc.report { exports accounting; }",
+        "module accounting { provides com.abc.report; }"
+      ],
+      "answer": 1,
+      "type": "single",
+      "explanation": "Le mot-clé correct est <code>exports</code>."
+    },
+    {
+      "topic": "Services (ServiceLoader)",
+      "question": "Quelle ligne charge correctement un service ?",
+      "options": [
+        "ServiceLoader<BloggerService> sl = ServiceLoader.load(BloggerService.class);",
+        "BloggerService bs = ServiceLoader.get(BloggerService.class);",
+        "BloggerService blogger = BloggerService.getInstance();",
+        "new SimpleBlogger().blog(\"hi\"); // charge via SPI"
+      ],
+      "answer": 0,
+      "type": "single",
+      "explanation": "API standard : <code>ServiceLoader.load</code>."
+    },
+    {
+      "topic": "Concurrency / Virtual Threads",
+      "question": "À propos des virtual threads :",
+      "options": [
+        "On crée un virtual thread via Thread.ofVirtual().start(r)",
+        "Executors.newWorkStealingPool() crée des virtual threads",
+        "Les virtual threads sont toujours plus rapides que les platform threads",
+        "Un virtual thread est nécessairement daemon et non modifiable"
+      ],
+      "answer": 0,
+      "type": "single",
+      "explanation": "Création via <code>Thread.ofVirtual()</code>. Les autres affirmations sont fausses."
+    },
+    {
+      "topic": "Concurrency / Atomic & synchronized",
+      "question": "Pour un compteur partagé incrémenté par plusieurs tâches, quelles solutions rendent le code thread-safe ?",
+      "options": [
+        "Utiliser AtomicInteger",
+        "Déclarer int count volatile",
+        "Protéger l’incrément dans un bloc synchronized cohérent",
+        "Déclarer la variable <code>synchronized int count</code>"
+      ],
+      "answer": [0, 2],
+      "type": "multiple",
+      "explanation": "volatile ne rend pas l’opération ++ atomique ; <code>synchronized int</code> n’existe pas ; AtomicInteger ou synchronized conviennent."
+    },
+    {
+      "topic": "NIO Files",
+      "question": "Lesquelles impriment correctement toutes les lignes d’un fichier texte existant ?",
+      "options": [
+        "Files.lines(Paths.get(\"file.txt\")).forEach(System.out::println);",
+        "new BufferedReader(new FileReader(\"file.txt\")).lines().forEach(System.out::println);",
+        "Files.list(Paths.get(\"file.txt\")).forEach(System.out::println);",
+        "Files.find(Paths.get(\"file.txt\")).forEach(System.out::println);"
+      ],
+      "answer": [0, 1],
+      "type": "multiple",
+      "explanation": "Files.list/find itèrent des chemins (répertoires), pas le contenu du fichier."
+    },
+    {
+      "topic": "NIO Path",
+      "question": "Que renvoie :<br><pre><code class=\"language-java\">Paths.get(\"x\\\\y\").relativize(Paths.get(\"x\\\\y\\\\z\"))</code></pre> ?",
+      "options": ["z", "..\\z", "x\\y\\z", "\\z"],
+      "answer": 0,
+      "type": "single",
+      "explanation": "Chemin cible enfant direct ⇒ relatif « z »."
+    },
+    {
+      "topic": "Localization / NumberFormat",
+      "question": "Comment formatter une monnaie en fr_CA ?",
+      "options": [
+        "NumberFormat.getCurrencyInstance(new Locale(\"fr\",\"CA\"))",
+        "new DecimalFormat(new Locale(\"fr\",\"CA\"))",
+        "NumberFormat.getInstance(\"fr_CA\").setCurrency()",
+        "Locale.setDefault(Locale.CANADA_FRENCH); new Currency()"
+      ],
+      "answer": 0,
+      "type": "single",
+      "explanation": "Usine : <code>NumberFormat.getCurrencyInstance(locale)</code>."
+    },
+    {
+      "topic": "Streams / Reduction (associativité)",
+      "question": "Laquelle peut donner un résultat différent à chaque exécution (même données) ?<br><pre><code class=\"language-java\">var L = java.util.List.of(1,2,3,4,5,6,7);</code></pre>",
+      "options": [
+        "L.parallelStream().reduce(0, Integer::sum)",
+        "L.parallelStream().reduce(5, Integer::sum)",
+        "L.stream().reduce(0, Integer::sum)",
+        "L.parallelStream().reduce(Integer::sum).orElse(0)"
+      ],
+      "answer": 1,
+      "type": "single",
+      "explanation": "Identité non neutre (5) en réduction parallèle ⇒ combinaison non déterministe."
+    },
+    {
+      "topic": "Generics / PECS",
+      "question": "Quelle signature d’override est valide si la méthode de base retourne <code>ArrayList&lt;Number&gt;</code> et prend <code>Set&lt;Integer&gt;</code> ?",
+      "options": [
+        "public ArrayList<Number> transform(Set<Integer> s)",
+        "public List<Integer> transform(Set<Integer> s)",
+        "public ArrayList<? super Integer> transform(Set<Integer> s)",
+        "public ArrayList<? extends Integer> transform(Set<Integer> s)"
+      ],
+      "answer": 0,
+      "type": "single",
+      "explanation": "Le covariant doit respecter le type exact ici (ArrayList<Number>)."
+    },
+    {
+      "topic": "Collections / Map.merge",
+      "question": "Que va afficher ?<br><pre><code class=\"language-java\">var m = new java.util.HashMap<String,Integer>();\nm.put(\"a\",1); m.put(\"b\",1);\nm.merge(\"b\",1,Integer::sum);\nm.merge(\"c\",3,Integer::sum);\nSystem.out.print(m);</code></pre>",
+      "options": ["{a=1, b=2, c=3}", "{a=1, b=1, c=3}", "{a=1, b=2}", "Exception"],
+      "answer": 0,
+      "type": "single",
+      "explanation": "merge additionne si clé présente, sinon insère la valeur initiale."
+    }
+,
+    {
+      "topic": "Concurrency / Virtual Threads",
+      "question": "À propos des virtual threads, quelles affirmations sont correctes ?",
+      "options": [
+        "Thread.ofVirtual().start(r) crée et démarre un virtual thread",
+        "Executors.newThreadPerTaskExecutor(Thread.ofVirtual().factory()) exécute chaque tâche dans un virtual thread",
+        "Les virtual threads ne peuvent pas bloquer sur I/O",
+        "setDaemon(true) est ignoré sur les virtual threads"
+      ],
+      "answer": [0,1],
+      "type": "multiple",
+      "explanation": "Création via API ofVirtual ; l’exécuteur per-task combiné à ofVirtual() crée des VTs. Ils peuvent bloquer (parking) ; setDaemon n’est pas exposé pareil mais on ne dit pas qu’il est “ignoré”."
+    },
+    {
+      "topic": "Concurrency / ReadWriteLock",
+      "question": "Après avoir pris un readLock, que se passe-t-il si un writeLock est tenté par un autre thread ?",
+      "options": [
+        "Le writeLock est accordé immédiatement",
+        "Le writeLock attend la libération de tous les readLocks",
+        "Le writeLock annule les readLocks existants",
+        "Le writeLock est converti implicitement en readLock"
+      ],
+      "answer": 1,
+      "type": "single",
+      "explanation": "ReentrantReadWriteLock autorise plusieurs lecteurs, mais le writeLock requiert l’exclusion totale."
+    },
+    {
+      "topic": "Pattern Matching / instanceof",
+      "question": "Sortie ?<br><pre><code class=\"language-java\">Object x = \"kayak\";\nif(x instanceof String s && s.length() > 4) System.out.print(s.charAt(0)+\"\"+s.charAt(4));\nSystem.out.print(s);</code></pre>",
+      "options": [
+        "ka puis kayak",
+        "ka puis erreur de compilation",
+        "kk puis rien",
+        "erreur à l’exécution"
+      ],
+      "answer": 1,
+      "type": "single",
+      "explanation": "La variable de pattern s n’est visible que dans la portée du if ; l’utilisation ensuite ne compile pas."
+    },
+    {
+      "topic": "Pattern Matching / switch",
+      "question": "Lequel est un switch expression valide et exhaustif sur Object ?",
+      "options": [
+        "switch(o){ case String s -> s; }",
+        "switch(o){ case String s -> s; case null -> \"n\"; default -> \"?\"; }",
+        "switch(o){ case null -> null; }",
+        "switch(o){ default -> (String)o; }"
+      ],
+      "answer": 1,
+      "type": "single",
+      "explanation": "Un switch expression doit être exhaustif (cases + default ou couverture totale)."
+    },
+    {
+      "topic": "Sealed / Hierarchie",
+      "question": "Énoncés vrais ?<br><pre><code class=\"language-java\">sealed interface Noti permits Sms, Email {}\nfinal class Sms implements Noti {}\nnon-sealed class Email implements Noti {}</code></pre>",
+      "options": [
+        "Email peut être étendue par n’importe quelle classe accessible",
+        "Sms peut être étendue par des classes du même package",
+        "Les types listés dans permits doivent être accessibles au compilateur",
+        "Il faut que Email soit final, sinon compilation échoue"
+      ],
+      "answer": [0,2],
+      "type": "multiple",
+      "explanation": "non-sealed lève le scellage pour Email ; Sms est final donc non extensible ; les types permits doivent être présents/visibles."
+    },
+    {
+      "topic": "Records / Canonical & Compact",
+      "question": "À propos d’un record :<br><pre><code class=\"language-java\">public record Rng(int min, int max){\n  public Rng{ if(min>max) throw new IllegalArgumentException(); }\n}</code></pre>Quelles affirmations sont correctes ?",
+      "options": [
+        "Le constructeur compact valide avant l’assignation implicite",
+        "Les composants sont finals",
+        "On doit écrire manuellement toString()",
+        "On peut ajouter des méthodes d’instance"
+      ],
+      "answer": [0,1,3],
+      "type": "multiple",
+      "explanation": "Records → composants finals, méthodes de base générées ; compact ctor pour valider ; méthodes d’instance autorisées."
+    },
+    {
+      "topic": "Date/Time / DST backward",
+      "question": "US/Eastern recule d’1h à 02:00 (retour DST). Que donne :<br><pre><code class=\"language-java\">var z = ZoneId.of(\"US/Eastern\");\nvar ldt = LocalDateTime.of(2022,11,6,1,30);\nvar zdt = ZonedDateTime.of(ldt,z).plus(Duration.ofHours(1));\nSystem.out.println(zdt.getHour());</code></pre>",
+      "options": ["1","2","3","Exception"],
+      "answer": 1,
+      "type": "single",
+      "explanation": "Avec Duration, on ajoute 1h “horloge” → passe de 1:30 à 2:30 (seconde occurrence du 1–2)."
+    },
+    {
+      "topic": "Date/Time / Period vs Duration",
+      "question": "Choisissez les affirmations vraies (ZonedDateTime) :",
+      "options": [
+        "plus(Period.ofDays(1)) conserve l’heure civile locale en tenant compte des transitions",
+        "plus(Duration.ofDays(1)) ajoute 24h exactes",
+        "Les deux ont le même effet pendant un changement d’heure",
+        "Period peut changer l’offset ; Duration jamais"
+      ],
+      "answer": [0,1,3],
+      "type": "multiple",
+      "explanation": "Period suit le calendrier local (offset peut changer), Duration ajoute un nombre d’heures exact."
+    },
+    {
+      "topic": "Streams / flatMap & regex",
+      "question": "Quel code crée un Stream<String> de mots (sans vides) depuis List<String> lignes ?",
+      "options": [
+        "lignes.stream().map(l->l.split(\"[ ,.!?\\\\r\\\\n]\")).filter(a->a.length>0)",
+        "lignes.stream().flatMap(l->Stream.of(l.split(\"[ ,.!?\\\\r\\\\n]\"))).filter(s->!s.isEmpty())",
+        "lignes.stream().forEach(l->Stream.of(l.split(\" \")))",
+        "lignes.parallelStream().map(String::chars)"
+      ],
+      "answer": 1,
+      "type": "single",
+      "explanation": "map donnerait Stream<String[]> ; flatMap/Stream.of + filter supprime les vides."
+    },
+    {
+      "topic": "Streams / groupingBy & mapping",
+      "question": "Construire Map<Character, List<String>> des mots groupés par première lettre :",
+      "options": [
+        "stream.collect(groupingBy(s->s.charAt(0)))",
+        "stream.collect(groupingBy(s->s.charAt(0), mapping(s->s, toList())))",
+        "stream.collect(toMap(s->s.charAt(0), s->List.of(s)))",
+        "stream.collect(groupingBy(s->s.substring(0,1)))"
+      ],
+      "answer": 1,
+      "type": "single",
+      "explanation": "groupingBy + mapping → valeur List<String> ; les autres ne donnent pas la bonne structure/valeur."
+    },
+    {
+      "topic": "Streams parallèles / combiner",
+      "question": "En réduction parallèle, quelles affirmations sont correctes ?",
+      "options": [
+        "L’identité doit être neutre pour l’opération",
+        "Le combiner doit être associatif",
+        "Le combiner n’est jamais utilisé",
+        "Une identité non neutre peut mener à un résultat incohérent"
+      ],
+      "answer": [0,1,3],
+      "type": "multiple",
+      "explanation": "Identité neutre + associativité sont requis ; sinon incohérences."
+    },
+    {
+      "topic": "I/O / RandomAccessFile",
+      "question": "Que fait ce code ?<br><pre><code class=\"language-java\">try(var raf = new RandomAccessFile(\"d.bin\",\"rw\")){\n  raf.seek(4);\n  raf.writeInt(0xCAFE);\n}</code></pre>",
+      "options": [
+        "Écrit 4 octets à l’offset 4",
+        "Écrit 2 octets à l’offset 4",
+        "Crée une exception car le fichier n’existe pas",
+        "Toujours tronque le fichier à 0"
+      ],
+      "answer": 0,
+      "type": "single",
+      "explanation": "writeInt écrit 4 octets ; RandomAccessFile crée le fichier si nécessaire en mode \"rw\"."
+    },
+    {
+      "topic": "NIO / Files.walk",
+      "question": "Quelles propositions sont correctes pour parcourir récursivement un répertoire et filtrer les .java ?",
+      "options": [
+        "Files.walk(dir).filter(p->p.toString().endsWith(\".java\"))",
+        "Files.list(dir).filter(p->p.toString().endsWith(\".java\")) // parcourt récursivement",
+        "Files.walk(dir, 1) parcourt récursivement sans limite",
+        "Files.walk(dir).forEach(System.out::println)"
+      ],
+      "answer": [0,3],
+      "type": "multiple",
+      "explanation": "list non récursif ; walk est récursif, avec profondeur paramétrable."
+    },
+    {
+      "topic": "NIO / PathMatcher (glob)",
+      "question": "Lequel capture \"src/main/java/app/Test.java\" avec un PathMatcher glob sur un Path absolu ?",
+      "options": [
+        "getPathMatcher(\"glob:**/src/main/java/**/*.java\")",
+        "getPathMatcher(\"glob:src/main/java/**/*.java\")",
+        "getPathMatcher(\"glob:**.java\")",
+        "getPathMatcher(\"regex:.+java\")"
+      ],
+      "answer": 0,
+      "type": "single",
+      "explanation": "Avec glob et un path absolu, il faut généralement **/ pour matcher à partir de la racine."
+    },
+    {
+      "topic": "NIO / WatchService",
+      "question": "À propos de WatchService :",
+      "options": [
+        "Il surveille les modifications de contenu des fichiers (diffs) nativement",
+        "On peut surveiller CREATE, DELETE, MODIFY sur un répertoire",
+        "Il est basé sur un polling uniforme partout",
+        "Un overflow d’événements peut survenir"
+      ],
+      "answer": [1,3],
+      "type": "multiple",
+      "explanation": "WatchService surveille des événements de système de fichiers ; pas de diff de contenu ; implémentation dépendante, overflow possible."
+    },
+    {
+      "topic": "Serialization",
+      "question": "Énoncés vrais :",
+      "options": [
+        "Les champs transient ne sont pas sérialisés",
+        "Les champs static sont sérialisés avec l’instance",
+        "readObject peut restaurer des invariants",
+        "serialVersionUID peut éviter InvalidClassException lors d’évolutions compatibles"
+      ],
+      "answer": [0,2,3],
+      "type": "multiple",
+      "explanation": "transient non sérialisé ; static appartient à la classe ; readObject pour invariants ; serialVersionUID stabilise la compatibilité."
+    },
+    {
+      "topic": "Modules / requires transitive",
+      "question": "Quel effet de <code>requires transitive util.api</code> dans le module A ?",
+      "options": [
+        "Les modules qui requièrent A héritent d’un accès à util.api",
+        "A doit exporter tous ses packages",
+        "A importe transitivement les dépendances de util.api",
+        "A ne peut plus être requis directement"
+      ],
+      "answer": 0,
+      "type": "single",
+      "explanation": "requires transitive expose la dépendance aux consommateurs de A."
+    },
+    {
+      "topic": "Modules / services",
+      "question": "Pour exposer un fournisseur de service :",
+      "options": [
+        "module m { provides p.Service with impl.Provider; }",
+        "module m { uses p.Service; }",
+        "module m { exports impl; }",
+        "module m { requires p.Service; }"
+      ],
+      "answer": 0,
+      "type": "single",
+      "explanation": "Fournisseur déclaré via provides … with … ; uses est côté consommateur."
+    },
+    {
+      "topic": "Exceptions / multi-catch",
+      "question": "Lesquelles sont valides ?",
+      "options": [
+        "catch(FileNotFoundException | IOException e) { }",
+        "catch(IOException | SQLException e) { }",
+        "catch(Exception | RuntimeException e) { }",
+        "catch(ArithmeticException | NullPointerException e) { }"
+      ],
+      "answer": [1,3],
+      "type": "multiple",
+      "explanation": "Un multi-catch ne peut pas contenir des types avec relation parent/enfant (1 et 3 sont invalides ; 2 et 4 valides)."
+    },
+    {
+      "topic": "Exceptions / TWR chaîné",
+      "question": "Dans TWR, si close() lève une exception et que le bloc try lève aussi une exception, alors :",
+      "options": [
+        "L’exception de close() remplace l’exception du try",
+        "L’exception du try est primaire et close() est suppressed",
+        "Les deux sont perdues",
+        "Le compilateur force un finally explicite"
+      ],
+      "answer": 1,
+      "type": "single",
+      "explanation": "Le TWR attache les exceptions de fermeture comme suppressed à l’exception primaire."
+    },
+    {
+      "topic": "Enums / comportement",
+      "question": "Sortie ?<br><pre><code class=\"language-java\">enum Mode{ A{String label(){return \"x\";}}, B;\n  String label(){ return name(); }\n}\nSystem.out.print(Mode.A.label()+\",\"+Mode.B.label());</code></pre>",
+      "options": ["x,B", "A,B", "x,A", "Compilation error"],
+      "answer": 2,
+      "type": "single",
+      "explanation": "Corps spécifique pour A, méthode par défaut pour B."
+    },
+    {
+      "topic": "Functional Interfaces / signatures",
+      "question": "Associez correctement :",
+      "options": [
+        "DoubleFunction<Integer> f = m -> (int)m.doubleValue();",
+        "ToIntFunction<Double> g = d -> (int)Math.floor(d);",
+        "IntUnaryOperator h = x -> x + 1;",
+        "Function<int,Integer> k = i -> i"
+      ],
+      "answer": [1,2,3],
+      "type": "multiple",
+      "explanation": "DoubleFunction<R> reçoit un double primitif → le paramètre doit être double, pas Double ; Function<int,…> invalide (pas de primitives)."
+    },
+    {
+      "topic": "Collections / Map.computeIfAbsent",
+      "question": "Que fait computeIfAbsent ?",
+      "options": [
+        "Incrémente la valeur si présente, sinon met 1",
+        "Met la valeur si la clé est absente, via un Supplier basé sur la clé",
+        "Remplace inconditionnellement la valeur",
+        "Supprime la clé si la fonction renvoie null"
+      ],
+      "answer": [1,3],
+      "type": "multiple",
+      "explanation": "computeIfAbsent calcule pour clé absente ; si la fonction renvoie null, aucune insertion."
+    },
+    {
+      "topic": "Collections concurrentes",
+      "question": "ConcurrentHashMap autorise :",
+      "options": [
+        "Les clés null",
+        "Les valeurs null",
+        "Ni clés ni valeurs null",
+        "Les deux"
+      ],
+      "answer": 2,
+      "type": "single",
+      "explanation": "ConcurrentHashMap interdit null pour clé et valeur."
+    },
+    {
+      "topic": "CopyOnWriteArrayList",
+      "question": "Énoncés vrais :",
+      "options": [
+        "Les itérateurs sont fail-fast",
+        "Les itérateurs voient un instantané immuable",
+        "addAll est O(n) et provoque une copie",
+        "Convient aux scénarios write-heavy"
+      ],
+      "answer": [1,2],
+      "type": "multiple",
+      "explanation": "COW → snapshot lors de l’itération ; non fail-fast ; copies coûteuses → plutôt read-heavy."
+    },
+    {
+      "topic": "I/O / Reader-Writer & Charset",
+      "question": "Lire un fichier texte UTF-8 ligne par ligne (sans NIO) :",
+      "options": [
+        "new BufferedReader(new FileReader(path))",
+        "new BufferedReader(new InputStreamReader(new FileInputStream(path), StandardCharsets.UTF_8))",
+        "Files.newBufferedReader(Path.of(path))",
+        "new BufferedReader(new FileReader(path, UTF_8))"
+      ],
+      "answer": [1,2],
+      "type": "multiple",
+      "explanation": "FileReader sans charset est dépendant de la locale ; Files.newBufferedReader utilise UTF-8 par défaut (depuis Java 18+)."
+    },
+    {
+      "topic": "NIO / Path.normalize & toRealPath",
+      "question": "Différence correcte :",
+      "options": [
+        "normalize résout les liens symboliques",
+        "toRealPath accède au système de fichiers et suit les liens symboliques (par défaut)",
+        "normalize peut lancer IOException",
+        "toRealPath ne touche pas le disque"
+      ],
+      "answer": 1,
+      "type": "single",
+      "explanation": "normalize est purement lexical ; toRealPath résout réellement (I/O, liens)."
+    },
+    {
+      "topic": "Generics / wildcards",
+      "question": "Quelles assignations compilent ?",
+      "options": [
+        "List<? extends Number> a = new ArrayList<Integer>();",
+        "List<? super Integer> b = new ArrayList<Number>();",
+        "List<Number> c = new ArrayList<? extends Integer>();",
+        "List<? super Number> d = new ArrayList<Object>();"
+      ],
+      "answer": [0,1,3],
+      "type": "multiple",
+      "explanation": "? extends Number accepte ArrayList<Integer> ; ? super Integer accepte Number ; ? super Number accepte Object ; “new ArrayList<? extends Integer>()” n’existe pas."
+    },
+    {
+      "topic": "Varargs & null",
+      "question": "Que fait l’appel m(null) si on a :<br><pre><code class=\"language-java\">void m(String s){}\nvoid m(String... ss){}\n</code></pre>",
+      "options": [
+        "Appelle m(String) (le plus spécifique)",
+        "Appelle m(String...)",
+        "Ambiguïté de surcharge",
+        "Ne compile pas"
+      ],
+      "answer": 0,
+      "type": "single",
+      "explanation": "m(String) est plus spécifique que m(String...)."
+    },
+    {
+      "topic": "Localization / ResourceBundle",
+      "question": "Avec base bundle messages.properties et messages_fr_FR.properties, et Locale.FRANCE, quelles affirmations sont correctes ?",
+      "options": [
+        "messages_fr_FR est choisi",
+        "messages_fr est choisi",
+        "messages (base) est choisi si fr_FR absent",
+        "Une MissingResourceException est toujours lancée si fr_FR absent"
+      ],
+      "answer": [0,2],
+      "type": "multiple",
+      "explanation": "Recherche par chaînage : langue_pays, langue, base."
+    },
+    {
+      "topic": "Formatting / MessageFormat",
+      "question": "Sortie ?<br><pre><code class=\"language-java\">var pat = \"{0,number,currency} - {1,date,short}\";\nSystem.out.println(java.text.MessageFormat.format(pat, 1234.5, new java.util.Date()));</code></pre>",
+      "options": [
+        "Dépend du Locale par défaut",
+        "Toujours en USD et MM/dd/yy",
+        "Toujours en EUR et dd/MM/yy",
+        "Exception si Locale non défini"
+      ],
+      "answer": 0,
+      "type": "single",
+      "explanation": "MessageFormat s’appuie sur le Locale courant."
+    },
+    {
+      "topic": "Packaging / jlink (conceptuel)",
+      "question": "À propos de jlink :",
+      "options": [
+        "Crée une image runtime personnalisée avec les modules requis",
+        "Remplace le JDK du système",
+        "Nécessite que l’application soit modulaire",
+        "Fonctionne aussi avec des jars non modulaires sans module-info ni automatic modules"
+      ],
+      "answer": [0,2],
+      "type": "multiple",
+      "explanation": "jlink assemble une image avec modules ; l’app doit être modulaire."
+    },
+    {
+      "topic": "Packaging / jars modulaires",
+      "question": "Énoncé vrai :",
+      "options": [
+        "Un jar avec module-info.class est un module nommé",
+        "Un jar sans module-info ne peut jamais être utilisé",
+        "Un jar sans module-info mis sur le module-path devient un module automatique",
+        "Les modules automatiques ne peuvent pas être requis"
+      ],
+      "answer": [0,2],
+      "type": "multiple",
+      "explanation": "module-info → module nommé ; sinon automatic module sur module-path."
+    },
+    {
+      "topic": "Parallel Streams / side effects",
+      "question": "Quelles pratiques sont sûres ?",
+      "options": [
+        "Accumuler dans un ArrayList partagé sans synchronisation",
+        "Utiliser collect(toList())",
+        "Utiliser Collectors.toConcurrentMap sur un flux parallèle",
+        "Modifer une variable externe non volatile dans map()"
+      ],
+      "answer": [1,2],
+      "type": "multiple",
+      "explanation": "Éviter les effets de bord non synchronisés ; collect fournit des conteneurs sûrs pour l’usage prévu."
+    }
+  ]
+}
+

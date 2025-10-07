@@ -42,7 +42,8 @@ class ExamLoader {
             'exam-24_threads.json',
             'exam-25_threads.json',
             'exam-26_full_quiz.json',
-            'exam-27_full_quiz.json'
+            'exam-27_full_quiz.json',
+            'exam-28_full_quiz.json'
         ];
 
         this.examFiles = [];
