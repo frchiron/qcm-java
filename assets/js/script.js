@@ -116,17 +116,44 @@ function setupNavigationButtons() {
 }
 
 function startTimer(minutes) {
-    let seconds = minutes * 60;
-    timer = setInterval(() => {
+    const totalSeconds = minutes * 60;
+    let seconds = totalSeconds;
+
+    const timerTime = document.querySelector(".timer-time");
+    const timerProgress = document.querySelector(".timer-progress");
+    const circumference = 2 * Math.PI * 35; // rayon = 35
+
+    function updateTimer() {
         let min = Math.floor(seconds / 60);
         let sec = seconds % 60;
-        document.getElementById("timer").textContent =
-            `⏱ ${min}:${sec < 10 ? '0' : ''}${sec}`;
+        timerTime.textContent = `${min}:${sec < 10 ? '0' : ''}${sec}`;
+
+        // Calculer la progression (cercle qui se vide)
+        const progress = seconds / totalSeconds;
+        const offset = circumference * (1 - progress);
+        timerProgress.style.strokeDashoffset = offset;
+
+        // Changer la couleur selon le temps restant
+        timerProgress.classList.remove('warning', 'danger');
+        const percentRemaining = (seconds / totalSeconds) * 100;
+
+        if (percentRemaining <= 10) {
+            timerProgress.classList.add('danger');
+        } else if (percentRemaining <= 25) {
+            timerProgress.classList.add('warning');
+        }
+
         if (seconds-- <= 0) {
             clearInterval(timer);
             endExam();
         }
-    }, 1000);
+    }
+
+    // Premier affichage immédiat
+    updateTimer();
+
+    // Puis toutes les secondes
+    timer = setInterval(updateTimer, 1000);
 }
 
 function saveCurrentAnswer() {

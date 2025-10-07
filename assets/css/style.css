@@ -24,9 +24,83 @@ h1 {
 .status-bar {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     width: 100%;
     color: #555;
     font-size: 0.9rem;
+}
+
+/* Timer circulaire élaboré */
+.timer-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.timer-circle {
+    transform: rotate(-90deg);
+}
+
+.timer-bg {
+    fill: none;
+    stroke: #e5e7eb;
+    stroke-width: 6;
+}
+
+.timer-progress {
+    fill: none;
+    stroke: #10b981;
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 220;
+    stroke-dashoffset: 0;
+    transition: stroke 0.3s ease, stroke-dashoffset 1s linear;
+}
+
+.timer-progress.warning {
+    stroke: #f59e0b;
+}
+
+.timer-progress.danger {
+    stroke: #ef4444;
+    animation: timerPulse 1s ease-in-out infinite;
+}
+
+@keyframes timerPulse {
+    0%, 100% {
+        stroke-width: 6;
+        opacity: 1;
+    }
+    50% {
+        stroke-width: 8;
+        opacity: 0.8;
+    }
+}
+
+.timer-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.timer-time {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #1e293b;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+}
+
+.timer-label {
+    font-size: 0.65rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 2px;
+    font-weight: 500;
 }
 
 .card {
@@ -799,6 +873,30 @@ body.home-page {
 
     .question-dot.current {
         transform: scale(1.1);
+    }
+
+    /* Timer responsive */
+    .timer-container {
+        margin-top: 5px;
+    }
+
+    .timer-circle {
+        width: 70px;
+        height: 70px;
+    }
+
+    .timer-time {
+        font-size: 1.1rem;
+    }
+
+    .timer-label {
+        font-size: 0.6rem;
+    }
+
+    .status-bar {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
     }
 }
 

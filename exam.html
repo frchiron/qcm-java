@@ -17,7 +17,16 @@
         <h1 id="exam-title"></h1>
         <div class="status-bar">
             <span id="progress"></span>
-            <span id="timer"></span>
+            <div id="timer" class="timer-container">
+                <svg class="timer-circle" width="80" height="80">
+                    <circle class="timer-bg" cx="40" cy="40" r="35"></circle>
+                    <circle class="timer-progress" cx="40" cy="40" r="35"></circle>
+                </svg>
+                <div class="timer-text">
+                    <div class="timer-time"></div>
+                    <div class="timer-label">Temps restant</div>
+                </div>
+            </div>
         </div>
         <div id="question-indicator" class="question-indicator"></div>
     </header>
