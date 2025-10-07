@@ -1,0 +1,708 @@
+{
+  "metadata": {
+    "id": "exam-27_full_quiz.json",
+    "mainTopic": "full",
+    "category": "full",
+    "examNumber": "F6",
+    "examName": "OCP Java SE 21 Developer",
+    "questionsCount": 51,
+    "description": "Examen blanc de 51 questions couvrant tous les domaines Java 21"
+  },
+  "title": "Java 21 OCP-830 - Examen Blanc 25 Questions",
+  "duration": 120,
+  "questions": [
+    {
+      "topic": "Switch Pattern Matching",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>sealed interface Vehicle permits Car, Truck {}\nrecord Car(int seats) implements Vehicle {}\nrecord Truck(int capacity) implements Vehicle {}\n\npublic class TestClass {\n    public static String getInfo(Vehicle v) {\n        return switch(v) {\n            case Car c when c.seats() > 5 -> \"Large car\";\n            case Car c -> \"Small car\";\n            case Truck t -> \"Truck: \" + t.capacity();\n        };\n    }\n    \n    public static void main(String[] args) {\n        System.out.println(getInfo(new Car(7)));\n        System.out.println(getInfo(new Car(4)));\n    }\n}</code></pre>",
+      "options": [
+        "Large car\nSmall car",
+        "Small car\nSmall car",
+        "Large car\nLarge car",
+        "Le code ne compile pas car le switch n'est pas exhaustif.",
+        "Le code ne compile pas car les guards (when) ne peuvent pas être utilisés avec sealed types."
+      ],
+      "answer": [0],
+      "explanation": "Le switch avec pattern matching et guards fonctionne correctement. Pour new Car(7), le premier case avec guard (c.seats() > 5) est vrai, donc affiche \"Large car\". Pour new Car(4), le premier case échoue, mais le second case Car c (sans guard) correspond, donc affiche \"Small car\". Le switch est exhaustif car il couvre toutes les implémentations permises de Vehicle."
+    },
+    {
+      "topic": "Collectors - teeing",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>List&lt;Integer&gt; nums = Arrays.asList(10, 20, 30, 40, 50);\n\nString result = nums.stream().collect(\n    Collectors.teeing(\n        Collectors.summingInt(n -> n),\n        Collectors.counting(),\n        (sum, count) -> sum + \"/\" + count\n    )\n);\n\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "150/5",
+        "30/5",
+        "150/1",
+        "Le code ne compile pas.",
+        "Une exception est levée à l'exécution."
+      ],
+      "answer": [0],
+      "explanation": "Collectors.teeing() permet d'appliquer deux collectors en parallèle puis de combiner leurs résultats. Le premier collector (summingInt) calcule la somme : 10+20+30+40+50 = 150. Le second (counting) compte les éléments : 5. La fonction de merge combine les deux : \"150/5\". C'est très utile pour calculer par exemple une moyenne en une seule passe."
+    },
+    {
+      "topic": "Record Canonical Constructor",
+      "question": "Quelles affirmations sont correctes concernant le code suivant ?<br><pre><code class='language-java'>record Book(String title, double price) {\n    public Book(String title, double price) {\n        if (price < 0) throw new IllegalArgumentException();\n        this.title = title.toUpperCase();\n        this.price = price;\n    }\n}</code></pre>",
+      "options": [
+        "Le code compile sans erreur.",
+        "Le canonical constructor peut modifier les valeurs avant l'affectation aux champs.",
+        "this.title et this.price sont nécessaires car c'est un canonical constructor explicite.",
+        "Un compact constructor serait plus approprié ici.",
+        "Le code ne compile pas car on ne peut pas modifier les paramètres dans un record."
+      ],
+      "answer": [0, 1, 2],
+      "type": "multiple",
+      "explanation": "C'est un canonical constructor EXPLICITE (pas compact). Dans ce cas, on DOIT explicitement affecter TOUS les champs avec this.field = value. On peut faire des validations et transformations avant l'affectation. Le code compile. Note: un compact constructor aurait été plus élégant car il permet de modifier les paramètres avant l'affectation implicite : public Book { if (price < 0) throw new IllegalArgumentException(); title = title.toUpperCase(); }"
+    },
+    {
+      "topic": "Parallel Stream & Reduction Identity",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>List&lt;Integer&gt; numbers = Arrays.asList(1, 2, 3, 4);\n\nint result = numbers.parallelStream()\n    .reduce(10, (a, b) -> a + b);\n\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "20",
+        "Entre 20 et 50",
+        "10",
+        "Le résultat est imprévisible.",
+        "Une exception est levée à l'exécution."
+      ],
+      "answer": [1],
+      "type": "multiple",
+      "explanation": "Avec parallelStream() et reduce avec identity, l'identity (10) est utilisée comme valeur de départ pour CHAQUE partition/thread. Si le stream est divisé en 2 partitions par exemple: partition1 calcule 10+1+2=13, partition2 calcule 10+3+4=17, puis combine: 13+17=30. Si divisé en 4 partitions: 10+1=11, 10+2=12, 10+3=13, 10+4=14, puis combine tout = 50. Le résultat dépend du nombre de partitions utilisées par le framework de parallélisation. C'est un piège classique: l'identity est dupliquée!"
+    },
+    {
+      "topic": "Module Exports & Opens",
+      "question": "Considérez le module suivant :<br><pre><code class='language-java'>module app.data {\n    exports com.app.model;\n    opens com.app.entity;\n}</code></pre>Quelles affirmations sont correctes ?",
+      "options": [
+        "Les classes de com.app.model sont accessibles par d'autres modules via compilation.",
+        "Les classes de com.app.entity sont accessibles par d'autres modules via compilation.",
+        "Les classes de com.app.entity sont accessibles via réflexion par d'autres modules.",
+        "Les classes de com.app.model sont accessibles via réflexion par d'autres modules.",
+        "opens et exports peuvent être utilisés sur le même package."
+      ],
+      "answer": [0, 2, 4],
+      "type": "multiple",
+      "explanation": "'exports' rend un package accessible à d'autres modules pour l'utilisation normale (compilation et runtime). 'opens' rend un package accessible pour la réflexion (nécessaire pour frameworks comme Hibernate, Jackson). com.app.model est exporté donc accessible normalement. com.app.entity est ouvert donc accessible via réflexion mais PAS normalement (pas d'export). On peut combiner exports et opens sur le même package pour autoriser les deux types d'accès. com.app.model n'est pas ouvert donc la réflexion profonde n'est pas autorisée par défaut."
+    },
+    {
+      "topic": "LocalDate & Period",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>LocalDate date1 = LocalDate.of(2024, 1, 31);\nLocalDate date2 = date1.plusMonths(1);\nLocalDate date3 = date1.plus(Period.ofMonths(1));\n\nSystem.out.println(date2);\nSystem.out.println(date3);</code></pre>",
+      "options": [
+        "2024-02-29\n2024-02-29",
+        "2024-02-31\n2024-02-31",
+        "2024-03-02\n2024-03-02",
+        "Le code lève une exception car février n'a pas 31 jours.",
+        "2024-02-29\n2024-03-02"
+      ],
+      "answer": [0],
+      "explanation": "Lorsqu'on ajoute un mois à une date et que le jour résultant n'existe pas dans le mois cible, Java ajuste automatiquement au dernier jour valide du mois. Le 31 janvier + 1 mois donne le 29 février 2024 (année bissextile). plusMonths(1) et plus(Period.ofMonths(1)) sont équivalents et produisent le même résultat. Pas d'exception, juste un ajustement intelligent. Les deux affichent 2024-02-29."
+    },
+    {
+      "topic": "Copy-On-Write Collections",
+      "question": "Quelles affirmations sont correctes concernant le code suivant ?<br><pre><code class='language-java'>List&lt;String&gt; list = new CopyOnWriteArrayList&lt;&gt;();\nlist.add(\"A\");\nlist.add(\"B\");\n\nIterator&lt;String&gt; it = list.iterator();\nlist.add(\"C\");\n\nwhile(it.hasNext()) {\n    System.out.print(it.next() + \" \");\n}</code></pre>",
+      "options": [
+        "Le code affichera \"A B \".",
+        "Le code affichera \"A B C \".",
+        "Une ConcurrentModificationException sera levée.",
+        "L'itérateur voit un snapshot de la liste au moment de sa création.",
+        "CopyOnWriteArrayList est thread-safe pour les itérations."
+      ],
+      "answer": [0, 3, 4],
+      "type": "multiple",
+      "explanation": "CopyOnWriteArrayList est conçue pour des scénarios avec beaucoup de lectures et peu d'écritures. L'itérateur créé voit un SNAPSHOT immuable de la liste au moment de sa création. Quand list.add(\"C\") est appelé après la création de l'itérateur, une nouvelle copie interne est créée mais l'itérateur continue de voir l'ancienne version (A, B). Donc affiche \"A B \". Aucune ConcurrentModificationException n'est levée. C'est thread-safe mais coûteux en mémoire pour les modifications."
+    },
+    {
+      "topic": "Lambda Scope & Effectively Final",
+      "question": "Quelles lignes de code provoqueront une erreur de compilation ?<br><pre><code class='language-java'>public class TestClass {\n    public static void main(String[] args) {\n        int factor = 10;\n        \n        List&lt;Integer&gt; nums = Arrays.asList(1, 2, 3);\n        \n        nums.forEach(n -> {\n            System.out.println(n * factor);  // Line 1\n        });\n        \n        factor = 20;  // Line 2\n        \n        nums.forEach(n -> {\n            System.out.println(n * factor);  // Line 3\n        });\n    }\n}</code></pre>",
+      "options": [
+        "Line 1",
+        "Line 2",
+        "Line 3",
+        "Line 1 et Line 3",
+        "Aucune ligne ne provoque d'erreur."
+      ],
+      "answer": [1, 2],
+      "type": "multiple",
+      "explanation": "Les variables locales utilisées dans les lambdas doivent être 'effectively final' (pas réassignées après initialisation). Line 1 utilise factor qui est effectively final à ce moment. Mais Line 2 réassigne factor, ce qui brise la règle d'effectively final. Donc Line 2 provoque une erreur de compilation, et par ricochet Line 3 aussi car elle utilise une variable qui a été réassignée. L'erreur se produit dès Line 2 car le compilateur détecte que factor est utilisé dans le lambda précédent."
+    },
+    {
+      "topic": "Sealed Classes & Exhaustiveness",
+      "question": "Quel est le résultat de la compilation du code suivant ?<br><pre><code class='language-java'>sealed interface Result permits Success, Failure {}\nrecord Success(String data) implements Result {}\nrecord Failure(String error) implements Result {}\n\npublic class TestClass {\n    public static void process(Result r) {\n        switch(r) {\n            case Success s -> System.out.println(s.data());\n            case Failure f -> System.out.println(f.error());\n        }\n    }\n}</code></pre>",
+      "options": [
+        "Le code compile sans erreur.",
+        "Le code ne compile pas car default est manquant.",
+        "Le code ne compile pas car le switch doit être une expression.",
+        "Le code ne compile pas car sealed interface ne peut pas avoir de records.",
+        "Le code compile mais nécessite un case null."
+      ],
+      "answer": [0],
+      "type": "multiple",
+      "explanation": "Avec les sealed types, le compilateur peut vérifier l'exhaustivité. Puisque Success et Failure sont les SEULES implémentations possibles de Result (sealed permits), le switch est exhaustif sans default. Ce switch est un statement (pas une expression), ce qui est valide. Les records peuvent implémenter des sealed interfaces. Le code compile parfaitement. case null n'est nécessaire que si on veut gérer explicitement null, sinon un NullPointerException sera levé."
+    },
+    {
+      "topic": "StringBuilder & Chaining",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>StringBuilder sb1 = new StringBuilder(\"Hello\");\nStringBuilder sb2 = sb1.append(\" World\");\nsb1.reverse();\nSystem.out.println(sb2);</code></pre>",
+      "options": [
+        "Hello World",
+        "dlroW olleH",
+        "World Hello",
+        "olleH",
+        "Le code ne compile pas."
+      ],
+      "answer": [1],
+      "explanation": "StringBuilder.append() retourne 'this', donc sb1 et sb2 référencent le MÊME objet StringBuilder. Après append, le contenu est \"Hello World\". Ensuite sb1.reverse() inverse le contenu. Comme sb1 et sb2 sont la même instance, sb2 affiche également le contenu inversé : \"dlroW olleH\". C'est un piège classique : les méthodes de StringBuilder retournent la même instance, pas une copie."
+    },
+    {
+      "topic": "Files.walk() & Stream",
+      "question": "Quelles affirmations sont correctes concernant le code suivant ?<br><pre><code class='language-java'>try (Stream&lt;Path&gt; paths = Files.walk(Paths.get(\"/home/user\"), 2)) {\n    paths.filter(p -> p.toString().endsWith(\".txt\"))\n         .forEach(System.out::println);\n}</code></pre>",
+      "options": [
+        "Le paramètre 2 limite la profondeur de parcours à 2 niveaux.",
+        "Le parcours inclut le répertoire de départ /home/user.",
+        "Files.walk() traverse les répertoires de manière breadth-first.",
+        "Le stream doit être fermé explicitement car il utilise des ressources I/O.",
+        "Files.walk() suit les liens symboliques par défaut."
+      ],
+      "answer": [0, 1, 3],
+      "type": "multiple",
+      "explanation": "Files.walk(path, maxDepth) parcourt l'arborescence jusqu'à maxDepth niveaux (2 ici). Le niveau 0 est le répertoire de départ lui-même, donc il est inclus dans le stream. Le parcours est depth-first (profondeur d'abord), pas breadth-first. Le stream retourné doit être fermé car il maintient des ressources I/O ouvertes (try-with-resources le fait automatiquement). Par défaut, Files.walk() NE suit PAS les liens symboliques (il faut passer FileVisitOption.FOLLOW_LINKS pour cela)."
+    },
+    {
+      "topic": "Enum with Abstract Methods",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>enum Operation {\n    PLUS {\n        public int apply(int x, int y) { return x + y; }\n    },\n    MINUS {\n        public int apply(int x, int y) { return x - y; }\n    };\n    \n    public abstract int apply(int x, int y);\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        System.out.println(Operation.PLUS.apply(5, 3));\n        System.out.println(Operation.MINUS.apply(5, 3));\n    }\n}</code></pre>",
+      "options": [
+        "8\n2",
+        "8\n-2",
+        "5\n5",
+        "Le code ne compile pas car les enums ne peuvent pas avoir de méthodes abstraites.",
+        "Le code ne compile pas car les constantes enum ne peuvent pas override les méthodes."
+      ],
+      "answer": [0],
+      "explanation": "Les enums PEUVENT avoir des méthodes abstraites, et chaque constante DOIT alors fournir une implémentation. C'est le pattern 'constant-specific method implementation'. PLUS.apply(5, 3) retourne 5+3=8. MINUS.apply(5, 3) retourne 5-3=2. Le résultat est \"8\\n2\". C'est une technique puissante pour associer un comportement spécifique à chaque constante enum."
+    },
+    {
+      "topic": "ConcurrentModificationException",
+      "question": "Quelles affirmations sont correctes ?<br><pre><code class='language-java'>List&lt;String&gt; list = new ArrayList&lt;&gt;(Arrays.asList(\"A\", \"B\", \"C\", \"D\"));\n\n// Code 1\nfor (String s : list) {\n    if (s.equals(\"B\")) {\n        list.remove(s);\n    }\n}\n\n// Code 2\nIterator&lt;String&gt; it = list.iterator();\nwhile (it.hasNext()) {\n    String s = it.next();\n    if (s.equals(\"B\")) {\n        it.remove();\n    }\n}</code></pre>",
+      "options": [
+        "Code 1 lève une ConcurrentModificationException.",
+        "Code 2 lève une ConcurrentModificationException.",
+        "Les deux codes fonctionnent sans exception.",
+        "Code 2 est la façon correcte de retirer un élément pendant l'itération.",
+        "Code 1 fonctionne car la boucle for-each ne détecte pas les modifications."
+      ],
+      "answer": [0, 3],
+      "type": "multiple",
+      "explanation": "Code 1 : La boucle for-each utilise un Iterator en interne. Modifier la collection (list.remove) pendant l'itération provoque ConcurrentModificationException car l'iterator détecte que la collection a été modifiée en dehors de lui. Code 2 : Utiliser it.remove() est la méthode CORRECTE pour retirer un élément pendant l'itération. L'iterator gère la suppression de manière sécurisée. Code 1 lève l'exception, Code 2 fonctionne correctement."
+    },
+    {
+      "topic": "Method Reference Types",
+      "question": "Quelles method references sont valides ?<br><pre><code class='language-java'>List&lt;String&gt; words = Arrays.asList(\"apple\", \"banana\", \"cherry\");\n\n// Option 1\nwords.stream().map(String::toUpperCase).forEach(System.out::println);\n\n// Option 2\nwords.stream().map(String::length).forEach(System.out::println);\n\n// Option 3\nwords.stream().filter(String::isEmpty).forEach(System.out::println);\n\n// Option 4\nwords.stream().forEach(words::add);\n\n// Option 5\nwords.replaceAll(s -> s.toUpperCase());</code></pre>",
+      "options": [
+        "Option 1",
+        "Option 2",
+        "Option 3",
+        "Option 4",
+        "Option 5"
+      ],
+      "answer": [0, 1, 2, 4],
+      "type": "multiple",
+      "explanation": "Option 1 : String::toUpperCase est une instance method reference valide pour Function<String, String>. Option 2 : String::length est valide pour Function<String, Integer>. Option 3 : String::isEmpty est valide pour Predicate<String>. Option 4 : INVALIDE - forEach attend un Consumer<String> mais words::add ne correspond pas car on ne peut pas modifier la liste pendant qu'on itère dessus avec forEach, et surtout le type ne correspond pas (add prend un String mais ne retourne rien). Option 5 : valide mais ce n'est pas une method reference, c'est une lambda. La méthode reference équivalente serait String::toUpperCase."
+    },
+    {
+      "topic": "Array Covariance",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>Number[] nums = new Integer[3];\nnums[0] = 10;\nnums[1] = 20;\nnums[2] = 30.5;  // Line 1\nSystem.out.println(nums[0]);</code></pre>",
+      "options": [
+        "10",
+        "Le code ne compile pas à Line 1.",
+        "Le code compile mais lève ArrayStoreException à Line 1.",
+        "Le code compile et affiche 10 sans exception.",
+        "Le code ne compile pas car Number[] ne peut pas référencer Integer[]."
+      ],
+      "answer": [2],
+      "type": "multiple",
+      "explanation": "Les arrays en Java sont covariants : Number[] peut référencer Integer[]. Le code compile. Cependant, à l'exécution (runtime), Java sait que nums référence réellement un Integer[]. À Line 1, on tente de stocker un Double (30.5) dans un Integer[]. Le compilateur ne détecte pas l'erreur (car nums est déclaré Number[]), mais le runtime lève ArrayStoreException. C'est une limitation connue des arrays - les generics ont été inventés en partie pour éviter ce problème (List<Number> ne peut PAS référencer List<Integer>)."
+    },
+    {
+      "topic": "Instant & Duration",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>Instant instant1 = Instant.parse(\"2024-01-01T10:00:00Z\");\nInstant instant2 = instant1.plus(Duration.ofHours(2));\nlong seconds = Duration.between(instant1, instant2).getSeconds();\nSystem.out.println(seconds);</code></pre>",
+      "options": [
+        "7200",
+        "2",
+        "120",
+        "7200000",
+        "Le code ne compile pas."
+      ],
+      "answer": [0],
+      "explanation": "Duration.ofHours(2) crée une durée de 2 heures. 2 heures = 2 * 60 * 60 = 7200 secondes. Duration.between() calcule la différence entre les deux instants. getSeconds() retourne le nombre de secondes dans cette durée. Le résultat est 7200."
+    },
+    {
+      "topic": "ForkJoinPool",
+      "question": "Quelles affirmations sont correctes concernant le code suivant ?<br><pre><code class='language-java'>List&lt;Integer&gt; numbers = IntStream.rangeClosed(1, 1000000)\n    .boxed()\n    .collect(Collectors.toList());\n\nlong count = numbers.parallelStream()\n    .filter(n -> n % 2 == 0)\n    .count();</code></pre>",
+      "options": [
+        "Le parallel stream utilise le ForkJoinPool.commonPool() par défaut.",
+        "count contiendra 500000.",
+        "Le nombre de threads utilisés dépend du nombre de processeurs disponibles.",
+        "On peut forcer l'utilisation d'un ForkJoinPool spécifique avec submit().",
+        "parallelStream() garantit toujours de meilleures performances que stream()."
+      ],
+      "answer": [0, 1, 2, 3],
+      "type": "multiple",
+      "explanation": "Par défaut, parallelStream() utilise le ForkJoinPool.commonPool(). Il y a 1000000 nombres de 1 à 1000000, dont la moitié sont pairs, donc count = 500000. Le pool commun a un parallélisme par défaut égal à (nombre de processeurs - 1). On peut soumettre une tâche à un ForkJoinPool spécifique. parallelStream() n'est PAS toujours plus rapide : pour de petites collections ou des opérations simples, l'overhead du parallélisme peut être contre-productif."
+    },
+    {
+      "topic": "String Pool & intern()",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>String s1 = \"Java\";\nString s2 = new String(\"Java\");\nString s3 = s2.intern();\n\nSystem.out.println(s1 == s2);\nSystem.out.println(s1 == s3);\nSystem.out.println(s2 == s3);</code></pre>",
+      "options": [
+        "false\ntrue\nfalse",
+        "true\ntrue\nfalse",
+        "false\nfalse\nfalse",
+        "true\ntrue\ntrue",
+        "false\ntrue\ntrue"
+      ],
+      "answer": [0],
+      "explanation": "s1 = \"Java\" utilise le string pool. s2 = new String(\"Java\") crée un NOUVEL objet String en dehors du pool. Donc s1 == s2 est false (références différentes). s3 = s2.intern() retourne la référence de \"Java\" dans le string pool, qui est la même que s1. Donc s1 == s3 est true. s2 est toujours l'objet hors pool, donc s2 == s3 est false. Résultat : false, true, false."
+    },
+    {
+      "topic": "Atomic Variables",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>AtomicInteger counter = new AtomicInteger(0);\nIntStream.range(0, 1000).parallel().forEach(i -> counter.incrementAndGet());\nSystem.out.println(counter.get());</code></pre>",
+      "options": [
+        "Toujours 1000",
+        "Une valeur aléatoire inférieure à 1000",
+        "Une valeur aléatoire supérieure à 1000",
+        "Le résultat dépend du nombre de threads utilisés.",
+        "Le code peut lever une exception."
+      ],
+      "answer": [0],
+      "type": "multiple",
+      "explanation": "AtomicInteger.incrementAndGet() est une opération atomique thread-safe. Même avec un parallel stream utilisant plusieurs threads, chaque incrémentation est garantie atomique. Le résultat final sera TOUJOURS 1000, quelle que soit l'ordonnancement des threads. C'est exactement le but des classes Atomic : fournir des opérations thread-safe sans synchronisation explicite."
+    },
+    {
+      "topic": "Paths & Relativize",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>Path p1 = Paths.get(\"/home/user/docs/file.txt\");\nPath p2 = Paths.get(\"/home/user/images/photo.jpg\");\nPath relative = p1.relativize(p2);\nSystem.out.println(relative);</code></pre>",
+      "options": [
+        "../../images/photo.jpg",
+        "../images/photo.jpg",
+        "images/photo.jpg",
+        "../../docs/file.txt",
+        "Le code lève une exception."
+      ],
+      "answer": [0],
+      "explanation": "relativize() calcule le chemin relatif pour aller de p1 vers p2. Depuis /home/user/docs/file.txt, il faut: (1) remonter au répertoire parent docs -> .., (2) remonter encore au répertoire user -> .., (3) descendre dans images, (4) atteindre photo.jpg. Le résultat est ../../images/photo.jpg. Note : relativize() travaille sur les chemins, pas sur les fichiers eux-mêmes."
+    },
+    {
+      "topic": "Spliterator",
+      "question": "Quelles affirmations sont correctes concernant Spliterator ?<br><pre><code class='language-java'>List&lt;String&gt; list = Arrays.asList(\"A\", \"B\", \"C\", \"D\");\nSpliterator&lt;String&gt; sp1 = list.spliterator();\nSpliterator&lt;String&gt; sp2 = sp1.trySplit();</code></pre>",
+      "options": [
+        "sp2 contiendra environ la moitié des éléments de sp1 original.",
+        "sp1 et sp2 peuvent être utilisés indépendamment pour parcourir leur portion.",
+        "Si sp2 est null, cela signifie que sp1 ne peut pas être divisé.",
+        "Spliterator est utilisé en interne par les parallel streams.",
+        "sp1.trySplit() modifie sp1 pour contenir la seconde moitié."
+      ],
+      "answer": [0, 1, 2, 3],
+      "type": "multiple",
+      "explanation": "Spliterator (splittable iterator) permet de diviser une source de données pour le traitement parallèle. trySplit() tente de diviser le spliterator : si réussi, il retourne un nouveau spliterator pour une portion des éléments, et le spliterator original conserve l'autre portion. Généralement, la division est approximativement 50/50. Si la division n'est pas possible, trySplit() retourne null. Les parallel streams utilisent Spliterator en interne pour diviser le travail. sp1 contiendra la seconde portion (pas la première) après le split."
+    },
+    {
+      "topic": "BiFunction & andThen",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>BiFunction&lt;Integer, Integer, Integer&gt; multiply = (a, b) -> a * b;\nFunction&lt;Integer, Integer&gt; addTen = x -> x + 10;\n\nBiFunction&lt;Integer, Integer, Integer&gt; combined = multiply.andThen(addTen);\n\nSystem.out.println(combined.apply(3, 4));</code></pre>",
+      "options": [
+        "22",
+        "42",
+        "12",
+        "Le code ne compile pas.",
+        "Une exception est levée à l'exécution."
+      ],
+      "answer": [0],
+      "explanation": "multiply calcule 3 * 4 = 12. andThen() compose les fonctions : d'abord multiply, puis addTen sur le résultat. Donc 12 + 10 = 22. andThen() est une méthode de composition disponible sur BiFunction, Function, Consumer, etc. Le résultat est 22."
+    },
+    {
+      "topic": "Garbage Collection Eligibility",
+      "question": "Considérez le code suivant :<br><pre><code class='language-java'>class Node {\n    Node next;\n    String data;\n    Node(String data) { this.data = data; }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Node n1 = new Node(\"A\");\n        Node n2 = new Node(\"B\");\n        n1.next = n2;\n        n2.next = n1;\n        \n        n1 = null;  // Point 1\n        n2 = null;  // Point 2\n    }\n}</code></pre>À quel moment les objets Node deviennent-ils éligibles pour la garbage collection ?",
+      "options": [
+        "À Point 1, les deux objets deviennent éligibles.",
+        "À Point 2, les deux objets deviennent éligibles.",
+        "Jamais, car ils se référencent mutuellement (référence circulaire).",
+        "Immédiatement après Point 2, car il n'y a plus de références depuis la pile.",
+        "Seulement l'objet \"A\" devient éligible à Point 2."
+      ],
+      "answer": [1, 3],
+      "type": "multiple",
+      "explanation": "Le GC Java moderne utilise des algorithmes sophistiqués qui détectent les îlots d'objets non atteignables. Même si n1 et n2 se référencent mutuellement (référence circulaire), si aucune référence externe (depuis la pile ou les objets vivants) ne pointe vers eux, ils deviennent TOUS DEUX éligibles pour le GC. À Point 1, n2 référence encore l'objet \"B\", qui référence \"A\", donc rien n'est éligible. À Point 2, plus aucune référence depuis la pile, donc les deux objets forment un îlot isolé et deviennent éligibles. Les GC modernes gèrent correctement les références circulaires."
+    },
+    {
+      "topic": "Switch Expression Exhaustiveness",
+      "question": "Quel est le résultat de la compilation ?<br><pre><code class='language-java'>enum Color { RED, GREEN, BLUE }\n\npublic class TestClass {\n    public static int getCode(Color color) {\n        return switch(color) {\n            case RED -> 1;\n            case GREEN -> 2;\n            case BLUE -> 3;\n        };\n    }\n    \n    public static int getValue(String s) {\n        return switch(s) {\n            case \"A\" -> 1;\n            case \"B\" -> 2;\n        };\n    }\n}</code></pre>",
+      "options": [
+        "Les deux méthodes compilent sans erreur.",
+        "getCode() ne compile pas car default est manquant.",
+        "getValue() ne compile pas car le switch n'est pas exhaustif.",
+        "Les deux méthodes ne compilent pas.",
+        "Seule getValue() compile."
+      ],
+      "answer": [2],
+      "type": "multiple",
+      "explanation": "Pour les switch expressions (qui retournent une valeur), l'exhaustivité est OBLIGATOIRE. getCode() : avec un enum, si tous les cas sont couverts (RED, GREEN, BLUE), le switch est exhaustif et compile. getValue() : avec un String, il existe infinité de valeurs possibles, donc un default est OBLIGATOIRE pour assurer l'exhaustivité. getValue() ne compile pas. Seule getCode() compile."
+    },
+    {
+      "topic": "Files.mismatch()",
+      "question": "Que va afficher le code suivant (en supposant que les deux fichiers existent) ?<br><pre><code class='language-java'>// file1.txt contient: \"Hello World\"\n// file2.txt contient: \"Hello Java!\"\n\nPath p1 = Paths.get(\"file1.txt\");\nPath p2 = Paths.get(\"file2.txt\");\n\nlong pos = Files.mismatch(p1, p2);\nSystem.out.println(pos);</code></pre>",
+      "options": [
+        "-1",
+        "0",
+        "6",
+        "11",
+        "Le code lève une exception."
+      ],
+      "answer": [2],
+      "explanation": "Files.mismatch() retourne la position du premier byte qui diffère entre les deux fichiers, ou -1 si les fichiers sont identiques. file1.txt : 'H','e','l','l','o',' ','W','o','r','l','d' (positions 0-10). file2.txt : 'H','e','l','l','o',' ','J','a','v','a','!' (positions 0-10). Les 6 premiers caractères sont identiques (\"Hello \"), le 7ème diffère ('W' vs 'J' à position 6). Le résultat est 6."
+    }
+,
+    {
+      "topic": "OOP - Method Overriding",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>class Animal {\n    String type = \"Animal\";\n    String getType() { return \"Animal class\"; }\n}\n\nclass Dog extends Animal {\n    String type = \"Dog\";\n    String getType() { return \"Dog class\"; }\n    void display() {\n        System.out.println(type + \" \" + super.type);\n        System.out.println(getType() + \" \" + super.getType());\n    }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Dog d = new Dog();\n        d.display();\n    }\n}</code></pre>",
+      "options": [
+        "Dog Animal\nDog class Animal class",
+        "Animal Animal\nAnimal class Animal class",
+        "Dog Dog\nDog class Dog class",
+        "Dog Animal\nAnimal class Dog class",
+        "Le code ne compile pas."
+      ],
+      "answer": [0],
+      "explanation": "Les variables d'instance ne sont PAS polymorphes, mais les méthodes le sont. Dans display() : 'type' accède au champ de Dog (\"Dog\"), 'super.type' accède au champ de Animal (\"Animal\"). Pour les méthodes : getType() appelle la version de Dog (\"Dog class\"), super.getType() appelle explicitement la version de Animal (\"Animal class\"). Résultat : \"Dog Animal\" puis \"Dog class Animal class\". C'est un piège classique : field hiding vs method overriding."
+    },
+    {
+      "topic": "OOP - Constructor Chaining",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>class Parent {\n    Parent() {\n        System.out.print(\"P1 \");\n        init();\n    }\n    void init() {\n        System.out.print(\"P2 \");\n    }\n}\n\nclass Child extends Parent {\n    int value = 10;\n    Child() {\n        System.out.print(\"C1 \");\n    }\n    void init() {\n        System.out.print(\"C2:\" + value + \" \");\n    }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        new Child();\n    }\n}</code></pre>",
+      "options": [
+        "P1 P2 C1",
+        "P1 C2:10 C1",
+        "P1 C2:0 C1",
+        "C1 P1 C2:10",
+        "Le code ne compile pas."
+      ],
+      "answer": [2],
+      "explanation": "Ordre d'exécution : (1) Le constructeur de Child appelle implicitement super() en premier. (2) Le constructeur de Parent affiche \"P1 \", puis appelle init(). (3) init() est overridden dans Child, donc c'est la version de Child qui est appelée (polymorphisme). MAIS attention : les champs de Child (value) ne sont PAS encore initialisés à ce stade ! value a sa valeur par défaut (0). Donc affiche \"C2:0 \". (4) Retour dans le constructeur de Child qui affiche \"C1 \". Résultat : \"P1 C2:0 C1\". C'est un piège dangereux : appeler une méthode overridable dans un constructeur peut voir des champs non initialisés !"
+    },
+    {
+      "topic": "OOP - Static Method Hiding",
+      "question": "Quelles affirmations sont correctes concernant le code suivant ?<br><pre><code class='language-java'>class Base {\n    static void display() {\n        System.out.println(\"Base static\");\n    }\n    void show() {\n        System.out.println(\"Base instance\");\n    }\n}\n\nclass Derived extends Base {\n    static void display() {\n        System.out.println(\"Derived static\");\n    }\n    void show() {\n        System.out.println(\"Derived instance\");\n    }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Base b = new Derived();\n        b.display();\n        b.show();\n    }\n}</code></pre>",
+      "options": [
+        "Le code affichera \"Base static\" puis \"Derived instance\".",
+        "Le code affichera \"Derived static\" puis \"Derived instance\".",
+        "Les méthodes statiques sont overridden comme les méthodes d'instance.",
+        "Les méthodes statiques sont cachées (hidden), pas overridden.",
+        "@Override sur display() dans Derived causerait une erreur de compilation."
+      ],
+      "answer": [0, 3, 4],
+      "type": "multiple",
+      "explanation": "Les méthodes statiques ne sont PAS overridden, elles sont CACHÉES (hidden). L'appel b.display() utilise le type de la RÉFÉRENCE (Base), pas le type de l'objet (Derived), donc appelle Base.display() → \"Base static\". Pour show(), c'est une méthode d'instance normale, donc polymorphisme : appelle Derived.show() → \"Derived instance\". @Override sur une méthode statique causerait une erreur car on ne peut pas override une méthode statique. Résultat : \"Base static\" puis \"Derived instance\"."
+    },
+    {
+      "topic": "OOP - Covariant Return Types",
+      "question": "Quel est le résultat de la compilation du code suivant ?<br><pre><code class='language-java'>class Vehicle {\n    Vehicle getVehicle() { return this; }\n}\n\nclass Car extends Vehicle {\n    Car getVehicle() { return this; }  // Line 1\n}\n\nclass SportsCar extends Car {\n    Vehicle getVehicle() { return this; }  // Line 2\n}</code></pre>",
+      "options": [
+        "Le code compile sans erreur.",
+        "Erreur de compilation à Line 1.",
+        "Erreur de compilation à Line 2.",
+        "Erreur de compilation aux deux lignes.",
+        "Le code compile mais Line 1 devrait utiliser @Override."
+      ],
+      "answer": [2, 4],
+      "type": "multiple",
+      "explanation": "Java supporte les covariant return types : une méthode overriding peut retourner un sous-type du type de retour de la méthode overridden. Line 1 : Car override getVehicle() de Vehicle et retourne Car (sous-type de Vehicle) → OK. Line 2 : SportsCar override getVehicle() de Car mais retourne Vehicle (SUPER-type de Car) → ERREUR. On peut retourner un type plus spécifique, pas plus général. @Override sur Line 1 est recommandé mais pas obligatoire. Seule Line 2 ne compile pas."
+    },
+    {
+      "topic": "OOP - Interface Default Methods",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>interface Alpha {\n    default void print() { System.out.print(\"A\"); }\n}\n\ninterface Beta {\n    default void print() { System.out.print(\"B\"); }\n}\n\nclass Gamma implements Alpha, Beta {\n    public void print() { \n        Alpha.super.print();\n        Beta.super.print();\n    }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Gamma g = new Gamma();\n        g.print();\n    }\n}</code></pre>",
+      "options": [
+        "A",
+        "B",
+        "AB",
+        "BA",
+        "Le code ne compile pas car il y a un conflit entre les deux default methods."
+      ],
+      "answer": [2],
+      "explanation": "Quand une classe implémente plusieurs interfaces avec des méthodes default de même signature, elle DOIT override la méthode pour résoudre le conflit. Gamma override print() et utilise InterfaceName.super.methodName() pour appeler explicitement les implémentations des interfaces. Alpha.super.print() affiche \"A\", puis Beta.super.print() affiche \"B\". Le résultat est \"AB\". Sans override explicite, le code ne compilerait pas."
+    },
+    {
+      "topic": "OOP - Access Modifiers & Overriding",
+      "question": "Quelles déclarations de méthodes dans Derived sont valides pour override display() de Base ?<br><pre><code class='language-java'>class Base {\n    protected void display() { }\n}</code></pre>",
+      "options": [
+        "private void display() { }",
+        "void display() { }",
+        "protected void display() { }",
+        "public void display() { }",
+        "protected final void display() { }"
+      ],
+      "answer": [2, 3, 4],
+      "type": "multiple",
+      "explanation": "Lors de l'overriding, le modificateur d'accès ne peut être QUE le même ou PLUS permissif. Base.display() est protected. Options : private est PLUS restrictif → INVALIDE. package-private (void) est PLUS restrictif → INVALIDE. protected est identique → VALIDE. public est PLUS permissif → VALIDE. protected final est valide pour l'accès mais empêche les sous-classes de Derived de re-override → VALIDE ici. Les options valides sont protected, public, et protected final."
+    },
+    {
+      "topic": "OOP - Abstract Classes & Constructors",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>abstract class Shape {\n    String color;\n    Shape(String color) {\n        this.color = color;\n        System.out.print(color + \" \");\n    }\n    abstract void draw();\n}\n\nclass Circle extends Shape {\n    Circle() {\n        super(\"Red\");\n        System.out.print(\"Circle \");\n    }\n    void draw() {\n        System.out.print(\"Drawing \");\n    }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Shape s = new Circle();\n        s.draw();\n    }\n}</code></pre>",
+      "options": [
+        "Red Circle Drawing",
+        "Circle Red Drawing",
+        "Red Drawing Circle",
+        "Le code ne compile pas car les classes abstraites ne peuvent pas avoir de constructeurs.",
+        "Le code ne compile pas car on ne peut pas instancier Shape."
+      ],
+      "answer": [0],
+      "explanation": "Les classes abstraites PEUVENT avoir des constructeurs. Ces constructeurs sont appelés quand une sous-classe concrète est instanciée. Ordre d'exécution : (1) Circle() appelle super(\"Red\"), (2) Le constructeur de Shape affiche \"Red \", (3) Retour dans Circle() qui affiche \"Circle \", (4) s.draw() appelle la version de Circle qui affiche \"Drawing \". Résultat : \"Red Circle Drawing\". On ne peut pas faire 'new Shape()' directement, mais 'new Circle()' est valide."
+    },
+    {
+      "topic": "OOP - Casting & instanceof",
+      "question": "Quelles lignes de code provoqueront une ClassCastException à l'exécution ?<br><pre><code class='language-java'>class Animal { }\nclass Dog extends Animal { }\nclass Cat extends Animal { }\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Animal a1 = new Dog();\n        Animal a2 = new Cat();\n        \n        Dog d1 = (Dog) a1;  // Line 1\n        Dog d2 = (Dog) a2;  // Line 2\n        \n        if (a1 instanceof Dog) {\n            Dog d3 = (Dog) a1;  // Line 3\n        }\n        \n        Cat c1 = (Cat) new Animal();  // Line 4\n    }\n}</code></pre>",
+      "options": [
+        "Line 1",
+        "Line 2",
+        "Line 3",
+        "Line 4",
+        "Aucune ligne ne lève d'exception."
+      ],
+      "answer": [1, 3],
+      "type": "multiple",
+      "explanation": "Line 1 : a1 référence réellement un Dog, donc le cast est valide → OK. Line 2 : a2 référence un Cat, pas un Dog. Le cast échoue → ClassCastException. Line 3 : Le test instanceof garantit que a1 est un Dog, donc le cast est sûr → OK. Line 4 : new Animal() crée une instance de Animal (pas Dog), donc le cast échoue → ClassCastException. Les erreurs sont aux lignes 2 et 4. Le compilateur accepte les casts car Animal est le parent de Dog/Cat, mais le runtime vérifie le type réel."
+    },
+    {
+      "topic": "OOP - Method Overloading Resolution",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>class Printer {\n    void print(Object obj) {\n        System.out.print(\"Object \");\n    }\n    void print(String str) {\n        System.out.print(\"String \");\n    }\n    void print(Integer num) {\n        System.out.print(\"Integer \");\n    }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Printer p = new Printer();\n        p.print(null);\n        p.print((Object) null);\n        Object obj = \"Test\";\n        p.print(obj);\n    }\n}</code></pre>",
+      "options": [
+        "String Object String",
+        "Le code ne compile pas en raison de l'ambiguïté du premier appel.",
+        "Object Object Object",
+        "String Object Object",
+        "String String String"
+      ],
+      "answer": [1],
+      "type": "multiple",
+      "explanation": "Premier appel p.print(null) : le compilateur doit choisir entre print(String) et print(Integer) car les deux acceptent null. String et Integer n'ont pas de relation de sous-typage, donc c'est AMBIGU → erreur de compilation. Deuxième appel p.print((Object) null) : le cast explicite lève l'ambiguïté → appellerait print(Object). Troisième appel : obj est de type Object (même si contient \"Test\"), donc print(Object) serait appelé (le type de la référence compte pour l'overload resolution). Le code ne compile pas à cause du premier appel."
+    },
+    {
+      "topic": "OOP - Final Methods & Classes",
+      "question": "Quelles affirmations sont correctes ?<br><pre><code class='language-java'>class Parent {\n    final void method1() { }\n    void method2() { }\n}\n\nfinal class Child extends Parent {\n    void method2() { }  // Line 1\n    void method3() { }  // Line 2\n}\n\nclass GrandChild extends Child {  // Line 3\n    void method3() { }  // Line 4\n}</code></pre>",
+      "options": [
+        "Line 1 compile sans erreur.",
+        "Line 1 provoque une erreur car on ne peut pas override une méthode dans une classe final.",
+        "Line 3 provoque une erreur car on ne peut pas étendre une classe final.",
+        "Line 4 provoque une erreur car method3() est implicitement final.",
+        "Le modificateur final sur Child empêche seulement l'overriding de ses méthodes, pas l'extension."
+      ],
+      "answer": [0, 2],
+      "type": "multiple",
+      "explanation": "Line 1 : method2() de Parent n'est PAS final, donc peut être overridden dans Child → OK. method1() est final dans Parent et ne peut être overridden nulle part. Line 3 : Child est déclaré final, donc AUCUNE classe ne peut l'étendre → ERREUR. Une classe final ne peut pas être étendue, point final. Line 4 n'est jamais atteint car Line 3 ne compile pas. Les méthodes d'une classe final ne sont pas implicitement final (mais ça n'a pas d'importance puisqu'on ne peut pas étendre la classe). Erreur uniquement à Line 3."
+    },
+    {
+      "topic": "OOP - Polymorphism & Type",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>class Figure {\n    void draw() { System.out.print(\"Figure \"); }\n    static void display() { System.out.print(\"Static Figure \"); }\n}\n\nclass Rectangle extends Figure {\n    void draw() { System.out.print(\"Rectangle \"); }\n    static void display() { System.out.print(\"Static Rectangle \"); }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Figure f = new Rectangle();\n        ((Figure) f).draw();\n        ((Rectangle) f).draw();\n        f.display();\n    }\n}</code></pre>",
+      "options": [
+        "Figure Rectangle Static Figure",
+        "Rectangle Rectangle Static Figure",
+        "Rectangle Rectangle Static Rectangle",
+        "Figure Figure Static Figure",
+        "Le code ne compile pas."
+      ],
+      "answer": [1],
+      "explanation": "((Figure) f).draw() : Le cast ne change rien, f référence toujours un Rectangle. Les méthodes d'instance sont polymorphes : appelle Rectangle.draw() → \"Rectangle \". ((Rectangle) f).draw() : Même chose, appelle Rectangle.draw() → \"Rectangle \". f.display() : Les méthodes statiques utilisent le type de la RÉFÉRENCE (Figure), pas l'objet → appelle Figure.display() → \"Static Figure \". Résultat : \"Rectangle Rectangle Static Figure\". Le cast d'une méthode d'instance n'affecte pas le polymorphisme !"
+    },
+    {
+      "topic": "OOP - Interface Inheritance",
+      "question": "Quelles affirmations sont correctes ?<br><pre><code class='language-java'>interface I1 {\n    default void method() { System.out.println(\"I1\"); }\n}\n\ninterface I2 extends I1 {\n    default void method() { System.out.println(\"I2\"); }\n}\n\nclass MyClass implements I2 {\n}</code></pre>",
+      "options": [
+        "MyClass hérite de la méthode default de I2.",
+        "MyClass doit override method() pour résoudre le conflit.",
+        "new MyClass().method() affichera \"I2\".",
+        "new MyClass().method() affichera \"I1\".",
+        "Le code ne compile pas car I2 ne peut pas override une default method de I1."
+      ],
+      "answer": [0, 2],
+      "type": "multiple",
+      "explanation": "Quand une interface étend une autre interface, elle PEUT override les default methods. I2 override method() de I1. MyClass implémente I2, donc hérite de la méthode default de I2 (la plus spécifique). Il n'y a PAS de conflit car I2.method() remplace I1.method(). new MyClass().method() affichera \"I2\". MyClass n'a pas besoin d'override car il n'y a qu'une seule implémentation disponible (celle de I2). Le code compile et s'exécute correctement."
+    },
+    {
+      "topic": "Streams - Intermediate Operations",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>List&lt;String&gt; words = Arrays.asList(\"Java\", \"Python\", \"JavaScript\", \"Ruby\");\n\nlong count = words.stream()\n    .peek(w -> System.out.print(w + \" \"))\n    .filter(w -> w.length() > 4)\n    .peek(w -> System.out.print(\"[\" + w + \"] \"))\n    .count();\n\nSystem.out.println(count);</code></pre>",
+      "options": [
+        "Java Python JavaScript Ruby [Python] [JavaScript] 2",
+        "Java [Java] Python [Python] JavaScript [JavaScript] Ruby 2",
+        "Java Python [Python] JavaScript [JavaScript] Ruby 2",
+        "2",
+        "Java Python JavaScript Ruby 2"
+      ],
+      "answer": [2],
+      "explanation": "Les opérations intermédiaires sont évaluées de manière LAZY et element-by-element. Pour chaque élément : (1) premier peek affiche l'élément, (2) filter vérifie la longueur, (3) si passe le filtre, second peek affiche [élément]. Traitement : \"Java\" (4 lettres) → affiche \"Java \", filtre échoue. \"Python\" (6 lettres) → affiche \"Python \", filtre passe, affiche \"[Python] \". \"JavaScript\" (10 lettres) → affiche \"JavaScript \", filtre passe, affiche \"[JavaScript] \". \"Ruby\" (4 lettres) → affiche \"Ruby \", filtre échoue. count() retourne 2 (Python, JavaScript). Résultat : \"Java Python [Python] JavaScript [JavaScript] Ruby 2\"."
+    },
+    {
+      "topic": "Exceptions - Custom Exception Hierarchy",
+      "question": "Quelles affirmations sont correctes concernant le code suivant ?<br><pre><code class='language-java'>class AppException extends Exception { }\nclass DatabaseException extends AppException { }\nclass NetworkException extends AppException { }\n\npublic class TestClass {\n    void process() throws AppException {\n        throw new DatabaseException();\n    }\n    \n    void handle() {\n        try {\n            process();\n        } catch (DatabaseException e) {\n            System.out.println(\"Database\");\n        } catch (AppException e) {\n            System.out.println(\"App\");\n        }\n    }\n}</code></pre>",
+      "options": [
+        "handle() affichera \"Database\".",
+        "handle() affichera \"App\".",
+        "Le code ne compile pas car DatabaseException doit être déclaré dans throws de handle().",
+        "L'ordre des catch est correct : plus spécifique en premier.",
+        "Si l'ordre des catch était inversé, le code ne compilerait pas."
+      ],
+      "answer": [0, 3, 4],
+      "type": "multiple",
+      "explanation": "process() lève DatabaseException. Dans handle(), le premier catch (DatabaseException) attrape l'exception car c'est le type exact → affiche \"Database\". Le second catch (AppException) ne sera jamais atteint pour cette exception. L'ordre des catch DOIT être du plus spécifique au plus général. Si on inversait (AppException avant DatabaseException), le catch DatabaseException serait unreachable code → erreur de compilation. handle() n'a pas besoin de déclarer throws car elle gère l'exception avec try-catch."
+    },
+    {
+      "topic": "OOP - Shadowing & Hiding",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>class Outer {\n    static int num = 10;\n    \n    static class Inner {\n        static int num = 20;\n        \n        static void display(int num) {\n            System.out.println(num + \" \" + Inner.num + \" \" + Outer.num);\n        }\n    }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Outer.Inner.display(30);\n    }\n}</code></pre>",
+      "options": [
+        "30 20 10",
+        "30 10 10",
+        "10 20 30",
+        "30 30 30",
+        "Le code ne compile pas."
+      ],
+      "answer": [0],
+      "explanation": "Il y a trois variables 'num' dans des scopes différents : (1) le paramètre num (30), (2) Inner.num (20), (3) Outer.num (10). Dans display(), 'num' seul référence le paramètre → 30. Inner.num référence explicitement le champ de Inner → 20. Outer.num référence explicitement le champ de Outer → 10. Résultat : \"30 20 10\". C'est un exemple de shadowing (masquage) de variables : la variable locale/paramètre masque les champs."
+    },
+    {
+      "topic": "Collections - Comparable",
+      "question": "Quel est le résultat de la compilation et de l'exécution ?<br><pre><code class='language-java'>class Product implements Comparable&lt;Product&gt; {\n    String name;\n    int price;\n    \n    Product(String name, int price) {\n        this.name = name;\n        this.price = price;\n    }\n    \n    public int compareTo(Product other) {\n        return this.price - other.price;\n    }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        List&lt;Product&gt; products = Arrays.asList(\n            new Product(\"A\", 100),\n            new Product(\"B\", 50),\n            new Product(\"C\", 75)\n        );\n        Collections.sort(products);\n        products.forEach(p -> System.out.print(p.name + \" \"));\n    }\n}</code></pre>",
+      "options": [
+        "A B C",
+        "B C A",
+        "C B A",
+        "Le code ne compile pas.",
+        "Une exception est levée à l'exécution."
+      ],
+      "answer": [1],
+      "explanation": "compareTo() trie par prix : this.price - other.price. Ordre croissant de prix : B(50), C(75), A(100). Donc affiche \"B C A\". Note : Utiliser la soustraction (this.price - other.price) pour compareTo() peut causer des bugs avec les débordements d'entiers. Il est préférable d'utiliser Integer.compare(this.price, other.price)."
+    },
+    {
+      "topic": "Lambda - Capturing Variables",
+      "question": "Quelles lignes de code provoqueront une erreur de compilation ?<br><pre><code class='language-java'>public class TestClass {\n    static int globalCount = 0;\n    \n    public static void main(String[] args) {\n        int localCount = 0;\n        final int finalCount = 0;\n        \n        Runnable r1 = () -> globalCount++;  // Line 1\n        Runnable r2 = () -> localCount++;   // Line 2\n        Runnable r3 = () -> System.out.println(localCount);  // Line 3\n        Runnable r4 = () -> System.out.println(finalCount);  // Line 4\n        \n        localCount = 5;  // Line 5\n    }\n}</code></pre>",
+      "options": [
+        "Line 1",
+        "Line 2",
+        "Line 3",
+        "Line 4",
+        "Line 5"
+      ],
+      "answer": [1, 2, 4],
+      "type": "multiple",
+      "explanation": "Les lambdas peuvent accéder aux variables locales SEULEMENT si elles sont effectively final. Line 1 : globalCount est static, pas de restriction → OK. Line 2 : tente de MODIFIER localCount dans le lambda → ERREUR. Line 3 : LIT localCount, mais Line 5 le modifie plus tard, donc localCount n'est pas effectively final → ERREUR. Line 4 : finalCount est explicitement final → OK. Line 5 : cette ligne SEULE ne cause pas d'erreur, mais rend localCount non-effectively-final, causant l'erreur à Line 3. Les erreurs sont aux lignes 2, 3 (à cause de 5), et 5 brise l'effectively final."
+    },
+    {
+      "topic": "Date & Time - ZonedDateTime Arithmetic",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>ZonedDateTime zdt1 = ZonedDateTime.of(2024, 1, 1, 12, 0, 0, 0, \n                                        ZoneId.of(\"America/New_York\"));\nZonedDateTime zdt2 = zdt1.withZoneSameInstant(ZoneId.of(\"Europe/Paris\"));\n\nSystem.out.println(zdt1.getHour() + \" \" + zdt2.getHour());</code></pre>",
+      "options": [
+        "12 12",
+        "12 18",
+        "12 17",
+        "12 6",
+        "Le code ne compile pas."
+      ],
+      "answer": [1],
+      "explanation": "withZoneSameInstant() change la zone horaire MAIS conserve le même instant absolu, donc ajuste l'heure. Le 1er janvier 2024 à 12h à New York. Paris est 6 heures en avance sur New York (heure d'hiver). Donc 12h à New York = 18h à Paris. zdt1.getHour() = 12, zdt2.getHour() = 18. Résultat : \"12 18\". À ne pas confondre avec withZoneSameLocal() qui conserverait l'heure locale mais changerait l'instant absolu."
+    },
+    {
+      "topic": "I/O - Serialization & transient",
+      "question": "Quelles affirmations sont correctes concernant le code suivant ?<br><pre><code class='language-java'>class User implements Serializable {\n    String username;\n    transient String password;\n    static int userCount = 0;\n    \n    User(String username, String password) {\n        this.username = username;\n        this.password = password;\n        userCount++;\n    }\n}</code></pre>",
+      "options": [
+        "Lors de la désérialisation, password sera null.",
+        "Lors de la désérialisation, username conservera sa valeur.",
+        "userCount sera sérialisé avec l'objet.",
+        "Les champs static ne sont jamais sérialisés.",
+        "Le mot-clé transient empêche la sérialisation d'un champ."
+      ],
+      "answer": [0, 1, 3, 4],
+      "type": "multiple",
+      "explanation": "transient indique qu'un champ ne doit PAS être sérialisé. password est transient, donc sera null après désérialisation. username n'est pas transient, donc sera sérialisé et restauré. userCount est static : les champs static appartiennent à la CLASSE, pas aux instances, donc ne sont JAMAIS sérialisés. Lors de la désérialisation, username garde sa valeur, password est null, et userCount aura la valeur actuelle dans la JVM (pas la valeur lors de la sérialisation)."
+    },
+    {
+      "topic": "OOP - Interface Static Methods",
+      "question": "Quelles affirmations sont correctes ?<br><pre><code class='language-java'>interface Calculator {\n    static int add(int a, int b) {\n        return a + b;\n    }\n    \n    default int multiply(int a, int b) {\n        return a * b;\n    }\n}\n\nclass SimpleCalc implements Calculator { }\n\npublic class TestClass {\n    public static void main(String[] args) {\n        SimpleCalc calc = new SimpleCalc();\n        System.out.println(calc.add(2, 3));  // Line 1\n        System.out.println(Calculator.add(2, 3));  // Line 2\n        System.out.println(calc.multiply(2, 3));  // Line 3\n    }\n}</code></pre>",
+      "options": [
+        "Line 1 compile et affiche 5.",
+        "Line 1 ne compile pas.",
+        "Line 2 compile et affiche 5.",
+        "Line 3 compile et affiche 6.",
+        "Les méthodes static d'interface sont héritées par les classes implémentantes."
+      ],
+      "answer": [1, 2, 3],
+      "type": "multiple",
+      "explanation": "Les méthodes static d'interface ne sont PAS héritées par les classes implémentantes. Line 1 : calc.add() ne compile pas car add() n'est pas héritée. Line 2 : Calculator.add() compile car on appelle directement la méthode static de l'interface → affiche 5. Line 3 : multiply() est une méthode default, donc HÉRITÉE par SimpleCalc → compile et affiche 6. Les méthodes static d'interface doivent être appelées via le nom de l'interface, pas via les instances."
+    },
+    {
+      "topic": "Modules - Qualified Exports",
+      "question": "Considérez le module suivant :<br><pre><code class='language-java'>module com.app.core {\n    exports com.app.core.api;\n    exports com.app.core.internal to com.app.admin, com.app.monitoring;\n}</code></pre>Quelles affirmations sont correctes ?",
+      "options": [
+        "Tous les modules peuvent accéder à com.app.core.api.",
+        "Seuls com.app.admin et com.app.monitoring peuvent accéder à com.app.core.internal.",
+        "com.app.core.internal est accessible en réflexion par tous les modules.",
+        "Un module non listé ne peut pas accéder à com.app.core.internal même via réflexion.",
+        "exports to est appelé 'qualified exports'."
+      ],
+      "answer": [0, 1, 3, 4],
+      "type": "multiple",
+      "explanation": "'exports' rend un package accessible à TOUS les modules. 'exports to' (qualified exports) limite l'accès à des modules spécifiques. com.app.core.api est exporté sans restriction → tous peuvent y accéder. com.app.core.internal est exporté UNIQUEMENT à admin et monitoring → seuls ces modules peuvent y accéder, même via réflexion. Les autres modules ne peuvent PAS y accéder, ni normalement ni par réflexion (sauf si 'opens' est utilisé). C'est une forme d'encapsulation forte."
+    },
+    {
+      "topic": "Streams - Collectors.groupingBy",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>record Person(String city, int age) {}\n\nList&lt;Person&gt; people = Arrays.asList(\n    new Person(\"Paris\", 25),\n    new Person(\"Paris\", 30),\n    new Person(\"Lyon\", 35)\n);\n\nMap&lt;String, Long&gt; result = people.stream()\n    .collect(Collectors.groupingBy(\n        Person::city,\n        Collectors.counting()\n    ));\n\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "{Paris=55, Lyon=35}",
+        "{Paris=2, Lyon=1}",
+        "{Paris=[25, 30], Lyon=[35]}",
+        "{Paris=2.0, Lyon=1.0}",
+        "Le code ne compile pas."
+      ],
+      "answer": [1],
+      "explanation": "groupingBy(Person::city, Collectors.counting()) groupe les personnes par ville et compte combien il y en a dans chaque groupe. Paris : 2 personnes (25 ans et 30 ans). Lyon : 1 personne (35 ans). Le résultat est {Paris=2, Lyon=1}. Collectors.counting() retourne un Long, pas un Double."
+    },
+    {
+      "topic": "Switch Expression - Yield",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>public class TestClass {\n    public static String classify(int num) {\n        return switch(num) {\n            case 1, 2, 3 -> \"Low\";\n            case 4, 5, 6 -> {\n                String result = \"Medium\";\n                yield result.toLowerCase();\n            }\n            default -> \"High\";\n        };\n    }\n    \n    public static void main(String[] args) {\n        System.out.println(classify(5));\n    }\n}</code></pre>",
+      "options": [
+        "Low",
+        "Medium",
+        "medium",
+        "High",
+        "Le code ne compile pas."
+      ],
+      "answer": [2],
+      "explanation": "Pour le case 5, on entre dans le bloc case 4, 5, 6. result est initialisé à \"Medium\", puis yield result.toLowerCase() retourne \"medium\" (en minuscules). Les switch expressions avec des blocs { } doivent utiliser yield pour retourner une valeur. Le résultat est \"medium\"."
+    },
+    {
+      "topic": "Thread - join()",
+      "question": "Que va (probablement) afficher le code suivant ?<br><pre><code class='language-java'>public class TestClass {\n    public static void main(String[] args) throws Exception {\n        Thread t1 = Thread.ofPlatform().start(() -> {\n            System.out.print(\"A\");\n        });\n        \n        Thread t2 = Thread.ofPlatform().start(() -> {\n            System.out.print(\"B\");\n        });\n        \n        t1.join();\n        t2.join();\n        System.out.print(\"C\");\n    }\n}</code></pre>",
+      "options": [
+        "Toujours ABC",
+        "Toujours BAC",
+        "AB suivis de C, ou BA suivis de C",
+        "C apparaîtra toujours en dernier.",
+        "L'ordre est complètement imprévisible."
+      ],
+      "answer": [2, 3],
+      "type": "multiple",
+      "explanation": "t1 et t2 sont démarrés et s'exécutent en parallèle. Leur ordre d'exécution relatif est indéterminé : on peut voir \"AB\" ou \"BA\". Cependant, t1.join() et t2.join() forcent le thread principal à ATTENDRE la fin de t1 et t2 avant de continuer. Donc \"C\" sera TOUJOURS affiché en dernier, après A et B. Les sorties possibles sont \"ABC\" ou \"BAC\". join() est crucial pour synchroniser les threads."
+    },
+    {
+      "topic": "Enums - Constructor & Fields",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>enum Size {\n    SMALL(1), MEDIUM(2), LARGE(3);\n    \n    private int value;\n    \n    private Size(int value) {\n        this.value = value;\n        System.out.print(value + \" \");\n    }\n    \n    public int getValue() { return value; }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Size s = Size.MEDIUM;\n        System.out.println(s.getValue());\n    }\n}</code></pre>",
+      "options": [
+        "2",
+        "1 2 3 2",
+        "2 2",
+        "Le code ne compile pas car les constructeurs d'enum doivent être publics.",
+        "1 2 3"
+      ],
+      "answer": [1],
+      "explanation": "Les constantes enum sont créées lors du chargement de la classe enum, AVANT l'exécution de main(). Toutes les constantes (SMALL, MEDIUM, LARGE) sont instanciées dans l'ordre de déclaration. Chaque appel au constructeur affiche la valeur : \"1 \" puis \"2 \" puis \"3 \". Ensuite dans main(), s.getValue() affiche 2. Résultat final : \"1 2 3 2\". Les constructeurs d'enum doivent être private ou package-private (jamais public ou protected)."
+    },
+    {
+      "topic": "NIO.2 - Files.walk() with FileVisitOption",
+      "question": "Quelles affirmations sont correctes concernant le code suivant ?<br><pre><code class='language-java'>Path start = Paths.get(\"/home/user\");\ntry (Stream&lt;Path&gt; paths = Files.walk(start, 3, FileVisitOption.FOLLOW_LINKS)) {\n    paths.forEach(System.out::println);\n}</code></pre>",
+      "options": [
+        "Le parcours va jusqu'à 3 niveaux de profondeur maximum.",
+        "Les liens symboliques seront suivis pendant le parcours.",
+        "Sans FileVisitOption.FOLLOW_LINKS, les liens symboliques seraient ignorés.",
+        "Le niveau 0 correspond au répertoire /home/user lui-même.",
+        "Files.walk() peut créer des boucles infinies si FOLLOW_LINKS est utilisé avec des liens circulaires."
+      ],
+      "answer": [0, 1, 3, 4],
+      "type": "multiple",
+      "explanation": "Files.walk(start, maxDepth, options) parcourt l'arborescence jusqu'à maxDepth niveaux (3 ici, avec niveau 0 = répertoire de départ). FOLLOW_LINKS indique de suivre les liens symboliques. Sans cette option, les liens symboliques sont traités comme des fichiers normaux (pas suivis). ATTENTION : avec FOLLOW_LINKS, si des liens symboliques créent des cycles (A -> B -> A), Files.walk() peut entrer dans une boucle infinie ! Il faut être prudent avec cette option."
+    }
+  ]
+}

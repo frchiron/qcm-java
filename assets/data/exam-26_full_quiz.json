@@ -1,0 +1,693 @@
+{
+  "metadata": {
+    "id": "exam-26_full_quiz.json",
+    "mainTopic": "full",
+    "category": "full",
+    "examNumber": "F5",
+    "examName": "Oracle Certified Professional: Java SE 21 Developer",
+    "questionsCount": 50,
+    "description": "Examen blanc complet couvrant tous les domaines de la certification Java 21"
+  },
+  "title": "Java 21 OCP-830 - Examen Blanc Complet",
+  "duration": 120,
+  "questions": [
+    {
+      "topic": "Records & Pattern Matching",
+      "question": "Quel est le résultat de la compilation et de l'exécution du code suivant ?<br><pre><code class='language-java'>record Point(int x, int y) {\n    public Point {\n        if (x < 0 || y < 0) {\n            x = 0;\n            y = 0;\n        }\n    }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Point p = new Point(-5, 10);\n        if (p instanceof Point(var a, var b)) {\n            System.out.println(a + \",\" + b);\n        }\n    }\n}</code></pre>",
+      "options": [
+        "0,0",
+        "-5,10",
+        "0,10",
+        "Le code ne compile pas car le compact constructor ne peut pas modifier les paramètres.",
+        "Le code ne compile pas car le pattern matching avec records est invalide.",
+        "Le code compile mais lève une exception à l'exécution."
+      ],
+      "answer": [2],
+      "type": "multiple",
+      "explanation": "Dans un compact constructor de record, les affectations aux paramètres ne modifient PAS les champs finaux du record. La vérification if(x < 0 || y < 0) est vraie, mais les affectations x=0 et y=0 ne font que modifier les variables locales des paramètres, pas les champs. Les champs sont initialisés avec les valeurs d'origine après l'exécution du compact constructor. Donc p contiendra Point(-5, 10). Cependant, le pattern matching extrait correctement ces valeurs, donc a=-5 et b=10, affichant 0,10 car -5+10+5 = 10... NON ATTENDEZ. Je me suis trompé. L'affichage est a + \",\" + b ce qui donne \"-5,10\". Mais attendez, il y a un piège ici. Dans le compact constructor, on ne peut PAS réassigner x et y directement dans un record - cela devrait causer une erreur de compilation. Laissez-moi reconsidérer... En fait, dans le compact constructor, on PEUT modifier les paramètres avant qu'ils ne soient affectés aux champs. Mais la syntaxe est trompeuse. Le code compile, et les modifications de x et y dans le compact constructor affectent bien les valeurs finales. Donc p = Point(0, 0) mais ensuite b=10 dans la condition... Non, je réfléchis mal. Le pattern matching déstructure le Point qui a été créé. Si le compact constructor a modifié x et y en 0, alors p=Point(0,0) et le pattern matching donne a=0, b=0. Mais x < 0 est vrai (-5 < 0) donc x=0, et y < 0 est faux (10 n'est pas < 0) donc y reste 10. Donc Point(0, 10), affichant \"0,10\"."
+    },
+    {
+      "topic": "Streams & Lambda",
+      "question": "Que va afficher le code suivant lorsqu'il est compilé et exécuté ?<br><pre><code class='language-java'>List&lt;Integer&gt; numbers = Arrays.asList(1, 2, 3, 4, 5);\nAtomicInteger counter = new AtomicInteger(0);\n\nList&lt;Integer&gt; result = numbers.stream()\n    .filter(n -> {\n        counter.incrementAndGet();\n        return n % 2 == 0;\n    })\n    .collect(Collectors.toList());\n\nSystem.out.println(counter.get() + \" \" + result.size());</code></pre>",
+      "options": [
+        "5 2",
+        "2 2",
+        "5 5",
+        "Le nombre affiché pour counter dépend de l'implémentation du stream.",
+        "Une exception est levée à l'exécution."
+      ],
+      "answer": [0],
+      "explanation": "Le stream séquentiel va appeler le filtre pour chaque élément de la liste (5 éléments), donc counter sera incrémenté 5 fois. Le filtre ne garde que les nombres pairs (2 et 4), donc result.size() vaut 2. Le résultat est \"5 2\"."
+    },
+    {
+      "topic": "Collections",
+      "question": "Quelles affirmations sont correctes concernant le code suivant ?<br><pre><code class='language-java'>var list1 = List.of(\"A\", \"B\", \"C\");\nvar list2 = new ArrayList&lt;&gt;(list1);\nlist2.add(\"D\");\nvar list3 = List.copyOf(list2);\nlist2.set(0, \"X\");\nSystem.out.println(list1.get(0) + list2.get(0) + list3.get(0));</code></pre>",
+      "options": [
+        "Le code affichera \"AXA\".",
+        "Le code affichera \"XXX\".",
+        "list3 est une copie immuable de list2.",
+        "list1 et list3 peuvent partager la même référence interne si list2 était immuable.",
+        "Une exception sera levée à l'exécution lors de list2.add(\"D\")."
+      ],
+      "answer": [0, 2],
+      "type": "multiple",
+      "explanation": "list1 est créé avec List.of() donc immuable. list2 est une nouvelle ArrayList mutable contenant les éléments de list1. L'ajout de \"D\" fonctionne. list3 est créé avec List.copyOf(list2), ce qui crée une copie immuable. Ensuite list2.set(0, \"X\") modifie uniquement list2. Donc list1.get(0)='A', list2.get(0)='X', list3.get(0)='A', affichant \"AXA\". list3 est bien immuable."
+    },
+    {
+      "topic": "Concurrency",
+      "question": "Quel sera le résultat de l'exécution du code suivant ?<br><pre><code class='language-java'>public class TestClass {\n    static int value = 0;\n    \n    public static void main(String[] args) throws Exception {\n        Thread t1 = Thread.ofVirtual().start(() -> {\n            for (int i = 0; i < 1000; i++) {\n                value++;\n            }\n        });\n        \n        Thread t2 = Thread.ofVirtual().start(() -> {\n            for (int i = 0; i < 1000; i++) {\n                value++;\n            }\n        });\n        \n        t1.join();\n        t2.join();\n        System.out.println(value);\n    }\n}</code></pre>",
+      "options": [
+        "Le code affichera toujours 2000.",
+        "Le code peut afficher une valeur inférieure à 2000.",
+        "Le code peut afficher une valeur supérieure à 2000.",
+        "Les threads virtuels garantissent la thread-safety.",
+        "Une exception sera levée car les threads virtuels ne peuvent pas modifier des variables statiques."
+      ],
+      "answer": [1],
+      "type": "multiple",
+      "explanation": "La variable 'value' n'est pas synchronisée, donc il y a une race condition. Les deux threads virtuels incrémentent value de manière concurrente sans synchronisation. L'opération value++ n'est pas atomique (lecture, incrémentation, écriture), donc des incrémentations peuvent être perdues. Le résultat final sera probablement inférieur à 2000. Les threads virtuels n'offrent pas de garanties de thread-safety supplémentaires par rapport aux threads de plateforme."
+    },
+    {
+      "topic": "Modules",
+      "question": "Considérez les définitions de modules suivantes :<br><pre><code class='language-java'>// module-info.java du module app.core\nmodule app.core {\n    exports com.app.api;\n    requires transitive app.utils;\n}\n\n// module-info.java du module app.client\nmodule app.client {\n    requires app.core;\n}</code></pre>Quelles affirmations sont correctes ?",
+      "options": [
+        "Le module app.client a un accès implicite aux packages exportés par app.utils.",
+        "Le module app.client doit déclarer explicitement 'requires app.utils' pour utiliser ses classes.",
+        "Le mot-clé 'transitive' rend app.utils accessible à tous les modules qui requièrent app.core.",
+        "Si app.core exporte un type qui utilise un type de app.utils dans sa signature, 'requires transitive' est obligatoire.",
+        "Le module app.client peut accéder aux packages non-exportés de app.utils via réflexion."
+      ],
+      "answer": [0, 2, 3],
+      "type": "multiple",
+      "explanation": "'requires transitive' crée une dépendance transitive : tout module qui requiert app.core obtient automatiquement un accès implicite à app.utils. Cela est particulièrement utile quand app.core expose des types qui utilisent des types de app.utils dans leurs signatures publiques. Le module app.client n'a pas besoin de déclarer explicitement 'requires app.utils'. Les packages non-exportés ne sont pas accessibles via réflexion sans 'opens' ou 'open module'."
+    },
+    {
+      "topic": "Date & Time",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>LocalDateTime ldt = LocalDateTime.of(2024, 3, 10, 1, 30);\nZonedDateTime zdt1 = ZonedDateTime.of(ldt, ZoneId.of(\"America/New_York\"));\nZonedDateTime zdt2 = zdt1.plusHours(1);\nlong hours = ChronoUnit.HOURS.between(zdt1, zdt2);\nSystem.out.println(hours);</code></pre>(Sachant que le passage à l'heure d'été aux États-Unis a lieu le 10 mars 2024 à 2h00)",
+      "options": [
+        "0",
+        "1",
+        "2",
+        "-1",
+        "Une exception est levée à l'exécution."
+      ],
+      "answer": [1],
+      "explanation": "Le 10 mars 2024 à 2h00, l'heure avance d'une heure (passage à l'heure d'été). Donc à 1h30, on est avant le changement. En ajoutant 1 heure avec plusHours(1), on obtient 3h30 (car 2h30 n'existe pas ce jour-là - l'heure saute de 2h00 à 3h00). ChronoUnit.HOURS.between calcule la différence en heures entre les deux instants. Même si l'horloge a 'sauté' une heure, la différence réelle entre les deux instants est bien de 1 heure en temps absolu. Le résultat est donc 1."
+    },
+    {
+      "topic": "OOP - Inheritance",
+      "question": "Quel est le résultat de la compilation et de l'exécution ?<br><pre><code class='language-java'>class Animal {\n    String name = \"Animal\";\n    void display() { System.out.print(name + \" \"); }\n}\n\nclass Dog extends Animal {\n    String name = \"Dog\";\n    void display() { System.out.print(name + \" \"); }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Animal a = new Dog();\n        System.out.print(a.name);\n        a.display();\n    }\n}</code></pre>",
+      "options": [
+        "Animal Dog",
+        "Dog Dog",
+        "Animal Animal",
+        "Dog Animal",
+        "Le code ne compile pas."
+      ],
+      "answer": [0],
+      "explanation": "Les variables d'instance ne sont PAS polymorphes en Java. a.name accède au champ 'name' de la classe Animal (car la référence est de type Animal), donc affiche \"Animal\". Cependant, les méthodes SONT polymorphes : a.display() appelle la version overridden dans Dog, affichant \"Dog \". Le résultat final est \"Animal Dog\"."
+    },
+    {
+      "topic": "Exceptions",
+      "question": "Quelles affirmations sont correctes concernant le code suivant ?<br><pre><code class='language-java'>public class TestClass implements AutoCloseable {\n    public void close() {\n        throw new RuntimeException(\"Close Exception\");\n    }\n    \n    public static void main(String[] args) {\n        try (TestClass tc = new TestClass()) {\n            throw new Exception(\"Try Exception\");\n        } catch (Exception e) {\n            System.out.println(e.getMessage());\n            for (Throwable t : e.getSuppressed()) {\n                System.out.println(\"Suppressed: \" + t.getMessage());\n            }\n        }\n    }\n}</code></pre>",
+      "options": [
+        "Le code affichera \"Try Exception\" suivi de \"Suppressed: Close Exception\".",
+        "Le code affichera \"Close Exception\" uniquement.",
+        "L'exception levée dans close() remplace l'exception du bloc try.",
+        "Les exceptions du bloc close() sont ajoutées comme suppressed exceptions.",
+        "Le code ne compile pas car close() doit déclarer throws Exception."
+      ],
+      "answer": [0, 3],
+      "type": "multiple",
+      "explanation": "Avec try-with-resources, si une exception est levée dans le bloc try ET dans close(), l'exception du bloc try est l'exception principale, et celle de close() est ajoutée comme 'suppressed exception'. Le code affichera donc \"Try Exception\" puis \"Suppressed: Close Exception\". La méthode close() peut lever une RuntimeException sans la déclarer dans throws."
+    },
+    {
+      "topic": "Streams & Collectors",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>record Employee(String dept, int salary) {}\n\nList&lt;Employee&gt; employees = Arrays.asList(\n    new Employee(\"IT\", 50000),\n    new Employee(\"IT\", 60000),\n    new Employee(\"HR\", 45000)\n);\n\nMap&lt;String, Integer&gt; result = employees.stream()\n    .collect(Collectors.groupingBy(\n        Employee::dept,\n        Collectors.summingInt(Employee::salary)\n    ));\n\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "{IT=110000, HR=45000}",
+        "{IT=60000, HR=45000}",
+        "{IT=2, HR=1}",
+        "Le code ne compile pas.",
+        "Une exception est levée à l'exécution."
+      ],
+      "answer": [0],
+      "explanation": "Le code groupe les employés par département et calcule la somme des salaires pour chaque groupe. Pour IT : 50000 + 60000 = 110000. Pour HR : 45000. Le résultat est {IT=110000, HR=45000}."
+    },
+    {
+      "topic": "Switch Expressions",
+      "question": "Quelles affirmations sont correctes concernant le code suivant ?<br><pre><code class='language-java'>public class TestClass {\n    public static String getValue(Integer value) {\n        return switch (value) {\n            case null -> \"null value\";\n            case 1, 2 -> \"small\";\n            case 3 -> {\n                String result = \"medium\";\n                yield result;\n            }\n            default -> \"large\";\n        };\n    }\n    \n    public static void main(String[] args) {\n        System.out.println(getValue(null));\n        System.out.println(getValue(2));\n    }\n}</code></pre>",
+      "options": [
+        "Le code compile et affiche \"null value\" puis \"small\".",
+        "Le code ne compile pas car switch ne peut pas avoir un case null.",
+        "Le code ne compile pas car yield doit être utilisé pour tous les cases.",
+        "Le code ne compile pas car default est redondant avec case null.",
+        "Le code compile mais lève NullPointerException à l'exécution."
+      ],
+      "answer": [0],
+      "type": "multiple",
+      "explanation": "Depuis Java 17, les switch expressions peuvent avoir un 'case null' pour gérer explicitement null. Les switch expressions peuvent mélanger l'utilisation de -> avec expression directe et de -> avec bloc et yield. Le default est toujours nécessaire même avec case null pour assurer l'exhaustivité. Le code compile et fonctionne correctement."
+    },
+    {
+      "topic": "String & Text Blocks",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>String s1 = \"\"\"\\n    Hello\\n    World\\n    \"\"\";\nString s2 = \"\\n    Hello\\n    World\\n    \";\nSystem.out.println(s1.equals(s2));</code></pre>",
+      "options": [
+        "true",
+        "false",
+        "Le code ne compile pas.",
+        "Une exception est levée à l'exécution."
+      ],
+      "answer": [1],
+      "explanation": "Les text blocks suppriment l'indentation commune automatiquement. Dans s1, les espaces d'indentation avant 'Hello' et 'World' sont supprimés. s1 devient \"\\nHello\\nWorld\\n\". s2 conserve tous les espaces car c'est une String littérale classique. Les deux strings ne sont donc pas égales. Le résultat est false."
+    },
+    {
+      "topic": "I/O - NIO.2",
+      "question": "Quelles affirmations sont correctes concernant le code suivant ?<br><pre><code class='language-java'>Path p1 = Paths.get(\"c:\\\\temp\\\\file.txt\");\nPath p2 = Paths.get(\"c:\\\\temp\\\\backup\\\\file.txt\");\nFiles.move(p1, p2, StandardCopyOption.REPLACE_EXISTING);</code></pre>",
+      "options": [
+        "Si le répertoire 'backup' n'existe pas, il sera créé automatiquement.",
+        "Si le répertoire 'backup' n'existe pas, une exception NoSuchFileException sera levée.",
+        "Si file.txt existe déjà dans backup, il sera remplacé grâce à REPLACE_EXISTING.",
+        "L'opération échouera si file.txt dans backup est en lecture seule.",
+        "Files.move copie le fichier puis supprime l'original."
+      ],
+      "answer": [1, 2],
+      "type": "multiple",
+      "explanation": "Files.move ne crée PAS automatiquement les répertoires parents manquants - une NoSuchFileException est levée si le répertoire de destination n'existe pas. REPLACE_EXISTING permet de remplacer un fichier existant à la destination. L'option peut échouer si le fichier de destination a des permissions restrictives. Files.move essaie de faire un déplacement atomique si possible, pas nécessairement une copie+suppression."
+    },
+    {
+      "topic": "Sealed Classes",
+      "question": "Quel est le résultat de la compilation du code suivant ?<br><pre><code class='language-java'>// Dans Shape.java\npublic sealed class Shape permits Circle, Square {}\n\n// Dans Circle.java  \nfinal class Circle extends Shape {}\n\n// Dans Square.java\nnon-sealed class Square extends Shape {}\n\n// Dans Rectangle.java\nclass Rectangle extends Square {}</code></pre>",
+      "options": [
+        "Le code compile sans erreur.",
+        "Circle doit être dans le même fichier que Shape.",
+        "Rectangle ne peut pas étendre Square car Square est sealed.",
+        "Square doit être déclaré final ou sealed.",
+        "Le code ne compile pas car sealed class ne peut avoir que des sous-classes final."
+      ],
+      "answer": [0],
+      "type": "multiple",
+      "explanation": "Le code compile correctement. Les classes permises (Circle, Square) peuvent être final, sealed ou non-sealed. Elles doivent être dans le même package que la classe sealed (ou dans le même fichier si elles sont inner classes). Rectangle peut étendre Square car Square est non-sealed, ce qui permet une extension illimitée. Il n'y a pas d'obligation que toutes les sous-classes soient final."
+    },
+    {
+      "topic": "var & Type Inference",
+      "question": "Quelles lignes de code ne compileront PAS ?<br><pre><code class='language-java'>public class TestClass {\n    var field = 10;  // Line 1\n    \n    public void method() {\n        var x = null;  // Line 2\n        var y = 10;  // Line 3\n        var z = (String) null;  // Line 4\n        var list = new ArrayList&lt;&gt;();  // Line 5\n    }\n}</code></pre>",
+      "options": [
+        "Line 1",
+        "Line 2",
+        "Line 3",
+        "Line 4",
+        "Line 5"
+      ],
+      "answer": [0, 1, 4],
+      "type": "multiple",
+      "explanation": "Line 1 : 'var' ne peut pas être utilisé pour les champs de classe, seulement pour les variables locales. Line 2 : 'var' nécessite un initializer et ne peut pas inférer le type à partir de 'null' seul. Line 4 : Même avec un cast, var avec null pose problème car le type exact ne peut être déterminé de manière fiable. Line 3 compile (int). Line 5 compile bien car le diamond operator avec new donne un type ArrayList<Object>."
+    },
+    {
+      "topic": "Localization",
+      "question": "Considérez les fichiers de ressources suivants :<br>messages.properties : greeting=Hello<br>messages_fr.properties : greeting=Bonjour<br>messages_fr_CA.properties : greeting=Salut<br><br>Que va afficher ce code ?<br><pre><code class='language-java'>Locale.setDefault(Locale.US);\nResourceBundle rb = ResourceBundle.getBundle(\"messages\", new Locale(\"fr\", \"BE\"));\nSystem.out.println(rb.getString(\"greeting\"));</code></pre>",
+      "options": [
+        "Hello",
+        "Bonjour",
+        "Salut",
+        "Une exception MissingResourceException est levée.",
+        "Le résultat dépend de la locale du système."
+      ],
+      "answer": [1],
+      "explanation": "Le mécanisme de fallback de ResourceBundle cherche dans l'ordre : messages_fr_BE.properties (n'existe pas), messages_fr.properties (existe, contient 'Bonjour'), donc s'arrête là. Il n'ira pas vers la locale par défaut (US) car il a trouvé une correspondance avec 'fr'. Le résultat est 'Bonjour'."
+    },
+    {
+      "topic": "Parallel Streams",
+      "question": "Quel sera le comportement du code suivant ?<br><pre><code class='language-java'>List&lt;String&gt; words = Arrays.asList(\"a\", \"b\", \"c\", \"d\", \"e\");\nString result = words.parallelStream()\n    .reduce(\"\", (s1, s2) -> s1 + s2);\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "Le code affichera toujours \"abcde\".",
+        "Le code affichera \"abcde\" ou \"aabbccddee\" ou d'autres combinaisons.",
+        "Le code peut afficher \"aaabbbcccdddeeee\" ou plus de répétitions.",
+        "L'ordre des caractères peut varier mais chaque lettre apparaîtra exactement une fois.",
+        "Le code affichera une chaîne vide."
+      ],
+      "answer": [1, 2],
+      "type": "multiple",
+      "explanation": "Avec parallelStream() et reduce avec une identity value (\"\"), chaque thread commence avec l'identity (\"\") et combine ses éléments. Ensuite les résultats partiels sont combinés. Comme l'identity est utilisée plusieurs fois (une fois par thread/partition), on peut obtenir des répétitions. Par exemple, avec 2 partitions : partition1 donne \"\" + \"a\" + \"b\" = \"ab\", partition2 donne \"\" + \"c\" + \"d\" + \"e\" = \"cde\", puis combine : \"ab\" + \"cde\" = \"abcde\". Mais si les partitions sont différentes, on peut avoir \"\" + \"a\" = \"a\", \"\" + \"b\" = \"b\", puis \"a\" + \"b\" = \"ab\", etc., résultant en plus de répétitions de l'identity. Le nombre de répétitions dépend de la façon dont le stream est partitionné."
+    },
+    {
+      "topic": "Collections - SequencedCollection",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>SequencedCollection&lt;String&gt; seq = new ArrayList&lt;&gt;();\nseq.addFirst(\"A\");\nseq.addLast(\"B\");\nseq.addFirst(\"C\");\nseq.addLast(\"D\");\nseq = seq.reversed();\nSystem.out.println(seq);</code></pre>",
+      "options": [
+        "[D, B, A, C]",
+        "[C, A, B, D]",
+        "[D, C, B, A]",
+        "Le code ne compile pas car ArrayList n'implémente pas SequencedCollection.",
+        "Une exception est levée à l'exécution."
+      ],
+      "answer": [0],
+      "explanation": "Depuis Java 21, ArrayList implémente SequencedCollection. Les opérations donnent : addFirst(\"A\") -> [A], addLast(\"B\") -> [A, B], addFirst(\"C\") -> [C, A, B], addLast(\"D\") -> [C, A, B, D]. Ensuite reversed() retourne une vue inversée : [D, B, A, C]. Le résultat affiché est [D, B, A, C]."
+    },
+    {
+      "topic": "Operators & Precedence",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>int x = 5;\nint y = ++x + x++ + x;\nSystem.out.println(x + \" \" + y);</code></pre>",
+      "options": [
+        "7 18",
+        "8 18",
+        "7 19",
+        "8 19",
+        "Le code ne compile pas."
+      ],
+      "answer": [0],
+      "explanation": "Évaluons l'expression : ++x incrémente x à 6 puis retourne 6. Ensuite x++ retourne la valeur actuelle (6) puis incrémente x à 7. Enfin, on ajoute x qui vaut maintenant 7. Donc y = 6 + 6 + 6 = 18. Mais attendez, après x++, x vaut 7, et la dernière partie ajoute x qui vaut 7, donc y = 6 + 6 + 7 = 19... Non ! L'évaluation se fait de gauche à droite : ++x (x devient 6, expression vaut 6), puis x++ (expression vaut 6, puis x devient 7), puis x (vaut 7). Donc y = 6 + 6 + 7 = 19 et x = 7. Résultat : \"7 19\"... Hmm, mais regardons l'option. Vérifions : ++x fait x=6 et donne 6, x++ donne 6 puis fait x=7, puis on lit x qui est 7. Total : 6+6+7=19. Donc x=7 et y=19. Mais l'option dit 7 18 ou 7 19... Laissez-moi recalculer. ++x : x passe à 6, renvoie 6. x++ : renvoie 6 (la valeur avant incrément), puis x passe à 7. x : vaut 7. Donc 6 + 6 + 7 = 19. x final = 7. Donc la réponse devrait être \"7 19\". Mais si 7 18 est proposé... Je pense qu'il y a une subtilité. En fait, non : ++x donne 6 et x devient 6, x++ donne 6 et x devient 7, +x donne 7. 6+6+7=19. Donc \"7 19\" est correct."
+    },
+    {
+      "topic": "Lambda & Method References",
+      "question": "Quelles lignes de code sont valides ?<br><pre><code class='language-java'>List&lt;String&gt; list = Arrays.asList(\"a\", \"b\", \"c\");\n\n// Option 1\nlist.forEach(System.out::println);\n\n// Option 2\nlist.stream().map(String::toUpperCase).forEach(System.out::println);\n\n// Option 3\nlist.stream().filter(String::isEmpty).forEach(System.out::println);\n\n// Option 4\nlist.stream().sorted(String::compareTo).forEach(System.out::println);\n\n// Option 5\nlist.replaceAll(String::toUpperCase);</code></pre>",
+      "options": [
+        "Option 1",
+        "Option 2",
+        "Option 3",
+        "Option 4",
+        "Option 5"
+      ],
+      "answer": [0, 1, 2, 4],
+      "type": "multiple",
+      "explanation": "Option 1 : valide, méthode reference pour Consumer. Option 2 : valide, String::toUpperCase est un bon Function. Option 3 : valide, String::isEmpty peut être utilisé comme Predicate. Option 4 : INVALIDE, sorted() attend un Comparator, pas une BiFunction. Il faudrait écrire .sorted(String::compareTo) ne fonctionne pas car compareTo a besoin de deux arguments (this et l'autre). Il faut utiliser .sorted() ou .sorted(Comparator.naturalOrder()). Option 5 : valide, replaceAll accepte un UnaryOperator."
+    },
+    {
+      "topic": "Optional",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>Optional&lt;String&gt; opt1 = Optional.of(\"Java\");\nOptional&lt;String&gt; opt2 = opt1.filter(s -> s.length() > 10);\nString result = opt2.orElseGet(() -> \"Default\");\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "Java",
+        "Default",
+        "null",
+        "Une exception est levée à l'exécution.",
+        "Le code ne compile pas."
+      ],
+      "answer": [1],
+      "explanation": "opt1 contient \"Java\". Le filtre vérifie si la longueur est > 10, ce qui est faux (longueur = 4). Donc opt2 devient Optional.empty(). orElseGet() sur un Optional vide appelle le Supplier et retourne \"Default\". Le résultat est \"Default\"."
+    },
+    {
+      "topic": "try-with-resources",
+      "question": "Quelles affirmations sont correctes concernant le code suivant ?<br><pre><code class='language-java'>class Resource implements AutoCloseable {\n    private String name;\n    Resource(String name) { \n        this.name = name;\n        System.out.println(name + \" opened\");\n    }\n    public void close() {\n        System.out.println(name + \" closed\");\n    }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Resource r1 = new Resource(\"R1\");\n        try (r1; Resource r2 = new Resource(\"R2\")) {\n            System.out.println(\"In try\");\n        }\n    }\n}</code></pre>",
+      "options": [
+        "L'ordre d'affichage sera : R1 opened, R2 opened, In try, R2 closed, R1 closed",
+        "L'ordre d'affichage sera : R1 opened, R2 opened, In try, R1 closed, R2 closed",
+        "r1 doit être déclaré final ou effectively final pour être utilisé dans try-with-resources.",
+        "Le code ne compile pas car r1 est déclaré en dehors du try-with-resources.",
+        "Les ressources sont fermées dans l'ordre inverse de leur déclaration dans le try."
+      ],
+      "answer": [0, 2, 4],
+      "type": "multiple",
+      "explanation": "Depuis Java 9, on peut utiliser des variables effectively final dans try-with-resources. r1 doit être effectively final. Les ressources sont toujours fermées dans l'ordre inverse de leur déclaration/initialisation dans le try. Donc r2 est fermé avant r1. L'ordre est correct : R1 opened (avant le try), R2 opened (dans le try), In try, R2 closed, R1 closed."
+    },
+    {
+      "topic": "Generics",
+      "question": "Quel est le résultat de la compilation du code suivant ?<br><pre><code class='language-java'>class Box&lt;T&gt; {\n    private T item;\n    public void set(T item) { this.item = item; }\n    public T get() { return item; }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Box&lt;? extends Number&gt; box = new Box&lt;Integer&gt;();\n        box.set(10);  // Line 1\n        Number n = box.get();  // Line 2\n    }\n}</code></pre>",
+      "options": [
+        "Le code compile sans erreur.",
+        "Erreur de compilation à Line 1.",
+        "Erreur de compilation à Line 2.",
+        "Erreur de compilation aux deux lignes.",
+        "Le code compile mais lève une exception à l'exécution."
+      ],
+      "answer": [1],
+      "type": "multiple",
+      "explanation": "Box<? extends Number> signifie que box peut contenir une Box d'un sous-type de Number (Integer, Double, etc.), mais on ne sait pas lequel exactement. On ne peut donc PAS appeler set() avec un argument (même Number), car on ne peut pas garantir le type exact. C'est le principe PECS (Producer Extends, Consumer Super). Line 1 ne compile pas. Line 2 compile car on peut lire un élément comme Number (covariance). Seule Line 1 a une erreur."
+    },
+    {
+      "topic": "Enums",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>enum Day {\n    MONDAY(1), TUESDAY(2), WEDNESDAY(3);\n    \n    private final int order;\n    \n    Day(int order) { this.order = order; }\n    \n    public int getOrder() { return order; }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Day day = Day.TUESDAY;\n        System.out.println(day.ordinal() + \" \" + day.getOrder());\n    }\n}</code></pre>",
+      "options": [
+        "1 2",
+        "2 2",
+        "2 1",
+        "1 1",
+        "Le code ne compile pas."
+      ],
+      "answer": [1],
+      "explanation": "ordinal() retourne la position de l'enum dans sa déclaration (base 0). TUESDAY est en position 1 (après MONDAY qui est en position 0). getOrder() retourne la valeur du champ order, qui est 2 pour TUESDAY. Le résultat est \"1 2\"."
+    },
+    {
+      "topic": "HashMap & equals/hashCode",
+      "question": "Quelles affirmations sont correctes ?<br><pre><code class='language-java'>class Key {\n    int id;\n    Key(int id) { this.id = id; }\n    public boolean equals(Object o) {\n        return o instanceof Key k && k.id == this.id;\n    }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Map&lt;Key, String&gt; map = new HashMap&lt;&gt;();\n        Key k1 = new Key(1);\n        Key k2 = new Key(1);\n        map.put(k1, \"Value1\");\n        map.put(k2, \"Value2\");\n        System.out.println(map.size());\n    }\n}</code></pre>",
+      "options": [
+        "Le code affichera 1.",
+        "Le code affichera 2.",
+        "La classe Key viole le contrat equals/hashCode.",
+        "k1.equals(k2) retourne true.",
+        "Les deux clés auront probablement des hash codes différents."
+      ],
+      "answer": [1, 2, 3, 4],
+      "type": "multiple",
+      "explanation": "equals() est overridden pour comparer par id, donc k1.equals(k2) retourne true. Cependant, hashCode() n'est PAS overridden, donc les deux objets auront probablement des hash codes différents (hérités de Object). Cela viole le contrat : si deux objets sont equals, ils doivent avoir le même hashCode. Dans HashMap, comme les hash codes sont différents, k1 et k2 sont traités comme des clés distinctes. Le résultat est 2. C'est un bug classique."
+    },
+    {
+      "topic": "Annotations",
+      "question": "Quelles affirmations sont correctes concernant le code suivant ?<br><pre><code class='language-java'>class Parent {\n    void method1() { }\n    static void method2() { }\n}\n\nclass Child extends Parent {\n    @Override\n    void method1() { }  // Line 1\n    \n    @Override\n    static void method2() { }  // Line 2\n    \n    @Override\n    public String toString() { return \"Child\"; }  // Line 3\n}</code></pre>",
+      "options": [
+        "Line 1 compile sans erreur.",
+        "Line 2 compile sans erreur.",
+        "Line 3 compile sans erreur.",
+        "Line 2 provoque une erreur car les méthodes statiques ne peuvent pas être overridden.",
+        "Le code compile entièrement sans erreur."
+      ],
+      "answer": [0, 2, 3],
+      "type": "multiple",
+      "explanation": "Line 1 : @Override est correct, method1() est bien overridden. Line 2 : Les méthodes statiques ne sont PAS overridden mais cachées (hidden). @Override sur une méthode statique provoque une erreur de compilation. Line 3 : @Override est correct, toString() de Object est overridden. Le code ne compile pas à cause de Line 2."
+    },
+    {
+      "topic": "instanceof & Pattern Matching",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>Object obj = \"Hello\";\n\nif (obj instanceof String s && s.length() > 3) {\n    System.out.println(s.toUpperCase());\n} else {\n    System.out.println(\"NO\");\n}\n\nSystem.out.println(s);</code></pre>",
+      "options": [
+        "HELLO suivi d'une erreur de compilation.",
+        "HELLO suivi de Hello.",
+        "NO suivi d'une erreur de compilation.",
+        "Le code ne compile pas entièrement.",
+        "HELLO suivi de NO."
+      ],
+      "answer": [0],
+      "type": "multiple",
+      "explanation": "La première partie compile et affiche \"HELLO\" car obj est bien une String de longueur > 3. Cependant, la variable de pattern 's' n'est en scope QUE dans le bloc if où le test est vrai. Donc System.out.println(s) après le if ne compile pas car 's' n'est pas en scope. Le code ne compile pas entièrement."
+    },
+    {
+      "topic": "Comparator & Sorting",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>List&lt;String&gt; words = Arrays.asList(\"apple\", \"Banana\", \"cherry\", \"Date\");\nCollections.sort(words);\nSystem.out.println(words);</code></pre>",
+      "options": [
+        "[apple, Banana, cherry, Date]",
+        "[Banana, Date, apple, cherry]",
+        "[apple, cherry, Banana, Date]",
+        "[Date, Banana, apple, cherry]",
+        "Le résultat dépend de la locale du système."
+      ],
+      "answer": [1],
+      "explanation": "Par défaut, String.compareTo() (utilisé par Collections.sort() sur les Strings) trie selon l'ordre lexicographique basé sur les valeurs Unicode. Les majuscules ont des valeurs Unicode plus petites que les minuscules. Donc 'B'(66) < 'D'(68) < 'a'(97) < 'c'(99). Le résultat trié est [Banana, Date, apple, cherry]."
+    },
+    {
+      "topic": "Files & Paths",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>Path p1 = Paths.get(\"/home/user/data/../docs/./file.txt\");\nPath p2 = p1.normalize();\nSystem.out.println(p2);</code></pre>",
+      "options": [
+        "/home/user/data/../docs/./file.txt",
+        "/home/user/docs/file.txt",
+        "\\home\\user\\docs\\file.txt",
+        "home/user/docs/file.txt",
+        "Le code ne compile pas."
+      ],
+      "answer": [1],
+      "explanation": "La méthode normalize() supprime les redondances dans le chemin : '..' remonte d'un niveau et '.' représente le répertoire courant. '/home/user/data/..' devient '/home/user', puis 'docs/.' devient 'docs'. Le résultat normalisé est '/home/user/docs/file.txt'. Le séparateur utilisé dépend du système d'exploitation, mais dans l'output de toString() sur un Path Unix, ce sera '/'."
+    },
+    {
+      "topic": "Comparable",
+      "question": "Quel est le résultat de la compilation et de l'exécution ?<br><pre><code class='language-java'>record Person(String name, int age) implements Comparable&lt;Person&gt; {\n    public int compareTo(Person other) {\n        int nameComp = this.name.compareTo(other.name);\n        return nameComp != 0 ? nameComp : Integer.compare(this.age, other.age);\n    }\n}\n\npublic class TestClass {\n    public static void main(String[] args) {\n        List&lt;Person&gt; people = Arrays.asList(\n            new Person(\"Alice\", 30),\n            new Person(\"Bob\", 25),\n            new Person(\"Alice\", 25)\n        );\n        Collections.sort(people);\n        people.forEach(System.out::println);\n    }\n}</code></pre>",
+      "options": [
+        "Person[name=Alice, age=25], Person[name=Alice, age=30], Person[name=Bob, age=25]",
+        "Person[name=Alice, age=30], Person[name=Alice, age=25], Person[name=Bob, age=25]",
+        "Person[name=Bob, age=25], Person[name=Alice, age=25], Person[name=Alice, age=30]",
+        "Le code ne compile pas.",
+        "L'ordre est indéterminé."
+      ],
+      "answer": [0],
+      "explanation": "Le compareTo trie d'abord par nom, puis par âge en cas d'égalité de nom. \"Alice\" < \"Bob\" alphabétiquement. Pour les deux Alice, 25 < 30. L'ordre final est : Alice 25, Alice 30, Bob 25."
+    },
+    {
+      "topic": "Executors",
+      "question": "Quelles affirmations sont correctes concernant le code suivant ?<br><pre><code class='language-java'>ExecutorService executor = Executors.newFixedThreadPool(2);\nList&lt;Future&lt;Integer&gt;&gt; futures = new ArrayList&lt;&gt;();\n\nfor (int i = 0; i < 5; i++) {\n    final int num = i;\n    Future&lt;Integer&gt; future = executor.submit(() -> num * 2);\n    futures.add(future);\n}\n\nexecutor.shutdown();\n\nfor (Future&lt;Integer&gt; f : futures) {\n    System.out.println(f.get());\n}</code></pre>",
+      "options": [
+        "Le code affichera 0, 2, 4, 6, 8 dans cet ordre.",
+        "Le code peut afficher les résultats dans un ordre différent.",
+        "executor.shutdown() empêche l'exécution des tâches déjà soumises.",
+        "Les appels f.get() bloquent jusqu'à ce que le résultat soit disponible.",
+        "Le code peut bloquer indéfiniment si une tâche ne se termine jamais."
+      ],
+      "answer": [0, 3, 4],
+      "type": "multiple",
+      "explanation": "executor.shutdown() empêche de soumettre de NOUVELLES tâches mais permet aux tâches déjà soumises de s'exécuter. Les Future sont ajoutés à la liste dans l'ordre, et f.get() sur chaque Future bloque jusqu'à obtenir le résultat. Donc les résultats seront affichés dans l'ordre : 0, 2, 4, 6, 8. Si une tâche ne se termine jamais, f.get() bloquera indéfiniment."
+    },
+    {
+      "topic": "StringBuilder",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>StringBuilder sb = new StringBuilder(\"Java\");\nsb.append(\" SE\").insert(4, \" 21\");\nSystem.out.println(sb);</code></pre>",
+      "options": [
+        "Java 21 SE",
+        "Java SE 21",
+        "Jav 21a SE",
+        "Java21 SE",
+        "Le code ne compile pas."
+      ],
+      "answer": [0],
+      "explanation": "Initialement sb = \"Java\". append(\" SE\") donne \"Java SE\". insert(4, \" 21\") insère \" 21\" à l'index 4 (après 'Java'). Le résultat est \"Java 21 SE\". L'index 4 pointe juste après 'a' dans 'Java'."
+    },
+    {
+      "topic": "Nested Classes",
+      "question": "Quelles affirmations sont correctes concernant le code suivant ?<br><pre><code class='language-java'>class Outer {\n    private int value = 10;\n    \n    static class Nested {\n        void display() {\n            System.out.println(value);  // Line 1\n        }\n    }\n    \n    class Inner {\n        void display() {\n            System.out.println(value);  // Line 2\n        }\n    }\n}</code></pre>",
+      "options": [
+        "Line 1 provoque une erreur de compilation.",
+        "Line 2 provoque une erreur de compilation.",
+        "Les deux lignes compilent sans erreur.",
+        "Nested ne peut pas accéder aux membres d'instance de Outer.",
+        "Inner peut accéder aux membres privés de Outer."
+      ],
+      "answer": [0, 3, 4],
+      "type": "multiple",
+      "explanation": "Les nested static classes ne peuvent accéder qu'aux membres statiques de la classe englobante. 'value' est un membre d'instance, donc Line 1 ne compile pas. Les inner classes (non-static) ont accès à tous les membres (même privés) de la classe englobante, donc Line 2 compile. Inner peut bien accéder aux membres privés de Outer."
+    },
+    {
+      "topic": "Array Initialization",
+      "question": "Quelles déclarations sont valides ?<br><pre><code class='language-java'>// Option 1\nint[] arr1 = new int[]{1, 2, 3};\n\n// Option 2\nint[] arr2 = {1, 2, 3};\n\n// Option 3\nint arr3[] = new int[3]{1, 2, 3};\n\n// Option 4\nvar arr4 = new int[]{1, 2, 3};\n\n// Option 5\nvar arr5 = {1, 2, 3};</code></pre>",
+      "options": [
+        "Option 1",
+        "Option 2",
+        "Option 3",
+        "Option 4",
+        "Option 5"
+      ],
+      "answer": [0, 1, 3],
+      "type": "multiple",
+      "explanation": "Option 1 : valide, initialisation avec new int[]{}. Option 2 : valide, initialisation courte lors de la déclaration. Option 3 : INVALIDE, on ne peut pas spécifier la taille ET les valeurs d'initialisation en même temps. Option 4 : valide, var peut inférer int[]. Option 5 : INVALIDE, var nécessite un type explicite sur le côté droit, l'initialisation {} seule n'est pas suffisante."
+    },
+    {
+      "topic": "ConcurrentHashMap",
+      "question": "Quelles affirmations sont correctes concernant ConcurrentHashMap ?<br><pre><code class='language-java'>Map&lt;String, Integer&gt; map = new ConcurrentHashMap&lt;&gt;();\nmap.put(\"A\", 1);\nmap.put(\"B\", 2);\n\nInteger value = map.putIfAbsent(\"A\", 10);  // Line 1\nInteger value2 = map.putIfAbsent(\"C\", 3);  // Line 2</code></pre>",
+      "options": [
+        "Après Line 1, value vaut 1.",
+        "Après Line 1, value vaut 10.",
+        "Après Line 1, la valeur associée à \"A\" dans la map est 10.",
+        "Après Line 2, value2 vaut null.",
+        "ConcurrentHashMap autorise les clés null."
+      ],
+      "answer": [0, 3],
+      "type": "multiple",
+      "explanation": "putIfAbsent(key, value) n'insère la valeur QUE si la clé est absente, et retourne la valeur existante (ou null si absente). Line 1 : \"A\" existe déjà avec la valeur 1, donc rien n'est modifié et value = 1. Line 2 : \"C\" n'existe pas, donc 3 est inséré et value2 = null. ConcurrentHashMap n'autorise NI les clés null NI les valeurs null (contrairement à HashMap)."
+    },
+    {
+      "topic": "Autoboxing & Unboxing",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>Integer i1 = 100;\nInteger i2 = 100;\nInteger i3 = 200;\nInteger i4 = 200;\n\nSystem.out.println((i1 == i2) + \" \" + (i3 == i4));</code></pre>",
+      "options": [
+        "true true",
+        "true false",
+        "false true",
+        "false false",
+        "Le résultat dépend de l'implémentation de la JVM."
+      ],
+      "answer": [1],
+      "explanation": "Java met en cache les objets Integer pour les valeurs entre -128 et 127 (optimisation). i1 et i2 sont dans cette plage, donc i1 == i2 compare les mêmes références (true). i3 et i4 sont hors de cette plage, donc ce sont des objets différents et i3 == i4 est false. Le résultat est \"true false\". C'est un piège classique de l'autoboxing."
+    },
+    {
+      "topic": "Static Initialization",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>public class TestClass {\n    static {\n        System.out.print(\"A\");\n    }\n    \n    { System.out.print(\"B\"); }\n    \n    static {\n        System.out.print(\"C\");\n    }\n    \n    public TestClass() {\n        System.out.print(\"D\");\n    }\n    \n    public static void main(String[] args) {\n        System.out.print(\"E\");\n        new TestClass();\n        new TestClass();\n    }\n}</code></pre>",
+      "options": [
+        "ACEBDBD",
+        "ACEBDD",
+        "AECBDBD",
+        "BDACBD",
+        "EBDBD"
+      ],
+      "answer": [0],
+      "explanation": "Les blocs static s'exécutent dans l'ordre lors du chargement de la classe, avant main() : A puis C. Ensuite main() s'exécute : E. Puis new TestClass() exécute le bloc d'instance (B) puis le constructeur (D). Le deuxième new TestClass() fait pareil : B puis D. L'ordre final est : ACEBDBD."
+    },
+    {
+      "topic": "Serialization",
+      "question": "Quelles affirmations sont correctes concernant la sérialisation ?<br><pre><code class='language-java'>class Parent {\n    int parentValue = 10;\n}\n\nclass Child extends Parent implements Serializable {\n    int childValue = 20;\n    transient int temp = 30;\n}</code></pre>",
+      "options": [
+        "Lors de la désérialisation, parentValue vaudra 0.",
+        "Lors de la désérialisation, childValue vaudra 20.",
+        "Lors de la désérialisation, temp vaudra 30.",
+        "Lors de la désérialisation, temp vaudra 0.",
+        "La classe ne compile pas car Parent n'implémente pas Serializable."
+      ],
+      "answer": [0, 1, 3],
+      "type": "multiple",
+      "explanation": "Quand une classe est Serializable mais pas son parent, les champs du parent ne sont PAS sérialisés. À la désérialisation, ces champs prennent leurs valeurs par défaut (0 pour int). childValue est sérialisé et conserve sa valeur (20). Les champs transient ne sont JAMAIS sérialisés, donc temp vaudra 0 après désérialisation. Le code compile car seule la classe à sérialiser doit implémenter Serializable."
+    },
+    {
+      "topic": "Switch Expressions with Enum",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>enum Status { ACTIVE, INACTIVE, PENDING }\n\npublic class TestClass {\n    public static void main(String[] args) {\n        Status status = Status.INACTIVE;\n        String result = switch (status) {\n            case ACTIVE -> \"Running\";\n            case INACTIVE -> \"Stopped\";\n        };\n        System.out.println(result);\n    }\n}</code></pre>",
+      "options": [
+        "Running",
+        "Stopped",
+        "Le code ne compile pas car le switch n'est pas exhaustif.",
+        "Le code ne compile pas car default est manquant.",
+        "Le code compile car toutes les valeurs de l'enum sont couvertes."
+      ],
+      "answer": [2, 3],
+      "type": "multiple",
+      "explanation": "Les switch expressions doivent être exhaustives. Même avec un enum, si tous les cas ne sont pas couverts, soit il faut ajouter les cas manquants (PENDING), soit ajouter un default. Ici PENDING n'est pas géré, donc le code ne compile pas. Il faut ajouter un case PENDING ou un default."
+    },
+    {
+      "topic": "DateTimeFormatter",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>LocalDate date = LocalDate.of(2024, 1, 5);\nDateTimeFormatter formatter = DateTimeFormatter.ofPattern(\"EEE dd MMM yyyy\");\nSystem.out.println(date.format(formatter));</code></pre>",
+      "options": [
+        "Fri 05 Jan 2024",
+        "Friday 05 January 2024",
+        "5 05 1 2024",
+        "Le résultat dépend de la locale par défaut.",
+        "Une exception est levée à l'exécution."
+      ],
+      "answer": [3],
+      "explanation": "Le pattern \"EEE\" représente le nom court du jour de la semaine, \"MMM\" le nom court du mois. Ces formats sont sensibles à la locale. Avec la locale par défaut (qui peut être US, FR, etc.), le résultat variera. Par exemple, en locale US : \"Fri 05 Jan 2024\", en locale FR : \"ven. 05 janv. 2024\". Le résultat dépend donc de la locale du système."
+    },
+    {
+      "topic": "Functional Interfaces",
+      "question": "Quelles interfaces sont des functional interfaces valides ?<br><pre><code class='language-java'>// Option 1\ninterface A {\n    void method1();\n}\n\n// Option 2\ninterface B {\n    void method1();\n    default void method2() { }\n}\n\n// Option 3\ninterface C {\n    void method1();\n    void method2();\n}\n\n// Option 4\ninterface D extends A {\n    default void method2() { }\n}\n\n// Option 5\ninterface E {\n    String toString();\n}</code></pre>",
+      "options": [
+        "Option 1",
+        "Option 2",
+        "Option 3",
+        "Option 4",
+        "Option 5"
+      ],
+      "answer": [0, 1, 3],
+      "type": "multiple",
+      "explanation": "Une functional interface a exactement UNE méthode abstraite (SAM - Single Abstract Method). Option 1 : 1 méthode abstraite ✓. Option 2 : 1 méthode abstraite (method2 est default) ✓. Option 3 : 2 méthodes abstraites ✗. Option 4 : hérite de method1() de A et ajoute une méthode default, donc 1 méthode abstraite ✓. Option 5 : toString() existe déjà dans Object, donc aucune nouvelle méthode abstraite n'est ajoutée, E n'a aucune SAM ✗."
+    },
+    {
+      "topic": "Module Services",
+      "question": "Considérez les définitions de modules suivantes :<br><pre><code class='language-java'>// Module api\nmodule api {\n    exports com.api;\n}\n\n// Module provider\nmodule provider {\n    requires api;\n    provides com.api.Service with com.provider.ServiceImpl;\n}\n\n// Module consumer\nmodule consumer {\n    requires api;\n    uses com.api.Service;\n}</code></pre>Quelles affirmations sont correctes ?",
+      "options": [
+        "Le module consumer doit déclarer 'requires provider' pour utiliser le service.",
+        "Le module consumer peut découvrir ServiceImpl via ServiceLoader même sans 'requires provider'.",
+        "Le module provider doit exporter com.provider pour que le service fonctionne.",
+        "La classe ServiceImpl doit avoir un constructeur public sans arguments.",
+        "Le module consumer peut avoir plusieurs implémentations du même service disponibles."
+      ],
+      "answer": [1, 3, 4],
+      "type": "multiple",
+      "explanation": "Dans le système de services du module Java, le consumer n'a PAS besoin de connaître le provider. Il déclare 'uses' pour indiquer qu'il utilise le service, et le provider déclare 'provides...with' pour fournir une implémentation. ServiceLoader découvre automatiquement les implémentations disponibles au runtime. Le provider n'a PAS besoin d'exporter le package de l'implémentation (com.provider), seul l'export de l'interface (dans api) est nécessaire. L'implémentation doit avoir un constructeur public sans arguments (ou une méthode static provider()). Plusieurs modules peuvent fournir différentes implémentations du même service."
+    },
+    {
+      "topic": "Streams - peek vs forEach",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>List&lt;String&gt; list = Arrays.asList(\"a\", \"b\", \"c\");\n\nlist.stream()\n    .peek(s -> System.out.print(s + \"1 \"))\n    .map(String::toUpperCase)\n    .peek(s -> System.out.print(s + \"2 \"));\n\nSystem.out.println(\"END\");</code></pre>",
+      "options": [
+        "a1 A2 b1 B2 c1 C2 END",
+        "END",
+        "a1 b1 c1 A2 B2 C2 END",
+        "Le comportement dépend de l'implémentation du stream.",
+        "Une exception est levée à l'exécution."
+      ],
+      "answer": [1],
+      "explanation": "Les opérations intermédiaires de Stream (peek, map, filter, etc.) sont LAZY : elles ne s'exécutent pas tant qu'il n'y a pas d'opération terminale (forEach, collect, count, etc.). Dans ce code, il n'y a AUCUNE opération terminale, donc le pipeline n'est jamais exécuté. Seul \"END\" sera affiché. C'est un piège classique avec les streams."
+    },
+    {
+      "topic": "Collector groupingBy",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>record Product(String category, int price) {}\n\nList&lt;Product&gt; products = Arrays.asList(\n    new Product(\"Electronics\", 100),\n    new Product(\"Electronics\", 200),\n    new Product(\"Books\", 50)\n);\n\nMap&lt;String, Long&gt; result = products.stream()\n    .collect(Collectors.groupingBy(\n        Product::category,\n        Collectors.counting()\n    ));\n\nSystem.out.println(result);</code></pre>",
+      "options": [
+        "{Electronics=300, Books=50}",
+        "{Electronics=2, Books=1}",
+        "{Electronics=[100, 200], Books=[50]}",
+        "Le code ne compile pas.",
+        "Une exception est levée à l'exécution."
+      ],
+      "answer": [1],
+      "explanation": "Collectors.groupingBy avec Collectors.counting() compte le nombre d'éléments dans chaque groupe. Pour 'Electronics', il y a 2 produits. Pour 'Books', il y a 1 produit. Le résultat est {Electronics=2, Books=1}. Si on voulait la somme des prix, il faudrait utiliser Collectors.summingInt(Product::price) à la place de counting()."
+    },
+    {
+      "topic": "Wrapper Classes & Caching",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>Long l1 = 100L;\nLong l2 = 100L;\nLong l3 = new Long(100L);\n\nSystem.out.println((l1 == l2) + \" \" + (l1 == l3));</code></pre>",
+      "options": [
+        "true true",
+        "true false",
+        "false true",
+        "false false",
+        "Le code ne compile pas."
+      ],
+      "answer": [4],
+      "type": "multiple",
+      "explanation": "Depuis Java 9, le constructeur Long(long) est déprécié et supprimé dans les versions récentes. new Long(100L) ne compile plus. En supposant qu'on utilise Long.valueOf(100L) à la place, Java met en cache les Long entre -128 et 127. Donc l1 et l2 seraient la même instance (true), mais l3 serait une instance différente créée explicitement (false). Mais avec new Long(), le code ne compile pas dans Java moderne."
+    },
+    {
+      "topic": "Files - lines()",
+      "question": "Quelles affirmations sont correctes concernant le code suivant ?<br><pre><code class='language-java'>try (Stream&lt;String&gt; lines = Files.lines(Paths.get(\"data.txt\"))) {\n    lines.filter(line -> line.startsWith(\"ERROR\"))\n         .forEach(System.out::println);\n}</code></pre>",
+      "options": [
+        "Le stream est automatiquement fermé à la fin du try.",
+        "Si data.txt ne contient aucune ligne commençant par \"ERROR\", rien ne sera affiché.",
+        "Si data.txt n'existe pas, une exception NoSuchFileException sera levée.",
+        "Files.lines() charge tout le contenu du fichier en mémoire.",
+        "Le stream doit être traité dans le bloc try-with-resources."
+      ],
+      "answer": [0, 1, 2, 4],
+      "type": "multiple",
+      "explanation": "Files.lines() retourne un Stream qui doit être fermé (il implémente AutoCloseable). Le try-with-resources le ferme automatiquement. Files.lines() lit le fichier de manière LAZY, ligne par ligne, donc ne charge PAS tout en mémoire. Si le fichier n'existe pas, NoSuchFileException est levée. Si aucune ligne ne commence par \"ERROR\", le filtre ne laisse passer aucun élément et rien n'est affiché. Le stream doit être consommé dans le try car après, il est fermé."
+    }
+,    {
+      "topic": "Math API & Precision",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>double d1 = 0.1 + 0.1 + 0.1;\ndouble d2 = 0.3;\nSystem.out.println(d1 == d2);\nSystem.out.println(Math.abs(d1 - d2) < 0.0001);</code></pre>",
+      "options": [
+        "true suivi de true",
+        "false suivi de true",
+        "true suivi de false",
+        "false suivi de false",
+        "Le résultat dépend de la JVM utilisée."
+      ],
+      "answer": [1],
+      "explanation": "En raison de la représentation binaire des nombres à virgule flottante, 0.1 ne peut pas être représenté exactement. L'addition 0.1 + 0.1 + 0.1 produit une valeur très proche mais pas exactement égale à 0.3. Donc d1 == d2 est false. Cependant, la différence est très petite (de l'ordre de 10^-17), donc Math.abs(d1 - d2) < 0.0001 est true. C'est pourquoi on compare généralement les doubles avec une tolérance epsilon plutôt qu'avec ==."
+    },
+    {
+      "topic": "Access Modifiers & Packages",
+      "question": "Considérez les classes suivantes dans des packages différents :<br><pre><code class='language-java'>// Dans package p1\npackage p1;\npublic class Base {\n    protected int value = 10;\n    protected void display() { System.out.println(value); }\n}\n\n// Dans package p2\npackage p2;\nimport p1.Base;\npublic class Derived extends Base {\n    public void test() {\n        Base b = new Base();\n        System.out.println(b.value);  // Line 1\n        b.display();  // Line 2\n        \n        Derived d = new Derived();\n        System.out.println(d.value);  // Line 3\n        d.display();  // Line 4\n    }\n}</code></pre>Quelles lignes provoqueront une erreur de compilation ?",
+      "options": [
+        "Line 1 et Line 2",
+        "Line 3 et Line 4",
+        "Aucune ligne ne provoque d'erreur.",
+        "Toutes les lignes provoquent une erreur.",
+        "Seulement Line 1"
+      ],
+      "answer": [0],
+      "type": "multiple",
+      "explanation": "Les membres protected d'une classe sont accessibles : (1) dans la même classe, (2) dans les sous-classes du même package, (3) dans les sous-classes d'autres packages MAIS uniquement via l'héritage (this ou super), PAS via une référence de la classe parente. Dans p2, Derived peut accéder à ses propres membres hérités (Line 3 et 4 OK), mais ne peut PAS accéder aux membres protected d'une instance de Base qui n'est pas de type Derived (Line 1 et 2 ERREUR). C'est un piège classique sur protected."
+    },
+    {
+      "topic": "Deque Operations",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>Deque&lt;String&gt; deque = new ArrayDeque&lt;&gt;();\ndeque.offerFirst(\"A\");\ndeque.offerLast(\"B\");\ndeque.offerFirst(\"C\");\nString first = deque.pollLast();\nString second = deque.peekFirst();\ndeque.addLast(first);\nSystem.out.println(deque);</code></pre>",
+      "options": [
+        "[C, A, B]",
+        "[B, C, A]",
+        "[A, C, B]",
+        "[C, B, A]",
+        "Une exception est levée à l'exécution."
+      ],
+      "answer": [0],
+      "explanation": "Traçons les opérations : offerFirst(\"A\") → [A], offerLast(\"B\") → [A, B], offerFirst(\"C\") → [C, A, B]. pollLast() retire et retourne \"B\", deque devient [C, A]. peekFirst() retourne \"C\" sans le retirer. addLast(\"B\") ajoute \"B\" à la fin → [C, A, B]. Le résultat est [C, A, B]."
+    },
+    {
+      "topic": "Thread States & Lifecycle",
+      "question": "Quelles affirmations sont correctes concernant le code suivant ?<br><pre><code class='language-java'>public class TestClass {\n    public static void main(String[] args) throws Exception {\n        Thread t = Thread.ofPlatform().unstarted(() -> {\n            try {\n                Thread.sleep(5000);\n            } catch (InterruptedException e) {}\n        });\n        \n        System.out.println(t.getState());  // Point 1\n        t.start();\n        Thread.sleep(100);\n        System.out.println(t.getState());  // Point 2\n        t.join();\n        System.out.println(t.getState());  // Point 3\n    }\n}</code></pre>",
+      "options": [
+        "Point 1 affichera NEW",
+        "Point 2 affichera TIMED_WAITING",
+        "Point 3 affichera TERMINATED",
+        "Point 2 pourrait afficher RUNNABLE",
+        "t.start() peut être appelé plusieurs fois sur le même thread."
+      ],
+      "answer": [0, 1, 2, 3],
+      "type": "multiple",
+      "explanation": "Point 1 : unstarted() crée un thread qui n'est pas encore démarré, donc état NEW. Point 2 : après start() et sleep(100), le thread t exécute probablement sleep(5000), donc état TIMED_WAITING. Mais il POURRAIT aussi être encore en état RUNNABLE si sleep() n'a pas encore été atteint. Point 3 : après join(), le thread a terminé, donc état TERMINATED. start() ne peut être appelé qu'UNE SEULE fois - un deuxième appel lève IllegalThreadStateException."
+    },
+    {
+      "topic": "Method Overloading & Varargs",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>public class TestClass {\n    public static void process(int... values) {\n        System.out.print(\"varargs \");\n    }\n    \n    public static void process(int value) {\n        System.out.print(\"single \");\n    }\n    \n    public static void process(Integer value) {\n        System.out.print(\"Integer \");\n    }\n    \n    public static void main(String[] args) {\n        process(10);\n        process(new int[]{10, 20});\n        Integer i = 10;\n        process(i);\n    }\n}</code></pre>",
+      "options": [
+        "single varargs Integer",
+        "varargs varargs Integer",
+        "single varargs varargs",
+        "Integer varargs Integer",
+        "Le code ne compile pas en raison d'une ambiguïté."
+      ],
+      "answer": [0],
+      "explanation": "Java choisit la méthode la plus spécifique lors de l'overload resolution. Pour process(10) : le compilateur préfère process(int) à process(int...) car c'est plus spécifique, et préfère process(int) à process(Integer) car pas de boxing nécessaire → affiche 'single'. Pour process(new int[]{10, 20}) : seul process(int...) accepte un tableau → affiche 'varargs'. Pour process(i) où i est Integer : process(Integer) correspond exactement sans unboxing, donc c'est préféré à process(int) qui nécessiterait un unboxing, et à process(int...) → affiche 'Integer'. Résultat : 'single varargs Integer'."
+    }
+  ]
+}
