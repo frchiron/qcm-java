@@ -337,9 +337,6 @@ function nextQuestion() {
         showQuestion();
     } else {
         // C'est la dernière question, terminer l'examen
-        if (mode === "exam") {
-            calculateScore(); // Recalculer le score final
-        }
         endExam();
     }
 }
@@ -364,6 +361,12 @@ document.getElementById("next-btn").addEventListener("click", () => {
 
 function endExam() {
     clearInterval(timer);
+
+    // Sauvegarder la réponse courante avant de calculer le score
+    if (mode === "exam") {
+        saveCurrentAnswer();
+        calculateScore(); // Toujours recalculer le score à partir des réponses sauvegardées
+    }
 
     const total = examData.questions.length;
     const percent = Math.round((score / total) * 100);
