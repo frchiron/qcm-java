@@ -9,7 +9,7 @@
     "description": "50 questions • Tous thèmes"
   },
   "title": "OCP-830 Java 21 - Questionnaire Complet 3",
-  "duration": 90,
+  "duration": 120,
   "questions": [
     {
       "topic": "Records & Pattern Matching",

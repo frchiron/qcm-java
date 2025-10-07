@@ -9,7 +9,7 @@
     "description": "50 questions • Tous thèmes"
   },
   "title": "OCP-830 Java 21 - Questionnaire 4",
-  "duration": 75,
+  "duration": 120,
   "questions": [
     {
       "topic": "Switch Expression & Yield",

@@ -203,8 +203,8 @@
         "Dépend de la configuration",
         "Aucun si write lock est tenu"
       ],
-      "answer": 2,
-      "explanation": "Plusieurs threads peuvent tenir le read lock simultanément (lecture concurrente OK). Mais si un thread tient le write lock, aucun autre thread (read ou write) ne peut acquérir un lock. Réponse : nombre illimité de readers (mais E est aussi vraie - piège : C est la meilleure réponse directe)."
+      "answer": [2, 4],
+      "explanation": "Plusieurs threads peuvent tenir le read lock simultanément (lecture concurrente OK). Mais si un thread tient le write lock, aucun autre thread (read ou write) ne peut acquérir un lock."
     },
     {
       "topic": "Virtual Threads",
