@@ -4,7 +4,7 @@
     "mainTopic": "full",
     "category": "full",
     "examNumber": "F5",
-    "examName": "Oracle Certified Professional: Java SE 21 Developer",
+    "examName": "Test complet validé",
     "questionsCount": 50,
     "description": "Examen blanc complet couvrant tous les domaines de la certification Java 21"
   },
@@ -22,9 +22,9 @@
         "Le code ne compile pas car le pattern matching avec records est invalide.",
         "Le code compile mais lève une exception à l'exécution."
       ],
-      "answer": [2],
+      "answer": [0],
       "type": "multiple",
-      "explanation": "Dans un compact constructor de record, les affectations aux paramètres ne modifient PAS les champs finaux du record. La vérification if(x < 0 || y < 0) est vraie, mais les affectations x=0 et y=0 ne font que modifier les variables locales des paramètres, pas les champs. Les champs sont initialisés avec les valeurs d'origine après l'exécution du compact constructor. Donc p contiendra Point(-5, 10). Cependant, le pattern matching extrait correctement ces valeurs, donc a=-5 et b=10, affichant 0,10 car -5+10+5 = 10... NON ATTENDEZ. Je me suis trompé. L'affichage est a + \",\" + b ce qui donne \"-5,10\". Mais attendez, il y a un piège ici. Dans le compact constructor, on ne peut PAS réassigner x et y directement dans un record - cela devrait causer une erreur de compilation. Laissez-moi reconsidérer... En fait, dans le compact constructor, on PEUT modifier les paramètres avant qu'ils ne soient affectés aux champs. Mais la syntaxe est trompeuse. Le code compile, et les modifications de x et y dans le compact constructor affectent bien les valeurs finales. Donc p = Point(0, 0) mais ensuite b=10 dans la condition... Non, je réfléchis mal. Le pattern matching déstructure le Point qui a été créé. Si le compact constructor a modifié x et y en 0, alors p=Point(0,0) et le pattern matching donne a=0, b=0. Mais x < 0 est vrai (-5 < 0) donc x=0, et y < 0 est faux (10 n'est pas < 0) donc y reste 10. Donc Point(0, 10), affichant \"0,10\"."
+      "explanation": "Le constructeur du record remet x et y à 0 si l’un d’eux est négatif. Ainsi, new Point(-5, 10) devient Point(0, 0), et le pattern matching extrait a=0, b=0, affichant 0,0"
     },
     {
       "topic": "Streams & Lambda",
@@ -150,7 +150,7 @@
     },
     {
       "topic": "String & Text Blocks",
-      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>String s1 = \"\"\"\\n    Hello\\n    World\\n    \"\"\";\nString s2 = \"\\n    Hello\\n    World\\n    \";\nSystem.out.println(s1.equals(s2));</code></pre>",
+      "question": "Que va afficher le code suivant ?<br><pre><code class='language-java'>String s1 = \"\"\"\n    Hello\n    World\n    \"\"\";\nString s2 = \"\\n    Hello\\n    World\\n    \";\nSystem.out.println(s1.equals(s2));</code></pre>",
       "options": [
         "true",
         "false",
@@ -170,7 +170,7 @@
         "L'opération échouera si file.txt dans backup est en lecture seule.",
         "Files.move copie le fichier puis supprime l'original."
       ],
-      "answer": [1, 2],
+      "answer": [1, 2,3],
       "type": "multiple",
       "explanation": "Files.move ne crée PAS automatiquement les répertoires parents manquants - une NoSuchFileException est levée si le répertoire de destination n'existe pas. REPLACE_EXISTING permet de remplacer un fichier existant à la destination. L'option peut échouer si le fichier de destination a des permissions restrictives. Files.move essaie de faire un déplacement atomique si possible, pas nécessairement une copie+suppression."
     },
@@ -198,9 +198,9 @@
         "Line 4",
         "Line 5"
       ],
-      "answer": [0, 1, 4],
+      "answer": [0, 1],
       "type": "multiple",
-      "explanation": "Line 1 : 'var' ne peut pas être utilisé pour les champs de classe, seulement pour les variables locales. Line 2 : 'var' nécessite un initializer et ne peut pas inférer le type à partir de 'null' seul. Line 4 : Même avec un cast, var avec null pose problème car le type exact ne peut être déterminé de manière fiable. Line 3 compile (int). Line 5 compile bien car le diamond operator avec new donne un type ArrayList<Object>."
+      "explanation": "Line 1 : 'var' ne peut pas être utilisé pour les champs de classe, seulement pour les variables locales. Line 2 : 'var' nécessite un initializer et ne peut pas inférer le type à partir de 'null' seul. Line 4 : ec un cast, var avec null ne pose pas problème, le cast donne le type. Line 3 compile (int). Line 5 compile bien car le diamond operator avec new donne un type ArrayList<Object>."
     },
     {
       "topic": "Localization",
@@ -217,7 +217,7 @@
     },
     {
       "topic": "Parallel Streams",
-      "question": "Quel sera le comportement du code suivant ?<br><pre><code class='language-java'>List&lt;String&gt; words = Arrays.asList(\"a\", \"b\", \"c\", \"d\", \"e\");\nString result = words.parallelStream()\n    .reduce(\"\", (s1, s2) -> s1 + s2);\nSystem.out.println(result);</code></pre>",
+      "question": "TODO TO CHECK Quel sera le comportement du code suivant ?<br><pre><code class='language-java'>List&lt;String&gt; words = Arrays.asList(\"a\", \"b\", \"c\", \"d\", \"e\");\nString result = words.parallelStream()\n    .reduce(\"\", (s1, s2) -> s1 + s2);\nSystem.out.println(result);</code></pre>",
       "options": [
         "Le code affichera toujours \"abcde\".",
         "Le code affichera \"abcde\" ou \"aabbccddee\" ou d'autres combinaisons.",
@@ -225,9 +225,9 @@
         "L'ordre des caractères peut varier mais chaque lettre apparaîtra exactement une fois.",
         "Le code affichera une chaîne vide."
       ],
-      "answer": [1, 2],
+      "answer": [0],
       "type": "multiple",
-      "explanation": "Avec parallelStream() et reduce avec une identity value (\"\"), chaque thread commence avec l'identity (\"\") et combine ses éléments. Ensuite les résultats partiels sont combinés. Comme l'identity est utilisée plusieurs fois (une fois par thread/partition), on peut obtenir des répétitions. Par exemple, avec 2 partitions : partition1 donne \"\" + \"a\" + \"b\" = \"ab\", partition2 donne \"\" + \"c\" + \"d\" + \"e\" = \"cde\", puis combine : \"ab\" + \"cde\" = \"abcde\". Mais si les partitions sont différentes, on peut avoir \"\" + \"a\" = \"a\", \"\" + \"b\" = \"b\", puis \"a\" + \"b\" = \"ab\", etc., résultant en plus de répétitions de l'identity. Le nombre de répétitions dépend de la façon dont le stream est partitionné."
+      "explanation": "parallelStream() conserve l’ordre d’itération d’une List, et reduce(\"\", (s1, s2) -> s1 + s2) utilise une identité neutre (\"\") et une opération associative"
     },
     {
       "topic": "Collections - SequencedCollection",
@@ -252,8 +252,8 @@
         "8 19",
         "Le code ne compile pas."
       ],
-      "answer": [0],
-      "explanation": "Évaluons l'expression : ++x incrémente x à 6 puis retourne 6. Ensuite x++ retourne la valeur actuelle (6) puis incrémente x à 7. Enfin, on ajoute x qui vaut maintenant 7. Donc y = 6 + 6 + 6 = 18. Mais attendez, après x++, x vaut 7, et la dernière partie ajoute x qui vaut 7, donc y = 6 + 6 + 7 = 19... Non ! L'évaluation se fait de gauche à droite : ++x (x devient 6, expression vaut 6), puis x++ (expression vaut 6, puis x devient 7), puis x (vaut 7). Donc y = 6 + 6 + 7 = 19 et x = 7. Résultat : \"7 19\"... Hmm, mais regardons l'option. Vérifions : ++x fait x=6 et donne 6, x++ donne 6 puis fait x=7, puis on lit x qui est 7. Total : 6+6+7=19. Donc x=7 et y=19. Mais l'option dit 7 18 ou 7 19... Laissez-moi recalculer. ++x : x passe à 6, renvoie 6. x++ : renvoie 6 (la valeur avant incrément), puis x passe à 7. x : vaut 7. Donc 6 + 6 + 7 = 19. x final = 7. Donc la réponse devrait être \"7 19\". Mais si 7 18 est proposé... Je pense qu'il y a une subtilité. En fait, non : ++x donne 6 et x devient 6, x++ donne 6 et x devient 7, +x donne 7. 6+6+7=19. Donc \"7 19\" est correct."
+      "answer": [2],
+      "explanation": "Évaluons l'expression : ++x incrémente x à 6 puis retourne 6. Ensuite x++ retourne la valeur actuelle (6) puis incrémente x à 7. Enfin, on ajoute x qui vaut maintenant 7. Donc y = 6 + 6 + 6 = 18. Mais attendez, après x++, x vaut 7, et la dernière partie ajoute x qui vaut 7, donc y = 6 + 6 + 7 = 19. Donc x=7 et y=19."
     },
     {
       "topic": "Lambda & Method References",
@@ -265,9 +265,9 @@
         "Option 4",
         "Option 5"
       ],
-      "answer": [0, 1, 2, 4],
+      "answer": [0, 1, 2,3, 4],
       "type": "multiple",
-      "explanation": "Option 1 : valide, méthode reference pour Consumer. Option 2 : valide, String::toUpperCase est un bon Function. Option 3 : valide, String::isEmpty peut être utilisé comme Predicate. Option 4 : INVALIDE, sorted() attend un Comparator, pas une BiFunction. Il faudrait écrire .sorted(String::compareTo) ne fonctionne pas car compareTo a besoin de deux arguments (this et l'autre). Il faut utiliser .sorted() ou .sorted(Comparator.naturalOrder()). Option 5 : valide, replaceAll accepte un UnaryOperator."
+      "explanation": "Option 1 : valide, méthode reference pour Consumer. Option 2 : valide, String::toUpperCase est un bon Function. Option 3 : valide, String::isEmpty peut être utilisé comme Predicate. Option 4 : valide, Quand sorted attend un Comparator<String>, le compilateur transforme String::compareTo en une lambda équivalente à :\n\nComparator<String> cmp = (s1, s2) -> s1.compareTo(s2);. Option 5 : valide, replaceAll accepte un UnaryOperator."
     },
     {
       "topic": "Optional",
@@ -320,7 +320,7 @@
         "1 1",
         "Le code ne compile pas."
       ],
-      "answer": [1],
+      "answer": [0],
       "explanation": "ordinal() retourne la position de l'enum dans sa déclaration (base 0). TUESDAY est en position 1 (après MONDAY qui est en position 0). getOrder() retourne la valeur du champ order, qui est 2 pour TUESDAY. Le résultat est \"1 2\"."
     },
     {
@@ -361,9 +361,9 @@
         "Le code ne compile pas entièrement.",
         "HELLO suivi de NO."
       ],
-      "answer": [0],
+      "answer": [3],
       "type": "multiple",
-      "explanation": "La première partie compile et affiche \"HELLO\" car obj est bien une String de longueur > 3. Cependant, la variable de pattern 's' n'est en scope QUE dans le bloc if où le test est vrai. Donc System.out.println(s) après le if ne compile pas car 's' n'est pas en scope. Le code ne compile pas entièrement."
+      "explanation": "la variable de pattern 's' n'est en scope QUE dans le bloc if où le test est vrai. Donc System.out.println(s) après le if ne compile pas car 's' n'est pas en scope. Le code ne compile pas entièrement."
     },
     {
       "topic": "Comparator & Sorting",
@@ -388,8 +388,8 @@
         "home/user/docs/file.txt",
         "Le code ne compile pas."
       ],
-      "answer": [1],
-      "explanation": "La méthode normalize() supprime les redondances dans le chemin : '..' remonte d'un niveau et '.' représente le répertoire courant. '/home/user/data/..' devient '/home/user', puis 'docs/.' devient 'docs'. Le résultat normalisé est '/home/user/docs/file.txt'. Le séparateur utilisé dépend du système d'exploitation, mais dans l'output de toString() sur un Path Unix, ce sera '/'."
+      "answer": [2],
+      "explanation": "La méthode normalize() supprime les redondances dans le chemin : '..' remonte d'un niveau et '.' représente le répertoire courant. '/home/user/data/..' devient '/home/user', puis 'docs/.' devient 'docs'. Le résultat normalisé est '/home/user/docs/file.txt'. Le séparateur utilisé dépend du système d'exploitation, mais dans l'output de toString() sur un Path Unix, ce sera '/', sur windows ce sera '\\'."
     },
     {
       "topic": "Comparable",
