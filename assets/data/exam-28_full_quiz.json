@@ -4,9 +4,9 @@
     "mainTopic": "full",
     "category": "full",
     "examNumber": "F7",
-    "examName": "Examen blanc OCP-830 - Série Multi-55",
+    "examName": "Examen blanc OCP-830",
     "questionsCount": 55,
-    "description": "Generated with ChatGPT"
+    "description": "reviewed done, generated with ChatGPT"
   },
   "title": "OCP-830 Java 21 - Examen Blanc",
   "duration": 120,
@@ -23,9 +23,9 @@
       "topic": "Strings & Text Blocks",
       "question": "Quelle longueur imprime ce code ?<br><pre><code class=\"language-java\">String s = \"\"\"\nfoo\nbar\n\"\"\";\nSystem.out.print(s.length());</code></pre>",
       "options": ["7", "8", "9", "10"],
-      "answer": 2,
+      "answer": 1,
       "type": "single",
-      "explanation": "Le text block contient \"foo\\nbar\\n\" (3+1+3+1+1=9) à cause du saut de ligne final implicite."
+      "explanation": "Le text block contient \"foo\\nbar\\n\" (3+1+3+1+1=8) "
     },
     {
       "topic": "Date/Time API",
@@ -222,10 +222,10 @@
       "topic": "Generics / PECS",
       "question": "Quelle signature d’override est valide si la méthode de base retourne <code>ArrayList&lt;Number&gt;</code> et prend <code>Set&lt;Integer&gt;</code> ?",
       "options": [
-        "public ArrayList<Number> transform(Set<Integer> s)",
-        "public List<Integer> transform(Set<Integer> s)",
-        "public ArrayList<? super Integer> transform(Set<Integer> s)",
-        "public ArrayList<? extends Integer> transform(Set<Integer> s)"
+        "<pre><code class='language-java'>public ArrayList<Number> transform(Set<Integer> s)</code></pre>",
+        "<pre><code class='language-java'>public List<Integer> transform(Set<Integer> s)</code></pre>",
+        "<pre><code class='language-java'>public ArrayList<? super Integer> transform(Set<Integer> s)</code></pre>",
+        "<pre><code class='language-java'>public ArrayList<? extends Integer> transform(Set<Integer> s)</code></pre>"
       ],
       "answer": 0,
       "type": "single",
@@ -322,9 +322,9 @@
       "topic": "Date/Time / DST backward",
       "question": "US/Eastern recule d’1h à 02:00 (retour DST). Que donne :<br><pre><code class=\"language-java\">var z = ZoneId.of(\"US/Eastern\");\nvar ldt = LocalDateTime.of(2022,11,6,1,30);\nvar zdt = ZonedDateTime.of(ldt,z).plus(Duration.ofHours(1));\nSystem.out.println(zdt.getHour());</code></pre>",
       "options": ["1","2","3","Exception"],
-      "answer": 1,
+      "answer": 0,
       "type": "single",
-      "explanation": "Avec Duration, on ajoute 1h “horloge” → passe de 1:30 à 2:30 (seconde occurrence du 1–2)."
+      "explanation": "Avec Duration, on ajoute 1h “horloge” → passe de 1:30 à 2:30 , et on recule d'1h -> 1h30"
     },
     {
       "topic": "Date/Time / Period vs Duration",
@@ -354,16 +354,16 @@
     },
     {
       "topic": "Streams / groupingBy & mapping",
-      "question": "Construire Map<Character, List<String>> des mots groupés par première lettre :",
+      "question": "Construire Map\\<Character, List<String\\>\\> des mots groupés par première lettre :",
       "options": [
         "stream.collect(groupingBy(s->s.charAt(0)))",
         "stream.collect(groupingBy(s->s.charAt(0), mapping(s->s, toList())))",
         "stream.collect(toMap(s->s.charAt(0), s->List.of(s)))",
         "stream.collect(groupingBy(s->s.substring(0,1)))"
       ],
-      "answer": 1,
-      "type": "single",
-      "explanation": "groupingBy + mapping → valeur List<String> ; les autres ne donnent pas la bonne structure/valeur."
+      "answer": [0,1],
+      "type": "multiple",
+      "explanation": "groupingBy uniquement, ou groupingBy + mapping → valeur List<String> ; la derniere proposition donne une String en clé et non un Char."
     },
     {
       "topic": "Streams parallèles / combiner",
@@ -396,11 +396,11 @@
       "question": "Quelles propositions sont correctes pour parcourir récursivement un répertoire et filtrer les .java ?",
       "options": [
         "Files.walk(dir).filter(p->p.toString().endsWith(\".java\"))",
-        "Files.list(dir).filter(p->p.toString().endsWith(\".java\")) // parcourt récursivement",
-        "Files.walk(dir, 1) parcourt récursivement sans limite",
+        "Files.list(dir).filter(p->p.toString().endsWith(\".java\"))",
+        "Files.walk(dir, 1)",
         "Files.walk(dir).forEach(System.out::println)"
       ],
-      "answer": [0,3],
+      "answer": [0],
       "type": "multiple",
       "explanation": "list non récursif ; walk est récursif, avec profondeur paramétrable."
     },
@@ -483,8 +483,8 @@
       "explanation": "Un multi-catch ne peut pas contenir des types avec relation parent/enfant (1 et 3 sont invalides ; 2 et 4 valides)."
     },
     {
-      "topic": "Exceptions / TWR chaîné",
-      "question": "Dans TWR, si close() lève une exception et que le bloc try lève aussi une exception, alors :",
+      "topic": "Exceptions / Try with resources chaîné",
+      "question": "Dans Try with resources, si close() lève une exception et que le bloc try lève aussi une exception, alors :",
       "options": [
         "L’exception de close() remplace l’exception du try",
         "L’exception du try est primaire et close() est suppressed",
@@ -493,15 +493,15 @@
       ],
       "answer": 1,
       "type": "single",
-      "explanation": "Le TWR attache les exceptions de fermeture comme suppressed à l’exception primaire."
+      "explanation": "Le Try With Resources attache les exceptions de fermeture comme suppressed à l’exception primaire."
     },
     {
       "topic": "Enums / comportement",
       "question": "Sortie ?<br><pre><code class=\"language-java\">enum Mode{ A{String label(){return \"x\";}}, B;\n  String label(){ return name(); }\n}\nSystem.out.print(Mode.A.label()+\",\"+Mode.B.label());</code></pre>",
       "options": ["x,B", "A,B", "x,A", "Compilation error"],
-      "answer": 2,
+      "answer": 0,
       "type": "single",
-      "explanation": "Corps spécifique pour A, méthode par défaut pour B."
+      "explanation": "Corps spécifique pour A, méthode par défaut pour B. Chaque constante d’un enum peut avoir sa propre implémentation de méthodes.\n\nSi une constante ne redéfinit pas la méthode, c’est la version par défaut (définie dans le corps de l’enum) qui s’applique.\n\nDonc ici : A → méthode spécifique, B → méthode commune."
     },
     {
       "topic": "Functional Interfaces / signatures",
@@ -512,9 +512,9 @@
         "IntUnaryOperator h = x -> x + 1;",
         "Function<int,Integer> k = i -> i"
       ],
-      "answer": [1,2,3],
+      "answer": [2,3],
       "type": "multiple",
-      "explanation": "DoubleFunction<R> reçoit un double primitif → le paramètre doit être double, pas Double ; Function<int,…> invalide (pas de primitives)."
+      "explanation": "DoubleFunction<R> attend un paramètre double, pas un objet. On ne peut pas appeler doubleValue() sur un double.ToIntFunction<T> (non paramétré ici) attend un paramètre Object → d est vu comme Object, pas comme double"
     },
     {
       "topic": "Collections / Map.computeIfAbsent",
@@ -585,10 +585,10 @@
       "topic": "Generics / wildcards",
       "question": "Quelles assignations compilent ?",
       "options": [
-        "List<? extends Number> a = new ArrayList<Integer>();",
-        "List<? super Integer> b = new ArrayList<Number>();",
-        "List<Number> c = new ArrayList<? extends Integer>();",
-        "List<? super Number> d = new ArrayList<Object>();"
+        "<pre><code class='language-java'>List<? extends Number> a = new ArrayList<Integer>();</code></pre>",
+        "<pre><code class='language-java'>List<? super Integer> b = new ArrayList<Number>();</code></pre>",
+        "<pre><code class='language-java'>List<Number> c = new ArrayList<? extends Integer>();</code></pre>",
+        "<pre><code class='language-java'>List<? super Number> d = new ArrayList<Object>();</code></pre>"
       ],
       "answer": [0,1,3],
       "type": "multiple",
