@@ -47,7 +47,7 @@
         "Un compact constructor serait plus approprié ici.",
         "Le code ne compile pas car on ne peut pas modifier les paramètres dans un record."
       ],
-      "answer": [0, 1, 2],
+      "answer": [0, 1, 2, 3],
       "type": "multiple",
       "explanation": "C'est un canonical constructor EXPLICITE (pas compact). Dans ce cas, on DOIT explicitement affecter TOUS les champs avec this.field = value. On peut faire des validations et transformations avant l'affectation. Le code compile. Note: un compact constructor aurait été plus élégant car il permet de modifier les paramètres avant l'affectation implicite : public Book { if (price < 0) throw new IllegalArgumentException(); title = title.toUpperCase(); }"
     },
